@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Telegram Chat</title>
+  <title>Telegram Auto Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Telegram WebApp SDK -->
+  <!-- Telegram SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- Styles -->
+  <!-- Style -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -19,13 +19,17 @@
 <div class="app">
   <header class="header">
     <img id="avatar" class="avatar" />
-    <span id="username">Telegram User</span>
+    <div class="title">
+      <span id="username"></span>
+      <small>Auto Support Chat</small>
+    </div>
+    <span id="unreadBadge" class="badge">0</span>
   </header>
 
   <div id="chat" class="chat"></div>
 
   <div class="input-bar">
-    <input id="messageInput" type="text" placeholder="Type a message..." />
+    <input id="messageInput" placeholder="Type your message..." />
     <button id="sendBtn">Send</button>
   </div>
 </div>
