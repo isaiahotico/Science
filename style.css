@@ -9,14 +9,14 @@ body {
 }
 
 .app {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 
 .header {
   background: #0088cc;
-  color: #fff;
+  color: white;
   padding: 10px;
   display: flex;
   align-items: center;
@@ -27,6 +27,10 @@ body {
   height: 36px;
   border-radius: 50%;
   margin-right: 10px;
+}
+
+.title {
+  flex: 1;
 }
 
 .chat {
@@ -46,6 +50,10 @@ body {
   text-align: right;
 }
 
+.message.bot .bubble {
+  background: #ffeeba;
+}
+
 .name {
   font-size: 11px;
   color: #555;
@@ -54,7 +62,7 @@ body {
 .bubble {
   padding: 8px 12px;
   border-radius: 12px;
-  background: #fff;
+  background: white;
   display: inline-block;
 }
 
@@ -65,19 +73,25 @@ body {
 .input-bar {
   display: flex;
   padding: 10px;
-  background: #fff;
+  background: white;
 }
 
 .input-bar input {
   flex: 1;
   padding: 10px;
-  font-size: 14px;
 }
 
 .input-bar button {
   background: #0088cc;
-  color: #fff;
+  color: white;
   border: none;
   padding: 0 15px;
-  font-size: 14px;
+}
+
+.badge {
+  background: red;
+  color: white;
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 10px;
 }
