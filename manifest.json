@@ -1,15 +1,8 @@
 {
-  "name": "Telegram Chat Mini App",
-  "short_name": "TG Chat",
+  "name": "Telegram Auto Chat",
+  "short_name": "AutoChat",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0088cc",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
+  "theme_color": "#0088cc"
 }
