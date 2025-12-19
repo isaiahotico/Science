@@ -1,39 +1,221 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Telegram Auto Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>PAPER HOUSE INC</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <!-- Telegram SDK -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- Telegram -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
+<!-- Monetag -->
+<script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
+<script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
+<script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
 
-  <!-- Style -->
-  <link rel="stylesheet" href="style.css" />
+<!-- Adexium -->
+<script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+
+<style>
+body{margin:0;background:#0b0b0b;color:#eaeaea;font-family:monospace}
+header{background:#111;padding:10px;display:flex;justify-content:space-between}
+.wallet{border-left:4px solid #00ff99;padding-left:10px}
+button{width:100%;padding:12px;margin:6px 0;background:#111;border:1px solid #00ff99;color:#00ff99}
+button:disabled{opacity:.4}
+.section{display:none;padding:10px}
+.section.active{display:block}
+.box{border:1px dashed #333;padding:8px;margin-top:8px}
+footer{text-align:center;font-size:12px;opacity:.6;padding:10px}
+input{width:100%;padding:10px;margin:6px 0;background:#111;border:1px solid #333;color:#fff}
+</style>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, onSnapshot, increment }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
+ authDomain:"paper-house-inc.firebaseapp.com",
+ projectId:"paper-house-inc",
+ storageBucket:"paper-house-inc.firebasestorage.app",
+ messagingSenderId:"658389836376",
+ appId:"1:658389836376:web:2ab1e2743c593f4ca8e02d"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+window.db=db;
+window.fs={doc,getDoc,setDoc,updateDoc,addDoc,collection,onSnapshot,increment};
+</script>
 </head>
+
 <body>
 
-<div class="app">
-  <header class="header">
-    <img id="avatar" class="avatar" />
-    <div class="title">
-      <span id="username"></span>
-      <small>Auto Support Chat</small>
-    </div>
-    <span id="unreadBadge" class="badge">0</span>
-  </header>
+<header>
+<div>PAPER HOUSE INC</div>
+<div class="wallet">₱ <span id="bal">0.000</span><br>@<span id="user"></span></div>
+</header>
 
-  <div id="chat" class="chat"></div>
-
-  <div class="input-bar">
-    <input id="messageInput" placeholder="Type your message..." />
-    <button id="sendBtn">Send</button>
-  </div>
+<div id="home" class="section active">
+<button onclick="show('ads')">Watched Ads Room</button>
+<button onclick="show('daily')">Daily Gift Room</button>
+<button onclick="show('withdraw')">Withdrawal Room</button>
 </div>
 
-<script type="module" src="app.js"></script>
+<div id="ads" class="section">
+<button id="watchBtn">Watch Earn ₱0.04</button>
+<div class="box" id="adsCd"></div>
+<button onclick="show('home')">⬅ Back</button>
+</div>
+
+<div id="daily" class="section">
+<button onclick="dailyGift('d1',0.015)">Daily Gift I ₱0.015</button>
+<button onclick="dailyGift('d2',0.015)">Daily Gift II ₱0.015</button>
+<button onclick="dailyGift('d3',0.015)">Daily Gift III ₱0.015</button>
+<div class="box" id="dailyCd"></div>
+<button onclick="show('home')">⬅ Back</button>
+</div>
+
+<div id="withdraw" class="section">
+<input id="gcash" placeholder="GCash Number">
+<input id="amount" placeholder="Amount">
+<button onclick="withdraw()">Withdraw</button>
+<div class="box" id="wdMsg"></div>
+<button onclick="show('home')">⬅ Back</button>
+</div>
+
+<footer>
+©2025 PAPER HOUSE INC<br>
+Isaiahotico15@gmail.com<br>
+<span id="time"></span>
+</footer>
+
+<script type="module">
+const {doc,getDoc,setDoc,updateDoc,addDoc,collection,onSnapshot,increment}=window.fs;
+const db=window.db;
+
+/* Telegram user */
+let user="Guest";
+if(window.Telegram?.WebApp?.initDataUnsafe?.user){
+ user=Telegram.WebApp.initDataUnsafe.user.username ||
+ Telegram.WebApp.initDataUnsafe.user.first_name;
+}
+document.getElementById("user").innerText=user;
+
+/* Firebase user */
+const ref=doc(db,"users",user);
+if(!(await getDoc(ref)).exists()) await setDoc(ref,{balance:0});
+onSnapshot(ref,s=>bal.innerText=s.data().balance.toFixed(3));
+window.addReward=a=>updateDoc(ref,{balance:increment(a)});
+
+/* Navigation */
+window.show=id=>{
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+};
+
+/* ===========================
+   PARALLEL PRELOAD (2 ADS)
+   =========================== */
+let adPool=[],zone=0,ready=false;
+const zones=[()=>show_10276123,()=>show_10337795,()=>show_10337853];
+
+function preload(){
+ try{
+  const fn=zones[zone%zones.length]();
+  fn({preload:true});
+  adPool.push(fn);
+  zone++;ready=true;
+ }catch{zone++}
+}
+
+function maintain(){
+ if(adPool.length<2) preload();
+ setTimeout(maintain,12000);
+}
+
+const wait=setInterval(()=>{
+ if(typeof show_10276123==="function"){
+  clearInterval(wait);
+  preload();preload();maintain();
+ }
+},200);
+
+async function showWarm(type=null){
+ if(!ready||!adPool.length) return false;
+ const fn=adPool.shift();
+ try{
+  type?await fn(type):await fn();
+  setTimeout(preload,100);
+  return true;
+ }catch{
+  setTimeout(preload,100);
+  return false;
+ }
+}
+
+/* Watch Ads */
+watchBtn.onclick=async()=>{
+ const last=localStorage.ads||0;
+ if(Date.now()-last<180000) return alert("Cooldown active ⏳");
+ watchBtn.disabled=true;
+ if(await showWarm()&&await showWarm()&&await showWarm()){
+  addReward(0.04);
+  alert("Gained 0.04 peso 🎉");
+  localStorage.ads=Date.now();
+ }
+ watchBtn.disabled=false;
+};
+
+/* Daily Gifts */
+window.dailyGift=async(k,a)=>{
+ const last=localStorage[k]||0;
+ if(Date.now()-last<900000) return alert("Cooldown active ⏳");
+ if(await showWarm('pop')){
+  addReward(a);
+  alert("Congratulations here is your 0.015 peso 🎉");
+  localStorage[k]=Date.now();
+ }
+};
+
+/* Withdraw */
+window.withdraw=async()=>{
+ await addDoc(collection(db,"withdrawals"),{
+  user,gcash:gcash.value,amount:+amount.value,status:"pending",time:Date.now()
+ });
+ wdMsg.innerText="Withdrawal sent!";
+};
+
+/* Global Ads ₱0.01 */
+const links=[
+"https://t.me/RicreatorCoinbot?startapp=cad587",
+"https://t.me/Dollar_EarningBot?start=7398171299",
+"https://t.me/TheOnlyFunds_Bot?start=187632",
+"https://t.me/Stars_Miner_bot?start=33861",
+"https://t.me/core_xbot?start=2074039",
+"https://t.me/ProfitHubMining_Bot?start=511555"
+];
+
+show_10276123({
+ type:'inApp',
+ inAppSettings:{frequency:2,capping:.1,interval:30,timeout:5,everyPage:false}
+}).then(()=>{
+ addReward(0.01);
+ alert("Congratulations Earn 0.01 peso 🎉");
+ window.open(links[Math.floor(Math.random()*links.length)],"_blank");
+});
+
+/* Adexium */
+new AdexiumWidget({
+ wid:'0f0f814f-d491-4578-9343-531b503ff453',
+ adFormat:'interstitial'
+}).autoMode();
+
+/* Clock */
+setInterval(()=>time.innerText=new Date().toLocaleString(),1000);
+</script>
+
 </body>
 </html>
