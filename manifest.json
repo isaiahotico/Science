@@ -1,0 +1,8 @@
+{
+  "name": "PAPER HOUSE INC",
+  "short_name": "PaperHouse",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00c853"
+}
