@@ -1,131 +1,118 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc,
-  addDoc, collection, query, where, onSnapshot,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
-  authDomain: "paper-house-inc.firebaseapp.com",
-  projectId: "paper-house-inc",
-  storageBucket: "paper-house-inc.firebasestorage.app",
-  messagingSenderId: "658389836376",
-  appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
+ apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
+ authDomain: "paper-house-inc.firebaseapp.com",
+ projectId: "paper-house-inc",
+ storageBucket: "paper-house-inc.firebasestorage.app",
+ messagingSenderId: "658389836376",
+ appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* Telegram */
+// Telegram
 const tg = window.Telegram.WebApp;
 tg.ready();
 const user = tg.initDataUnsafe.user;
-const uid = String(user.id);
+const uid = user?.id || "guest";
+document.getElementById('username').innerText = user?.username || "Guest";
 
-/* UI */
-const balanceEl = document.getElementById("balance");
-document.getElementById("username").innerText = user.username;
+const userRef = doc(db,"users",uid);
 
-/* Load user */
-const userRef = doc(db, "users", uid);
-
+// Load user wallet
 async function loadUser(){
-  const snap = await getDoc(userRef);
-  if(!snap.exists()){
-    await setDoc(userRef,{
-      username:user.username,
-      balance:0,
-      lastWatchAd:0,
-      lastDailyGift1:0,
-      lastDailyGift2:0,
-      lastDailyGift3:0
-    });
-  }
-  onSnapshot(userRef,s=>{
-    balanceEl.innerText = s.data().balance.toFixed(3);
-  });
+ const d = await getDoc(userRef);
+ if(!d.exists()) await setDoc(userRef,{balance:0});
+ onSnapshot(userRef,s=>{
+  document.getElementById('balance').innerText = (s.data().balance||0).toFixed(3);
+ });
 }
 loadUser();
 
-/* Anti-abuse cooldown */
-function canClaim(last, cd){
-  return Date.now() - last > cd;
+// Add balance
+window.addBalance = async v=>{
+ const d = await getDoc(userRef);
+ await setDoc(userRef,{balance:(d.data().balance||0)+v},{merge:true});
 }
 
-/* Rewards */
-async function reward(amount, field){
-  await updateDoc(userRef,{
-    balance: Number((Number(balanceEl.innerText)+amount).toFixed(3)),
-    [field]: Date.now()
-  });
-  alert(`🎉 Gained ₱${amount}`);
+// Cooldown
+window.startCooldown=(k,s)=>localStorage.setItem(k,Date.now()+s*1000);
+window.cooldownReady=(k,s)=>{
+ const t=localStorage.getItem(k);
+ if(t && Date.now()<t){alert("Cooldown active");return false;}
+ return true;
 }
 
-/* Watch Ads */
-window.watchAds = async ()=>{
-  const u = (await getDoc(userRef)).data();
-  if(!canClaim(u.lastWatchAd,180000)) return alert("Cooldown 3 mins");
+// CPM ads rotation
+const adsCPM = [
+  {id:'10276123', fn: window.show_10276123, reward:0.04, type:'interstitial', cooldown:180},
+  {id:'10337795', fn: window.show_10337795, reward:0.04, type:'interstitial', cooldown:180},
+  {id:'10337853', fn: window.show_10337853, reward:0.04, type:'interstitial', cooldown:180},
+];
 
-  await Promise.all([show_10276123(),show_10337795(),show_10337853()]);
-  reward(0.04,"lastWatchAd");
-};
+const dailyAds = [
+  {id:'10276123', fn: window.show_10276123, reward:0.015, type:'pop', cooldown:900},
+  {id:'10337795', fn: window.show_10337795, reward:0.015, type:'pop', cooldown:900},
+  {id:'10337853', fn: window.show_10337853, reward:0.015, type:'pop', cooldown:900},
+];
 
-/* Daily Gifts */
-window.dailyGift = async n=>{
-  const field=`lastDailyGift${n}`;
-  const u=(await getDoc(userRef)).data();
-  if(!canClaim(u[field],900000)) return alert("Cooldown 15 mins");
+const globalAdsList = [
+  {fn: window.show_10276123},
+  {fn: window.show_10337795},
+  {fn: window.show_10337853},
+];
 
-  [show_10276123,show_10337795,show_10337853][n-1]('pop')
-    .then(()=>reward(0.015,field));
-};
-
-/* Withdraw */
-window.withdraw = async ()=>{
-  const amount=Number(balanceEl.innerText);
-  if(amount<1) return alert("Min ₱1");
-
-  await addDoc(collection(db,"withdrawals"),{
-    userId:uid,
-    username:user.username,
-    amount,
-    gcash:document.getElementById("gcash").value,
-    status:"pending",
-    createdAt:serverTimestamp()
-  });
-
-  await updateDoc(userRef,{balance:0});
-  alert("Withdrawal sent 🚀");
-};
-
-/* Withdrawal history (LIVE) */
-onSnapshot(
-  query(collection(db,"withdrawals"),where("userId","==",uid)),
-  snap=>{
-    const tb=document.getElementById("withdrawTable");
-    tb.innerHTML="";
-    snap.forEach(d=>{
-      const r=d.data();
-      tb.innerHTML+=`
-        <tr>
-          <td>₱${r.amount}</td>
-          <td>${r.status}</td>
-          <td>${r.createdAt?.toDate().toLocaleString()}</td>
-        </tr>`;
-    });
+// Watch Ads CPM
+window.watchAdsCPM = async ()=>{
+  for(let ad of adsCPM){
+    if(cooldownReady(ad.id, ad.cooldown)){
+      try {
+        await ad.fn(ad.type || 'interstitial');
+        addBalance(ad.reward);
+        alert(`Gained ${ad.reward.toFixed(3)} peso 🎉`);
+        startCooldown(ad.id, ad.cooldown);
+      } catch(e){ console.warn(`Ad ${ad.id} failed`); }
+    }
   }
-);
+}
 
-/* Navigation */
-window.openRoom=id=>{
-  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-};
-window.goHome=()=>openRoom("home");
+// Daily gifts
+window.dailyGiftCPM = async (slot)=>{
+  let ad = dailyAds[slot==='I'?0:slot==='II'?1:2];
+  if(cooldownReady(ad.id, ad.cooldown)){
+    try {
+      await ad.fn('pop');
+      new AdexiumWidget({wid:'0f0f814f-d491-4578-9343-531b503ff453', adFormat:'interstitial'}).autoMode();
+      addBalance(ad.reward);
+      alert(`Congratulations here is your ${ad.reward.toFixed(3)} peso 🎉`);
+      startCooldown(ad.id, ad.cooldown);
+    } catch(e){ console.warn(`Daily Gift ${slot} failed.`); }
+  } else alert("Daily Gift cooldown active");
+}
 
-/* Adexium */
-new AdexiumWidget({wid:'0f0f814f-d491-4578-9343-531b503ff453',adFormat:'interstitial'}).autoMode();
-
-/* Footer date */
-document.getElementById("date").innerText=new Date().toLocaleString();
+// Global interstitial rotation
+function globalInterstitialRotation(){
+  for(let ad of globalAdsList){
+    ad.fn({
+      type:'inApp',
+      inAppSettings:{frequency:2,capping:0.1,interval:30,timeout:5,everyPage:false}
+    }).then(()=>{
+      addBalance(0.01);
+      alert("Congratulations Earn 0.01 peso 🎉");
+      const links=[
+       "https://t.me/RicreatorCoinbot?startapp=cad587",
+       "https://t.me/Dollar_EarningBot?start=7398171299",
+       "https://t.me/TheOnlyFunds_Bot?start=187632",
+       "https://t.me/Stars_Miner_bot?start=33861",
+       "https://t.me/core_xbot?start=2074039",
+       "https://t.me/ProfitHubMining_Bot?start=511555"
+      ];
+      location.href = links[Math.floor(Math.random()*links.length)];
+    }).catch(e=>console.warn("Global ad failed"));
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{globalInterstitialRotation();});
