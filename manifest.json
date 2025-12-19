@@ -1,23 +1,8 @@
 {
-  "name": "PAPER HOUSE INC",
-  "short_name": "PaperHouse",
-  "description": "Earn rewards by watching ads and claiming daily gifts!",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#222222",
-  "theme_color": "#00ff99",
-  "icons": [
-    {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-  // You'll need to create a folder named 'icons' and place actual icon files there.
-  // For a quick start, you can generate these using online PWA icon generators.
+  "name":"PAPER HOUSE INC",
+  "short_name":"PHI",
+  "start_url":"index.html",
+  "display":"standalone",
+  "background_color":"#020617",
+  "theme_color":"#22c55e"
 }
