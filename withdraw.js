@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, doc, setDoc, getDoc, onSnapshot, addDoc, collection, serverTimestamp } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Firebase config
 const firebaseConfig = {
  apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
  authDomain: "paper-house-inc.firebaseapp.com",
