@@ -14,7 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Telegram
+// Telegram user
 const tg = window.Telegram.WebApp;
 tg.ready();
 const user = tg.initDataUnsafe.user;
