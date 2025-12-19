@@ -1,73 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PAPER HOUSE INC</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoTube Mini App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Firebase SDKs (for non-critical features like links, leaderboards) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css">
+    <!-- Monetag SDKs for Watch Ads Rooms & Daily Gifts -->
+    <!-- Room 1 & Daily Gift II & Site-wide Auto Ad 2 -->
+    <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
+    <!-- Room 2 & Daily Gift III -->
+    <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
+    <!-- Room 3 -->
+    <script src='//libtl.com/sdk.js' data-zone='3136495' data-sdk='show_3136495'></script>
+    <!-- Site-wide Auto Ad 1 (Assuming this is a rewarded zone you've set up) -->
+    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
 
-<!-- Telegram -->
-<script src="https://telegram.org/js/telegram-web-app.js?56"></script>
 
-<!-- Monetag preload (parallel) -->
-<link rel="preload" href="//libtl.com/sdk.js" as="script">
+    <!-- Adexium Widget Integration -->
+    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const adexiumWidget = new AdexiumWidget({wid: '0f0f814f-d491-4578-9343-531b503ff453', adFormat: 'interstitial'});
+            adexiumWidget.autoMode();
+            console.log('Adexium Widget initialized in autoMode.');
+        });
+    </script>
 
-<script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
-<script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
-<script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
-
-<!-- Adexium -->
-<script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <!-- YouTube Player API -->
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
 </head>
-
 <body>
+    <div class="app-container">
+        <header>
+            <h1 class="app-title">CryptoTube</h1>
+            <div class="currency-display">
+                Peso: <span id="pesoBalance">0.00</span>⚡
+            </div>
+            <p id="telegramUserInfo" class="telegram-info"></p>
+        </header>
 
-<header>
-  <div class="wallet">₱ <span id="balance">0.000</span></div>
-  <div class="user" id="username">loading...</div>
-</header>
+        <nav class="main-nav">
+            <button class="nav-button" data-page="profile">PROFILE ROOM</button>            <button class="nav-button" data-page="leaderboard-earners">TOP EARNERS</button>
+            <button class="nav-button" data-page="leaderboard-videos">TOP VIDEOS</button>
+            <button class="nav-button" data-page="youtube">YOUTUBE ROOM</button>
+            <button class="nav-button" data-page="link">LINK ROOM</button>
+            <button class="nav-button" data-page="watchads1">WATCH ADS ROOM 1</button>
+            <button class="nav-button" data-page="watchads2">WATCH ADS ROOM 2</button>
+            <button class="nav-button" data-page="watchads3">WATCH ADS ROOM 3</button>
+            <button class="nav-button" data-page="dailygift2">DAILY GIFT II</button>
+            <button class="nav-button" data-page="dailygift3">DAILY GIFT III</button>
+            <button class="nav-button" data-page="withdrawal">WITHDRAWAL ROOM</button>
+            <button class="nav-button admin-button" data-page="admin">ADMIN PANEL</button>
+        </nav>
 
-<section id="home">
-  <button onclick="openRoom('watch')">🎬 Watched Ads Room</button>
-  <button onclick="openRoom('daily')">🎁 Daily Gift Room</button>
-  <button onclick="openRoom('withdraw')">🏦 Withdrawal Room</button>
-</section>
+        <main id="appContent">
+            <!-- Profile Room -->
+            <section id="profilePage" class="page">
+                <h2>PROFILE ROOM</h2>
+                <p>Welcome, <span id="telegramUsername">Guest</span>!</p>
+                <p>Your Telegram ID: <span id="telegramUserId">N/A</span></p>
+                <p>Your IP Address: <span id="userIpAddress">N/A</span></p>
+                <p>Your Peso Balance: <span id="profilePesoBalance">0.00</span>⚡</p>
+                <h3>Your Submitted Links</h3>
+                <table id="userLinksTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>YouTube Link</th>
+                            <th>Total Views (Simulated)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- User links will be loaded here -->
+                    </tbody>
+                </table>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-<section id="watch" class="hidden">
-  <button onclick="watchAds()">Watch Earn ₱0.04</button>
-  <p id="watchCooldown"></p>
-  <button onclick="goHome()">⬅ Back</button>
-</section>
+            <!-- Top Earners Leaderboard -->
+            <section id="leaderboard-earnersPage" class="page hidden">
+                <h2>TOP EARNERS</h2>
+                <table id="topEarnersTable">
+                    <thead>                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Total Earned (Peso)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Leaderboard data will be loaded here -->
+                    </tbody>
+                </table>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-<section id="daily" class="hidden">
-  <button onclick="dailyGift(1)">Daily Gift I ₱0.015</button>
-  <button onclick="dailyGift(2)">Daily Gift II ₱0.015</button>
-  <button onclick="dailyGift(3)">Daily Gift III ₱0.015</button>
-  <button onclick="goHome()">⬅ Back</button>
-</section>
+            <!-- Top Watched Videos Leaderboard -->
+            <section id="leaderboard-videosPage" class="page hidden">
+                <h2>TOP WATCHED VIDEOS</h2>
+                <table id="topVideosTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Title</th>
+                            <th>Views</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Leaderboard data will be loaded here -->
+                    </tbody>
+                </table>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-<section id="withdraw" class="hidden">
-  <input id="gcash" placeholder="GCash Number">
-  <button onclick="withdraw()">Withdraw</button>
+            <!-- YouTube Room -->
+            <section id="youtubePage" class="page hidden">
+                <h2>YOUTUBE ROOM</h2>
+                <div id="player"></div>
+                <p id="videoTitleDisplay"></p>
+                <div class="youtube-controls">
+                    <button id="playRewardBtn" class="action-button">Play for Reward</button>
+                    <button id="nextVideoBtn" class="action-button">Next Video</button>
+                </div>
+                <div id="rewardTimer" class="hidden">
+                    Watching for reward: <span id="timerCountdown">60</span>s
+                </div>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-  <table>
-    <thead>
-      <tr><th>Amount</th><th>Status</th><th>Time</th></tr>
-    </thead>
-    <tbody id="withdrawTable"></tbody>
-  </table>
+            <!-- Link Room -->
+            <section id="linkPage" class="page hidden">
+                <h2>LINK ROOM</h2>
+                <p>You have <span id="freeLinksCount">0</span> free link submissions remaining.</p>
+                <p>Total links submitted: <span id="totalLinksSubmitted">0</span> / <span id="maxTotalLinks">20</span></p>
+                <p>Next link costs: 5⚡ Pesos</p>
+                <input type="text" id="youtubeLinkInput" placeholder="Enter YouTube Video URL">
+                <button id="submitLinkBtn" class="action-button">Submit Link</button>
+                <p id="linkSubmissionMessage"></p>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-  <button onclick="goHome()">⬅ Back</button>
-</section>
+            <!-- Watch Ads Room 1 -->
+            <section id="watchads1Page" class="page hidden">
+                <h2>WATCH ADS ROOM 1</h2>
+                <p>Watch 4 ads consecutively to earn 0.028⚡ Peso.</p>
+                <button id="startAds1Btn" class="action-button">Start Ads</button>
+                <p id="ads1Status"></p>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-<footer>
-©2025 PAPER HOUSE INC<br>
-Isaiahotico15@gmail.com<br>
-<span id="date"></span>
-</footer>
+            <!-- Watch Ads Room 2 -->
+            <section id="watchads2Page" class="page hidden">
+                <h2>WATCH ADS ROOM 2</h2>
+                <p>Watch 4 ads consecutively to earn 0.028⚡ Peso.</p>
+                <button id="startAds2Btn" class="action-button">Start Ads</button>
+                <p id="ads2Status"></p>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
 
-<script type="module" src="app.js"></script>
+            <!-- Watch Ads Room 3 -->
+            <section id="watchads3Page" class="page hidden">
+                <h2>WATCH ADS ROOM 3</h2>
+                <p>Watch 4 ads consecutively to earn 0.028⚡ Peso.</p>
+                <button id="startAds3Btn" class="action-button">Start Ads</button>
+                <p id="ads3Status"></p>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
+
+            <!-- Daily Gift II -->
+            <section id="dailygift2Page" class="page hidden">
+                <h2>DAILY GIFT II</h2>
+                <p>Claim your daily gift here! Cooldown: 15 minutes.</p>
+                <button id="claimDailyGift2Btn" class="action-button">Daily Gift II 0.015 Peso</button>
+                <p id="dailyGift2Status"></p>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
+
+            <!-- Daily Gift III -->
+            <section id="dailygift3Page" class="page hidden">
+                <h2>DAILY GIFT III</h2>
+                <p>Claim your daily gift here! Cooldown: 15 minutes.</p>
+                <button id="claimDailyGift3Btn" class="action-button">Daily Gift III 0.015 Peso</button>
+                <p id="dailyGift3Status"></p>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
+
+            <!-- Withdrawal Room -->
+            <section id="withdrawalPage" class="page hidden">
+                <h2>WITHDRAWAL ROOM</h2>
+                <h3>Withdraw to Gcash</h3>
+                <input type="text" id="gcashNumber" placeholder="Enter Gcash Number"><input type="number" id="gcashAmount" placeholder="Amount in Peso">
+                <button id="withdrawGcashBtn" class="action-button" disabled>Withdraw to Gcash</button>
+
+                <h3>Withdraw to FaucetPay (USDT)</h3>
+                <p>Min withdrawal: 1⚡ Peso (approx 0.02⚡ USDT)</p>
+                <p>Max withdrawal: 100⚡ Peso (approx 2⚡ USDT)</p>
+                <input type="email" id="faucetpayEmail" placeholder="Enter FaucetPay Email">
+                <input type="number" id="faucetpayAmount" placeholder="Amount in Peso">
+                <button id="withdrawFaucetpayBtn" class="action-button" disabled>Withdraw to FaucetPay</button>
+
+                <h3>Withdrawal History</h3>
+                <table id="withdrawalHistoryTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Details</th>
+                            <th>Status</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Withdrawal history will be loaded here -->
+                    </tbody>
+                </table>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
+
+            <!-- Admin Panel Room -->
+            <section id="adminPage" class="page hidden">
+                <h2>ADMIN PANEL</h2>
+                <input type="password" id="adminPassword" placeholder="Admin Password">
+                <button id="adminLoginBtn" class="action-button">Login</button>
+                <div id="adminContent" class="hidden">
+                    <h3>Withdrawal Requests</h3>
+                    <table id="adminWithdrawalsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User ID</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Details</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Withdrawal requests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button class="home-button" data-page="home">Return Home</button>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
