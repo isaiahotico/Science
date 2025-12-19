@@ -3,71 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <title>PAPER HOUSE INC</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
 
-<!-- Telegram -->
-<script src="https://telegram.org/js/telegram-web-app.js?56"></script>
-
-<!-- Monetag preload (parallel) -->
-<link rel="preload" href="//libtl.com/sdk.js" as="script">
-
+<!-- Monetag SDKs -->
 <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
 <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
 <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
 
 <!-- Adexium -->
 <script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-</head>
 
+<!-- Firebase + App Logic -->
+<script type="module" src="app.js"></script>
+
+<!-- Telegram -->
+<script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+</head>
 <body>
 
 <header>
-  <div class="wallet">₱ <span id="balance">0.000</span></div>
-  <div class="user" id="username">loading...</div>
+  <div class="wallet">💰 ₱<span id="balance">0.00</span></div>
+  <div class="user">👤 <span id="username">Loading...</span></div>
 </header>
 
-<section id="home">
-  <button onclick="openRoom('watch')">🎬 Watched Ads Room</button>
-  <button onclick="openRoom('daily')">🎁 Daily Gift Room</button>
-  <button onclick="openRoom('withdraw')">🏦 Withdrawal Room</button>
-</section>
+<section>
+<h1>PAPER HOUSE INC</h1>
 
-<section id="watch" class="hidden">
-  <button onclick="watchAds()">Watch Earn ₱0.04</button>
-  <p id="watchCooldown"></p>
-  <button onclick="goHome()">⬅ Back</button>
-</section>
-
-<section id="daily" class="hidden">
-  <button onclick="dailyGift(1)">Daily Gift I ₱0.015</button>
-  <button onclick="dailyGift(2)">Daily Gift II ₱0.015</button>
-  <button onclick="dailyGift(3)">Daily Gift III ₱0.015</button>
-  <button onclick="goHome()">⬅ Back</button>
-</section>
-
-<section id="withdraw" class="hidden">
-  <input id="gcash" placeholder="GCash Number">
-  <button onclick="withdraw()">Withdraw</button>
-
-  <table>
-    <thead>
-      <tr><th>Amount</th><th>Status</th><th>Time</th></tr>
-    </thead>
-    <tbody id="withdrawTable"></tbody>
-  </table>
-
-  <button onclick="goHome()">⬅ Back</button>
+<div class="menu">
+  <button onclick="watchAdsCPM()">Watched Ads Room (₱0.04)</button>
+  <br>
+  <button onclick="dailyGiftCPM('I')">Daily Gift I (₱0.015)</button>
+  <button onclick="dailyGiftCPM('II')">Daily Gift II (₱0.015)</button>
+  <button onclick="dailyGiftCPM('III')">Daily Gift III (₱0.015)</button>
+  <br>
+  <button onclick="window.location.href='withdraw.html'">Withdrawal Room</button>
+  <button onclick="window.location.href='admin.html'">Admin Room</button>
+</div>
 </section>
 
 <footer>
-©2025 PAPER HOUSE INC<br>
-Isaiahotico15@gmail.com<br>
-<span id="date"></span>
+©2025 | PAPER HOUSE INC<br>
+📧 Isaiahotico15@gmail.com<br>
+⏰ <span id="time"></span>
 </footer>
 
-<script type="module" src="app.js"></script>
+<script>
+setInterval(()=>time.innerText=new Date().toLocaleString(),1000)
+</script>
+
 </body>
 </html>
