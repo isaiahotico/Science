@@ -1,8 +1,0 @@
-{
-  "name": "Telegram Auto Chat",
-  "short_name": "AutoChat",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0088cc"
-}
