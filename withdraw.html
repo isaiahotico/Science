@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Withdrawal Room</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="withdraw.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="wallet">💰 ₱<span id="balance">0.00</span></div>
+  <div class="user">👤 <span id="username">Loading...</span></div>
+</header>
+
+<section>
+<h1>💸 Withdrawal Room</h1>
+
+<input id="gcash" placeholder="Enter GCash Number">
+<input id="amount" placeholder="Enter Amount">
+<button onclick="withdraw()">Withdraw</button>
+
+<h2>Withdrawal History</h2>
+<table id="history">
+<thead>
+<tr><th>Name</th><th>Amount</th><th>GCash</th><th>Status</th><th>Time</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</section>
+
+<footer>
+©2025 | PAPER HOUSE INC<br>
+📧 Isaiahotico15@gmail.com
+</footer>
+
+</body>
+</html>
