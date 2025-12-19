@@ -1,128 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPER HOUSE INC</title>
+<meta charset="UTF-8">
+<title>PAPER HOUSE INC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Link to your stylesheet -->
-    <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
 
-    <!-- Web App Manifest for PWA features -->
-    <link rel="manifest" href="manifest.json">
+<!-- Telegram -->
+<script src="https://telegram.org/js/telegram-web-app.js?56"></script>
 
-    <!-- Firebase SDKs (use CDN for simplicity with GitHub Pages) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+<!-- Monetag preload (parallel) -->
+<link rel="preload" href="//libtl.com/sdk.js" as="script">
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
-          authDomain: "paper-house-inc.firebaseapp.com",
-          projectId: "paper-house-inc",
-          storageBucket: "paper-house-inc.firebasestorage.app",
-          messagingSenderId: "658389836376",
-          appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+<script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
+<script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
+<script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
 
-        // Expose Firebase objects globally for app.js (since app.js is not a module yet for simpler access)
-        window.firebaseDB = db;
-        window.getFirestore = getFirestore;
-        window.doc = doc;
-        window.getDoc = getDoc;
-        window.setDoc = setDoc;
-        window.updateDoc = updateDoc;
-    </script>
-
-    <!-- Telegram Web App SDK & Adexium -->
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
-    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-    <script type="text/javascript">
-        // Initialize Adexium auto-mode for passive revenue.
-        // This runs independently in the background.
-        document.addEventListener('DOMContentLoaded', () => {
-            const adexiumAutoWidget = new AdexiumWidget({wid: '0f0f814f-d491-4578-9343-531b503ff453', adFormat: 'interstitial'});
-            adexiumAutoWidget.autoMode();
-            window.adexiumAutoWidget = adexiumAutoWidget; // Make it accessible if needed
-        });
-    </script>
-
-    <!-- Monetag SDKs -->
-    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>    <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
-
+<!-- Adexium -->
+<script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
 </head>
+
 <body>
 
-    <div class="header-info">
-        <div class="wallet-display">
-            <div class="wallet-stripe"></div>
-            Wallet: <span id="walletBalance">0.00</span> Peso
-        </div>
-        <div class="telegram-username">
-            User: <span id="telegramUsername">Loading...</span>
-        </div>
-    </div>
+<header>
+  <div class="wallet">₱ <span id="balance">0.000</span></div>
+  <div class="user" id="username">loading...</div>
+</header>
 
-    <h1>PAPER HOUSE INC</h1>
+<section id="home">
+  <button onclick="openRoom('watch')">🎬 Watched Ads Room</button>
+  <button onclick="openRoom('daily')">🎁 Daily Gift Room</button>
+  <button onclick="openRoom('withdraw')">🏦 Withdrawal Room</button>
+</section>
 
-    <div class="container">
-        <div class="main-menu">
-            <button id="watchedAdsRoomBtn">Watched Ads Room</button>
-            <button id="dailyGiftRoomBtn">Daily Gift Room</button>
-        </div>
+<section id="watch" class="hidden">
+  <button onclick="watchAds()">Watch Earn ₱0.04</button>
+  <p id="watchCooldown"></p>
+  <button onclick="goHome()">⬅ Back</button>
+</section>
 
-        <div id="watchedAdsRoom" class="room-section">
-            <h2>Watched Ads Room</h2>
-            <p>Watch 3 combined ads and earn 0.04 Peso!</p>
-            <button id="watchAdsButton">Watch Earn 0.04 Peso</button>
-            <div class="cooldown-box">
-                Next watch in: <span id="watchedAdsCooldown">Ready!</span>
-            </div>
-            <p id="watchedAdsStatus" class="status-message"></p>
-            <button onclick="goBackToMain()">Back to Main</button>
-        </div>
+<section id="daily" class="hidden">
+  <button onclick="dailyGift(1)">Daily Gift I ₱0.015</button>
+  <button onclick="dailyGift(2)">Daily Gift II ₱0.015</button>
+  <button onclick="dailyGift(3)">Daily Gift III ₱0.015</button>
+  <button onclick="goHome()">⬅ Back</button>
+</section>
 
-        <div id="dailyGiftRoom" class="room-section">
-            <h2>Daily Gift Room</h2>
-            <p>Claim your daily gift rewards! Each has a 15-minute cooldown.</p>
+<section id="withdraw" class="hidden">
+  <input id="gcash" placeholder="GCash Number">
+  <button onclick="withdraw()">Withdraw</button>
 
-            <div class="gift-button-wrapper">
-                <button id="dailyGiftIButton">Daily Gift I 0.015 Peso</button>
-                <div class="cooldown-box">
-                    Next: <span id="dailyGiftICooldown">Ready!</span>
-                </div>
-                <p id="dailyGiftIStatus" class="status-message"></p>
-            </div>
+  <table>
+    <thead>
+      <tr><th>Amount</th><th>Status</th><th>Time</th></tr>
+    </thead>
+    <tbody id="withdrawTable"></tbody>
+  </table>
 
-            <div class="gift-button-wrapper">
-                <button id="dailyGiftIIButton">Daily Gift II 0.015 Peso</button>
-                <div class="cooldown-box">
-                    Next: <span id="dailyGiftIICooldown">Ready!</span>
-                </div>
-                <p id="dailyGiftIIStatus" class="status-message"></p>
-            </div>
+  <button onclick="goHome()">⬅ Back</button>
+</section>
 
-            <div class="gift-button-wrapper">
-                <button id="dailyGiftIIIButton">Daily Gift III 0.015 Peso</button>
-                <div class="cooldown-box">
-                    Next: <span id="dailyGiftIIICooldown">Ready!</span>
-                </div>
-                <p id="dailyGiftIIIStatus" class="status-message"></p>
-            </div>
+<footer>
+©2025 PAPER HOUSE INC<br>
+Isaiahotico15@gmail.com<br>
+<span id="date"></span>
+</footer>
 
-            <button onclick="goBackToMain()">Back to Main</button>
-        </div>
-    </div>
-
-    <div id="rewardPopup" class="popup">
-        <p id="rewardMessage"></p>
-        <button onclick="hidePopup()">OK</button>
-    </div>
-
-    <!-- Link to your main JavaScript file -->
-    <script src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
