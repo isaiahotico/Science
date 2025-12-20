@@ -2,40 +2,39 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Watch & Earn</title>
+<title>Ads Room 1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
-
-<!-- Monetag SDK -->
 <script src="//libtl.com/sdk.js"
         data-zone="10276123"
         data-sdk="show_10276123"></script>
 
-<script type="module" src="app.js"></script>
-</head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-<header class="top-bar">
-  <div class="wallet magenta">₱ <span id="wallet">0.000</span></div>
-  <div class="user">@<span id="tgUser">...</span></div>
+<header class="topbar">
+  <div class="wallet">₱<span id="wallet">0.000</span></div>
+  <div class="user">
+    <span class="dot"></span>
+    <span id="tgUser">Live User</span>
+  </div>
 </header>
 
-<main>
+<div class="box">
   <h2>Watch Earn ₱0.036 Each Ad</h2>
+  <p>₱0.009 per ad × 4 ads</p>
 
-  <div class="ad-box">
-    <div>Ads Left: <b id="adsLeft">4</b></div>
-    <div id="cooldown">Ready</div>
+  <div id="adsLeft">Ads left: 4</div>
+  <div id="cooldownBox"></div>
 
-    <button class="watch-btn" onclick="startAds()">
-      ▶ Watch Ads
-    </button>
-  </div>
+  <button class="watch-btn" onclick="startAds()">Watch Ads</button>
+</div>
 
-  <button class="back-btn" onclick="goBack()">⬅ Return</button>
-</main>
+<button class="back" onclick="goHome()">⬅ Return</button>
 
+<script src="app.js"></script>
 </body>
 </html>
