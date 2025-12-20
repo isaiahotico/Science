@@ -1,8 +1,8 @@
 {
   "name": "PAPER HOUSE INC",
-  "short_name": "PaperHouse",
-  "start_url": "index.html",
+  "short_name": "Sentinels",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#ff00ff"
+  "background_color": "#0b0b12",
+  "theme_color": "#ff2fa0"
 }
