@@ -1,60 +1,12 @@
-body {
-  margin: 0;
-  background: #111;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: #000;
-  border-bottom: 4px solid magenta;
-}
-
-.wallet {
-  font-weight: bold;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  background: magenta;
-  border-radius: 50%;
-}
-
-h1 {
-  margin-top: 30px;
-}
-
-.box {
-  margin: 30px auto;
-  padding: 20px;
-  border: 2px solid magenta;
-  border-radius: 10px;
-  max-width: 300px;
-}
-
-.watch-btn {
-  background: magenta;
-  color: #fff;
-  border: none;
-  padding: 15px 25px;
-  font-size: 16px;
-  border-radius: 6px;
-  margin-top: 20px;
-}
-
-#adsLeft, #cooldownBox {
-  margin: 10px 0;
-  font-weight: bold;
-  color: magenta;
-}
+:root{--m:#ff2fa0;--bg:#0b0b12;--card:#151527}
+body{margin:0;font-family:system-ui;background:linear-gradient(135deg,#0b0b12,#1b0033);color:#fff}
+header{padding:14px;background:#000c;display:flex;justify-content:space-between}
+.balance{border-left:6px solid var(--m);padding-left:10px}
+.page{display:none;padding:16px}.page.active{display:block}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 0 18px #000}
+button{width:100%;padding:14px;border:none;border-radius:14px;margin:8px 0;font-weight:700;background:linear-gradient(135deg,#ff2fa0,#ff8fd6)}
+button.small{padding:10px;font-size:14px}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#000c}
+.nav div{flex:1;text-align:center;padding:12px;font-weight:700}
+footer{text-align:center;font-size:12px;opacity:.7;margin:16px}
+input{width:100%;padding:10px;border-radius:10px;border:none}
