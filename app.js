@@ -11,47 +11,37 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 
-// ----------------- USER + WALLET -----------------
-let wallet = parseFloat(localStorage.getItem("wallet") || "0");
-let adsLeft = parseInt(localStorage.getItem("adsLeft") || "4");
-let lastWatch = parseInt(localStorage.getItem("lastWatch") || "0");
+/* -------- USER DATA -------- */
+const params = new URLSearchParams(location.search);
+const username = params.get("user") || "guest";
 
-const params = new URLSearchParams(window.location.search);
-const tgUser = params.get("user") || "guest";
+let wallet = parseFloat(localStorage.getItem("wallet") || 0);
+let adsLeft = parseInt(localStorage.getItem("adsLeft") || 4);
+let lastWatch = parseInt(localStorage.getItem("lastWatch") || 0);
 
+/* -------- UI UPDATE -------- */
 function updateUI() {
   document.getElementById("wallet")?.innerText = wallet.toFixed(3);
-  document.getElementById("username")?.innerText = tgUser;
-  document.getElementById("adsLeft")?.innerText = adsLeft;
+  document.getElementById("username")?.innerText = username;
 }
-
 updateUI();
 
-// ----------------- NAV -----------------
+/* -------- NAV -------- */
 window.openRoom = () => {
-  window.location.href = `room1.html?user=${tgUser}`;
+  location.href = "index.html?room=1&user=" + username;
 };
 
-window.goBack = () => history.back();
-
-// ----------------- COOLDOWN -----------------
-function cooldownActive() {
+/* -------- COOLDOWN -------- */
+function inCooldown() {
   return Date.now() - lastWatch < 5 * 60 * 1000;
 }
 
-// ----------------- WATCH AD -----------------
+/* -------- WATCH AD -------- */
 window.watchAd = () => {
-  if (adsLeft <= 0) {
-    alert("No ads left. Please wait.");
-    return;
-  }
+  if (adsLeft <= 0) return alert("No ads left");
+  if (inCooldown()) return alert("Cooldown 5 minutes");
 
-  if (cooldownActive()) {
-    alert("Cooldown active. Please wait.");
-    return;
-  }
-
-  show_10276123('pop').then(() => {
+  show_10276123("pop").then(() => {
     wallet += 0.009;
     adsLeft--;
     lastWatch = Date.now();
@@ -60,14 +50,14 @@ window.watchAd = () => {
     localStorage.setItem("adsLeft", adsLeft);
     localStorage.setItem("lastWatch", lastWatch);
 
-    alert(`Ad completed! Ads left: ${adsLeft}`);
     updateUI();
+    alert("Reward added ₱0.009");
   });
 };
 
-// ----------------- MEDIUM–HIGH CPM AUTO -----------------
+/* -------- MEDIUM–HIGH CPM -------- */
 show_10276123({
-  type: 'inApp',
+  type: "inApp",
   inAppSettings: {
     frequency: 2,
     capping: 0.1,
