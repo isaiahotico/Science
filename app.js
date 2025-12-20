@@ -1,115 +1,108 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-  getFirestore,
-  doc,
-  setDoc,
-  updateDoc,
-  onSnapshot,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  getFirestore, doc, getDoc, setDoc, updateDoc, increment
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* FIREBASE */
-const app = initializeApp({
+/* 🔥 Firebase Init */
+const firebaseConfig = {
   apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
   authDomain: "paper-house-inc.firebaseapp.com",
   projectId: "paper-house-inc",
   storageBucket: "paper-house-inc.firebasestorage.app",
   messagingSenderId: "658389836376",
   appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
-});
+};
+
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* TELEGRAM LOGIN */
+/* 👤 Telegram */
 const tg = window.Telegram?.WebApp;
-tg?.ready();
+const user = tg?.initDataUnsafe?.user || {};
+const uid = user.id || "guest";
+const username = user.username || "Guest";
 
-const tgUser = tg?.initDataUnsafe?.user;
-const uid = tgUser?.id?.toString() || "guest";
-const username = tgUser?.username || "guest";
+/* 🧾 UI */
+document.getElementById("tgUser")?.innerText = username;
 
-/* UI */
-document.getElementById("username").innerText = username;
+/* 💰 Wallet */
+const ref = doc(db, "users", uid);
 
-/* USER DOC */
-const userRef = doc(db, "users", uid);
-
-/* INIT USER */
-await setDoc(userRef, {
-  username,
-  wallet: 0,
-  adsLeft: 4,
-  lastWatch: 0,
-  updated: serverTimestamp()
-}, { merge: true });
-
-/* REALTIME WALLET */
-onSnapshot(userRef, snap => {
-  if (!snap.exists()) return;
-  document.getElementById("wallet").innerText =
-    snap.data().wallet.toFixed(3);
-});
-
-/* COOLDOWN */
-function cooldownOK(lastWatch) {
-  return Date.now() - lastWatch >= 5 * 60 * 1000;
-}
-
-/* PARALLEL PRELOAD (🔥 FAST) */
-function preloadAds() {
-  try {
-    show_10276123();
-    show_10276123("pop");
-  } catch (e) {}
-}
-preloadAds();
-
-/* AUTOPLAY ADS */
-async function playAdsAuto() {
-  const snap = await (await import(
-    "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
-  )).getDoc(userRef);
-
-  let { adsLeft, lastWatch, wallet } = snap.data();
-
-  if (adsLeft <= 0) return alert("No ads left");
-  if (!cooldownOK(lastWatch)) return alert("Cooldown active");
-
-  show_10276123("pop").then(async () => {
-    await updateDoc(userRef, {
-      wallet: wallet + 0.009,
-      adsLeft: adsLeft - 1,
-      lastWatch: Date.now(),
-      updated: serverTimestamp()
+async function initUser() {
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      username,
+      balance: 0,
+      lastWatch: 0
     });
+  }
+  updateWallet();
+}
+initUser();
 
-    if (adsLeft - 1 > 0) {
-      setTimeout(playAdsAuto, 1200); // 🔥 autoplay next
-    } else {
-      alert("All ads completed ₱0.036");
-    }
+async function updateWallet() {
+  const snap = await getDoc(ref);
+  document.getElementById("wallet").innerText =
+    snap.data().balance.toFixed(3);
+}
+
+/* 🔁 Navigation */
+window.openRoom = () => location.href = "ads.html";
+window.goBack = () => history.back();
+
+/* 🎯 Ads Config */
+let adsLeft = 4;
+const reward = 0.009;
+const cooldown = 5 * 60 * 1000;
+
+/* ⚡ Parallel Preload (warm 2 ads) */
+show_10276123('pop').catch(()=>{});
+show_10276123('pop').catch(()=>{});
+
+/* ▶ Start Ads */
+window.startAds = async () => {
+  const snap = await getDoc(ref);
+  if (Date.now() - snap.data().lastWatch < cooldown) {
+    alert("Cooldown active");
+    return;
+  }
+  playAd();
+};
+
+async function playAd() {
+  if (adsLeft <= 0) {
+    await updateDoc(ref, { lastWatch: Date.now() });
+    startCooldown();
+    return;
+  }
+
+  document.getElementById("adsLeft").innerText = adsLeft;
+
+  show_10276123('pop').then(async () => {
+    adsLeft--;
+    await updateDoc(ref, {
+      balance: increment(reward)
+    });
+    updateWallet();
+    playAd();
   });
 }
 
-/* OPEN ROOM */
-window.openRoom = () => {
-  document.getElementById("main").innerHTML = `
-    <h2>Watch Earn ₱0.036 Each Ad Peso</h2>
-    <div class="ads-box">
-      <p>Ads autoplaying...</p>
-    </div>
-    <button class="secondary-btn" onclick="location.reload()">Return</button>
-  `;
-  playAdsAuto();
-};
+/* ⏱ Cooldown UI */
+function startCooldown() {
+  let t = cooldown / 1000;
+  const el = document.getElementById("cooldown");
 
-/* MEDIUM CPM IN-APP */
-show_10276123({
-  type: "inApp",
-  inAppSettings: {
-    frequency: 2,
-    capping: 0.1,
-    interval: 30,
-    timeout: 5,
-    everyPage: false
-  }
-});
+  const timer = setInterval(() => {
+    el.innerText = `Cooldown: ${t--}s`;
+    if (t <= 0) {
+      clearInterval(timer);
+      adsLeft = 4;
+      el.innerText = "Ready";
+      document.getElementById("adsLeft").innerText = adsLeft;
+    }
+  }, 1000);
+}
