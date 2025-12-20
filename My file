@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAPER HOUSE INC</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f0f0f5; margin:0; padding:0;}
+  header { background: #ff66b2; color:white; padding: 15px; text-align:center; font-size:1.8em;}
+  #balance { position:absolute; top:10px; left:10px; background: magenta; color:white; padding:5px 10px; border-radius:5px;}
+  .room-section { margin:20px; padding:15px; background:#fff; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+  .room-title { font-size:1.3em; margin-bottom:10px; }
+  .room-btn { display:block; margin:10px 0; padding:10px; background:#66ccff; border:none; border-radius:5px; cursor:pointer; font-size:1em;}
+  .reward-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#ffcc00; padding:15px; border-radius:10px; display:none; font-weight:bold; font-size:1.2em; z-index:1000; }
+  .ads-container { margin-top:10px; }
+  .cooldown { font-size:0.9em; color:#555; margin-top:3px; }
+</style>
+</head>
+<body>
+
+<header>PAPER HOUSE INC</header>
+<div id="balance">Balance: 0.00 PHP</div>
+
+<div class="room-section">
+  <div class="room-title">🍍🍍🍋Daily Sign in Room🍋🍍🍍</div>
+  <div class="ads-container">
+    <button class="room-btn" onclick="watchAd('V1')">🍍Daily Sign In Sentinel V1🍍</button>
+    <div class="cooldown" id="cdV1"></div>
+
+    <button class="room-btn" onclick="watchAd('V2')">🍍Daily Sign In Sentinel V2🍍</button>
+    <div class="cooldown" id="cdV2"></div>
+
+    <button class="room-btn" onclick="watchAd('V3')">🍍Daily Sign In Sentinel V3🍍</button>
+    <div class="cooldown" id="cdV3"></div>
+  </div>
+</div>
+
+<div class="room-section">
+  <div class="room-title">🍋🍍🍍Gift Room🍍🍍🍋</div>
+  <button class="room-btn" onclick="alert('Gift Room coming soon!')">Open Gift Room</button>
+</div>
+
+<div class="room-section">
+  <div class="room-title">🍋🍍🍍UNLIMITED ADS🍍🍍🍋</div>
+  <button class="room-btn" onclick="alert('Unlimited Ads coming soon!')">Open UNLIMITED ADS</button>
+</div>
+
+<div id="rewardPopup" class="reward-popup"></div>
+
+<script>
+let balance = 0;
+let telegramUsername = "Guest"; // Replace with live Telegram API
+
+// Cooldown storage
+let cooldowns = { V1: 0, V2: 0, V3: 0 };
+
+// Watch Ad function
+function watchAd(version){
+  const now = Date.now();
+  if(cooldowns[version] && now - cooldowns[version] < 12*60*60*1000){
+    alert('Cooldown active! Come back later.');
+    return;
+  }
+
+  // Dynamically inject Monetag SDK
+  let zoneId;
+  if(version==='V1') zoneId='10276123';
+  if(version==='V2') zoneId='10337795';
+  if(version==='V3') zoneId='10337853';
+
+  let script = document.createElement('script');
+  script.src = `//libtl.com/sdk.js`;
+  script.setAttribute('data-zone', zoneId);
+  script.setAttribute('data-sdk', `show_${zoneId}`);
+  document.body.appendChild(script);
+
+  // Simulate ad watched
+  setTimeout(()=>{
+    balance += 0.01;
+    document.getElementById('balance').innerHTML = `Balance: ${balance.toFixed(2)} PHP`;
+    cooldowns[version] = now;
+    showRewardPopup('🍋Congratulations gain 0.01 peso 🎉🍋');
+    updateCooldowns();
+    document.body.removeChild(script);
+  }, 3000); // Simulate 3s ad watch
+}
+
+// Show reward popup
+function showRewardPopup(message){
+  const popup = document.getElementById('rewardPopup');
+  popup.innerHTML = message;
+  popup.style.display='block';
+  setTimeout(()=>{ popup.style.display='none'; }, 2500);
+}
+
+// Update cooldown timers
+function updateCooldowns(){
+  const now = Date.now();
+  ['V1','V2','V3'].forEach(v=>{
+    const cdDiv = document.getElementById('cd'+v);
+    if(cooldowns[v]){
+      let diff = 12*60*60*1000 - (now - cooldowns[v]);
+      if(diff>0){
+        let hrs = Math.floor(diff/3600000);
+        let mins = Math.floor((diff%3600000)/60000);
+        cdDiv.innerHTML = `Cooldown: ${hrs}h ${mins}m`;
+      } else {
+        cdDiv.innerHTML = 'Ready!';
+      }
+    } else {
+      cdDiv.innerHTML = 'Ready!';
+    }
+  });
+}
+
+// Auto refresh cooldown every 1 min
+setInterval(updateCooldowns, 60000);
+
+</script>
+
+</body>
+</html>
