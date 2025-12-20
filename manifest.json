@@ -3,6 +3,6 @@
   "short_name": "Sentinels",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0b0b12",
-  "theme_color": "#ff2fa0"
+  "theme_color": "#ff2fa0",
+  "background_color": "#0b0b12"
 }
