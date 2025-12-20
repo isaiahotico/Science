@@ -1,90 +1,105 @@
-/* ===== CONFIG ===== */
-const REWARD = 0.009;
-const MAX_ADS = 4;
-const COOLDOWN_MIN = 5;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, updateDoc,
+  serverTimestamp, onSnapshot, collection, addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* ===== STATE ===== */
-let watched = 0;
+/* 🔥 YOUR FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-/* ===== REAL-TIME TELEGRAM USER ===== */
-function loadTelegramUser() {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.ready();
-    const user = Telegram.WebApp.initDataUnsafe.user;
-    const name = user ? (user.username ? "@" + user.username : user.first_name) : "Guest";
-    document.querySelectorAll("#tgUser").forEach(e => e.innerText = name);
-  } else {
-    document.querySelectorAll("#tgUser").forEach(e => e.innerText = "Guest");
-  }
-}
+/* Telegram */
+const tg = window.Telegram?.WebApp;
+tg?.expand();
+const user = tg?.initDataUnsafe?.user;
+const uid = user?.id || "guest";
+const username = user?.username || "TelegramUser";
+document.getElementById("tgName").innerText = username;
 
-/* ===== WALLET ===== */
-function getWallet() {
-  return parseFloat(localStorage.getItem("wallet") || 0);
-}
+const userRef = doc(db, "users", uid);
 
-function updateWallet(v) {
-  const w = getWallet() + v;
-  localStorage.setItem("wallet", w.toFixed(3));
-  document.querySelectorAll("#wallet").forEach(e => e.innerText = w.toFixed(3));
-}
+/* INIT USER */
+await setDoc(userRef, {
+  username,
+  balance: 0,
+  lastDaily: {},
+  lastGift: {},
+  lastUnli: {},
+}, { merge: true });
 
-/* ===== COOLDOWN ===== */
-function cooldownActive() {
-  const t = localStorage.getItem("cooldown");
-  return t && Date.now() < t;
-}
-
-function startCooldown() {
-  localStorage.setItem("cooldown", Date.now() + COOLDOWN_MIN * 60000);
-}
-
-function showCooldown() {
-  const box = document.getElementById("cooldownBox");
-  if (!box) return;
-  const end = localStorage.getItem("cooldown");
-
-  const timer = setInterval(() => {
-    let left = Math.max(0, end - Date.now());
-    let m = Math.floor(left / 60000);
-    let s = Math.floor((left % 60000) / 1000);
-    box.innerText = `Cooldown: ${m}:${s.toString().padStart(2,'0')}`;
-    if (left <= 0) {
-      clearInterval(timer);
-      box.innerText = "";
-    }
-  }, 1000);
-}
-
-/* ===== PARALLEL ADS ===== */
-function startAds() {
-  if (cooldownActive()) {
-    showCooldown();
-    return;
-  }
-  watched = 0;
-  nextAd();
-}
-
-function nextAd() {
-  if (watched >= MAX_ADS) {
-    startCooldown();
-    showCooldown();
-    return;
-  }
-
-  // Parallel rewarded popup ads
-  show_10276123('pop').then(() => {
-    watched++;
-    updateWallet(REWARD);
-    const adsLeft = document.getElementById("adsLeft");
-    if (adsLeft) adsLeft.innerText = "Ads left: " + (MAX_ADS - watched);
-    setTimeout(nextAd, 800); // very fast rotation
-  }).catch(() => setTimeout(nextAd, 1200));
-}
-
-/* ===== INIT ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("#wallet").forEach(e => e.innerText = getWallet().toFixed(3));
-  loadTelegramUser();
+/* REAL-TIME BALANCE */
+onSnapshot(userRef, snap => {
+  document.getElementById("balance").innerText =
+    (snap.data()?.balance || 0).toFixed(2);
 });
+
+/* PAGE SWITCH */
+window.show = id => {
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+};
+
+/* COOLDOWN CHECK */
+async function canWatch(type, key, cooldownMs){
+  const snap = await getDoc(userRef);
+  const last = snap.data()?.[type]?.[key];
+  if(!last) return true;
+  return Date.now() - last.toMillis() > cooldownMs;
+}
+
+/* REWARD */
+async function reward(amount, type, key){
+  await updateDoc(userRef, {
+    balance: amount,
+    [`${type}.${key}`]: serverTimestamp()
+  });
+  alert(`🍋 Congratulations gain ₱${amount} 🎉🍋`);
+}
+
+/* DAILY – 12 HOURS */
+window.dailyAd = async v => {
+  if(!(await canWatch("lastDaily", v, 12*60*60*1000)))
+    return alert("⏳ Cooldown 12 hours");
+  (v==="v1"?show_10276123:
+   v==="v2"?show_10337795:show_10337853)()
+   .then(()=>reward(0.01,"lastDaily",v));
+};
+
+/* GIFT – 15 MIN */
+window.giftAd = async v => {
+  if(!(await canWatch("lastGift", v, 15*60*1000)))
+    return alert("⏳ Cooldown 15 minutes");
+  (v==="v1"?show_10276123:
+   v==="v2"?show_10337795:show_10337853)("pop")
+   .then(()=>reward(0.012,"lastGift",v));
+};
+
+/* UNLI – 5 MIN */
+window.unliAd = async v => {
+  if(!(await canWatch("lastUnli", v, 5*60*1000)))
+    return alert("⏳ Cooldown 5 minutes");
+  (v==="v1"?show_10276123:
+   v==="v2"?show_10337795:show_10337853)()
+   .then(()=>reward(0,"lastUnli",v));
+};
+
+/* WITHDRAW */
+window.requestWithdraw = async () => {
+  const snap = await getDoc(userRef);
+  const bal = snap.data().balance;
+  if(bal <= 0) return alert("No balance");
+  await addDoc(collection(db,"withdrawals"),{
+    uid, username,
+    amount: bal,
+    gcash: document.getElementById("gcash").value,
+    status:"pending",
+    time: serverTimestamp()
+  });
+  await updateDoc(userRef,{ balance:0 });
+};
+setInterval(()=>document.getElementById("time").innerText=new Date().toLocaleString(),1000);
