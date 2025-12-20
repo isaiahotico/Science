@@ -1,69 +1,101 @@
-/* Telegram */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, addDoc,
+  onSnapshot, updateDoc, doc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔥 YOUR FIREBASE KEY */
+const firebaseConfig = {
+  apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
+  authDomain: "paper-house-inc.firebaseapp.com",
+  projectId: "paper-house-inc",
+  storageBucket: "paper-house-inc.firebasestorage.app",
+  messagingSenderId: "658389836376",
+  appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* Telegram user */
 const tg = window.Telegram?.WebApp;
-tg?.expand();
 const username = tg?.initDataUnsafe?.user?.username || "Telegram User";
-document.getElementById("tgName").innerText = username;
+document.getElementById("tgName")?.innerText = username;
 
-/* Storage helpers */
-const get = k => JSON.parse(localStorage.getItem(k) || "0");
-const set = (k,v) => localStorage.setItem(k, JSON.stringify(v));
-
-let balance = get("balance");
-document.getElementById("balance").innerText = balance.toFixed(2);
+/* Balance */
+let balance = JSON.parse(localStorage.getItem("balance") || "0");
+document.getElementById("balance")?.innerText = balance.toFixed(2);
 
 /* Reward */
-function reward(amount){
-  balance += amount;
-  set("balance", balance);
-  document.getElementById("balance").innerText = balance.toFixed(2);
-  alert(`🍋 Congratulations gain ₱${amount.toFixed(2)} 🎉🍋`);
+function reward(v){
+  balance += v;
+  localStorage.setItem("balance", balance);
+  document.getElementById("balance")?.innerText = balance.toFixed(2);
+  alert("🎉 Congratulations you earned ₱0.01");
 }
 
-/* Cooldown */
-function ready(key, ms){
-  const last = get(key);
-  return Date.now() - last > ms;
-}
-function mark(key){ set(key, Date.now()); }
-
-/* DAILY – 12 HOURS */
-function dailyAd(v){
-  const key = "daily_"+v;
-  if(!ready(key, 12*60*60*1000))
-    return alert("⏳ Cooldown: 12 hours");
-  (v==="v1"?show_10276123:v==="v2"?show_10337795:show_10337853)()
-  .then(()=>{ reward(0.01); mark(key); });
-}
-
-/* GIFT – 15 MIN */
-function giftAd(v){
-  const key = "gift_"+v;
-  if(!ready(key, 15*60*1000))
-    return alert("⏳ Cooldown: 15 minutes");
-  (v==="v1"?show_10276123:v==="v2"?show_10337795:show_10337853)("pop")
-  .then(()=>{ reward(0.012); mark(key); });
-}
-
-/* UNLIMITED – 5 MIN */
-function unliAd(v){
-  const key = "unli_"+v;
-  if(!ready(key, 5*60*1000))
-    return alert("⏳ Cooldown: 5 minutes");
-  (v==="v1"?show_10276123:v==="v2"?show_10337795:show_10337853)()
-  .then(()=> mark(key));
-}
-
-/* Withdraw (local log) */
-function withdraw(){
+/* Withdraw */
+window.withdraw = async ()=>{
   if(balance <= 0) return alert("No balance");
-  document.getElementById("withdrawLog").innerHTML +=
-    `<p>Pending ₱${balance.toFixed(2)} — ${new Date().toLocaleString()}</p>`;
+  await addDoc(collection(db,"withdrawals"),{
+    user: username,
+    amount: balance,
+    gcash: document.getElementById("gcash").value,
+    status: "Pending",
+    time: serverTimestamp()
+  });
   balance = 0;
-  set("balance", 0);
-  document.getElementById("balance").innerText = "0.00";
+  localStorage.setItem("balance",0);
+};
+
+/* User history */
+const uh = document.getElementById("userHistory");
+if(uh){
+  onSnapshot(collection(db,"withdrawals"), snap=>{
+    uh.innerHTML="";
+    snap.forEach(d=>{
+      const w=d.data();
+      if(w.user===username){
+        uh.innerHTML+=`
+        <tr>
+          <td>${w.user}</td>
+          <td>₱${w.amount}</td>
+          <td>${w.gcash}</td>
+          <td>${w.status}</td>
+          <td>${w.time?.toDate().toLocaleString()}</td>
+        </tr>`;
+      }
+    });
+  });
 }
+
+/* Admin */
+const at = document.getElementById("adminTable");
+if(at){
+  onSnapshot(collection(db,"withdrawals"), snap=>{
+    at.innerHTML="";
+    snap.forEach(d=>{
+      const w=d.data();
+      at.innerHTML+=`
+      <tr>
+        <td>${w.user}</td>
+        <td>₱${w.amount}</td>
+        <td>${w.gcash}</td>
+        <td>${w.status}</td>
+        <td>
+          <button onclick="updateStatus('${d.id}','Approved')">✔</button>
+          <button onclick="updateStatus('${d.id}','Denied')">✖</button>
+        </td>
+      </tr>`;
+    });
+  });
+}
+
+window.updateStatus = async (id,s)=>{
+  await updateDoc(doc(db,"withdrawals",id),{status:s});
+};
 
 /* Clock */
 setInterval(()=>{
-  document.getElementById("time").innerText = new Date().toLocaleString();
+  document.getElementById("clock")?.innerText=new Date().toLocaleString();
 },1000);
