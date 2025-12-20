@@ -1,105 +1,75 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc,
-  serverTimestamp, onSnapshot, collection, addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-/* 🔥 YOUR FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 /* Telegram */
 const tg = window.Telegram?.WebApp;
 tg?.expand();
-const user = tg?.initDataUnsafe?.user;
-const uid = user?.id || "guest";
-const username = user?.username || "TelegramUser";
+const username = tg?.initDataUnsafe?.user?.username || "Telegram User";
 document.getElementById("tgName").innerText = username;
 
-const userRef = doc(db, "users", uid);
+/* Storage */
+const store = key => JSON.parse(localStorage.getItem(key) || "0");
+const save = (key,val) => localStorage.setItem(key, JSON.stringify(val));
 
-/* INIT USER */
-await setDoc(userRef, {
-  username,
-  balance: 0,
-  lastDaily: {},
-  lastGift: {},
-  lastUnli: {},
-}, { merge: true });
+let balance = store("balance");
+document.getElementById("balance").innerText = balance.toFixed(2);
 
-/* REAL-TIME BALANCE */
-onSnapshot(userRef, snap => {
-  document.getElementById("balance").innerText =
-    (snap.data()?.balance || 0).toFixed(2);
-});
-
-/* PAGE SWITCH */
-window.show = id => {
+/* Navigation */
+function show(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-};
-
-/* COOLDOWN CHECK */
-async function canWatch(type, key, cooldownMs){
-  const snap = await getDoc(userRef);
-  const last = snap.data()?.[type]?.[key];
-  if(!last) return true;
-  return Date.now() - last.toMillis() > cooldownMs;
 }
 
-/* REWARD */
-async function reward(amount, type, key){
-  await updateDoc(userRef, {
-    balance: amount,
-    [`${type}.${key}`]: serverTimestamp()
-  });
-  alert(`🍋 Congratulations gain ₱${amount} 🎉🍋`);
+/* Reward */
+function reward(amount){
+  balance += amount;
+  save("balance", balance);
+  document.getElementById("balance").innerText = balance.toFixed(2);
+  alert(`🍋 Congratulations gain ₱${amount.toFixed(2)} 🎉🍋`);
+}
+
+/* Cooldown checker */
+function canWatch(key, cooldown){
+  const last = store(key);
+  return Date.now() - last > cooldown;
+}
+function setCooldown(key){
+  save(key, Date.now());
 }
 
 /* DAILY – 12 HOURS */
-window.dailyAd = async v => {
-  if(!(await canWatch("lastDaily", v, 12*60*60*1000)))
-    return alert("⏳ Cooldown 12 hours");
-  (v==="v1"?show_10276123:
-   v==="v2"?show_10337795:show_10337853)()
-   .then(()=>reward(0.01,"lastDaily",v));
-};
+function dailyAd(v){
+  const key = "daily_"+v;
+  if(!canWatch(key, 12*60*60*1000))
+    return alert("⏳ Cooldown: 12 hours");
+  (v==="v1"?show_10276123:v==="v2"?show_10337795:show_10337853)()
+  .then(()=>{ reward(0.01); setCooldown(key); });
+}
 
 /* GIFT – 15 MIN */
-window.giftAd = async v => {
-  if(!(await canWatch("lastGift", v, 15*60*1000)))
-    return alert("⏳ Cooldown 15 minutes");
-  (v==="v1"?show_10276123:
-   v==="v2"?show_10337795:show_10337853)("pop")
-   .then(()=>reward(0.012,"lastGift",v));
-};
+function giftAd(v){
+  const key = "gift_"+v;
+  if(!canWatch(key, 15*60*1000))
+    return alert("⏳ Cooldown: 15 minutes");
+  (v==="v1"?show_10276123:v==="v2"?show_10337795:show_10337853)("pop")
+  .then(()=>{ reward(0.012); setCooldown(key); });
+}
 
 /* UNLI – 5 MIN */
-window.unliAd = async v => {
-  if(!(await canWatch("lastUnli", v, 5*60*1000)))
-    return alert("⏳ Cooldown 5 minutes");
-  (v==="v1"?show_10276123:
-   v==="v2"?show_10337795:show_10337853)()
-   .then(()=>reward(0,"lastUnli",v));
-};
+function unliAd(v){
+  const key = "unli_"+v;
+  if(!canWatch(key, 5*60*1000))
+    return alert("⏳ Cooldown: 5 minutes");
+  (v==="v1"?show_10276123:v==="v2"?show_10337795:show_10337853)()
+  .then(()=> setCooldown(key));
+}
 
-/* WITHDRAW */
-window.requestWithdraw = async () => {
-  const snap = await getDoc(userRef);
-  const bal = snap.data().balance;
-  if(bal <= 0) return alert("No balance");
-  await addDoc(collection(db,"withdrawals"),{
-    uid, username,
-    amount: bal,
-    gcash: document.getElementById("gcash").value,
-    status:"pending",
-    time: serverTimestamp()
-  });
-  await updateDoc(userRef,{ balance:0 });
-};
+/* Withdraw */
+function withdraw(){
+  if(balance <= 0) return alert("No balance");
+  document.getElementById("withdrawLog").innerHTML +=
+    `<p>Pending ₱${balance.toFixed(2)} - ${new Date().toLocaleString()}</p>`;
+  balance = 0;
+  save("balance", 0);
+  document.getElementById("balance").innerText = "0.00";
+}
+
+/* Clock */
 setInterval(()=>document.getElementById("time").innerText=new Date().toLocaleString(),1000);
