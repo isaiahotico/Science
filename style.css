@@ -1,50 +1,12 @@
-:root{
-  --m:#ff2fa0;
-  --card:#151527;
-}
-body{
-  margin:0;
-  font-family:system-ui;
-  background:linear-gradient(135deg,#0b0b12,#1b0033);
-  color:#fff;
-}
-header{
-  padding:14px;
-  background:#000c;
-  display:flex;
-  justify-content:space-between;
-}
-.balance{
-  border-left:6px solid var(--m);
-  padding-left:10px;
-}
-main{padding:16px}
-.card{
-  background:var(--card);
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:18px;
-  box-shadow:0 0 22px #000;
-}
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:16px;
-  margin:8px 0;
-  font-weight:700;
-  background:linear-gradient(135deg,#ff2fa0,#ff8fd6);
-}
-button.small{padding:10px;font-size:14px}
-input{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:none;
-}
-footer{
-  text-align:center;
-  font-size:12px;
-  opacity:.7;
-  margin:16px;
-}
+body{background:#0b0b12;color:#fff;font-family:sans-serif;margin:0;padding:0}
+header{padding:15px;text-align:center;background:#ff2fa0;position:relative;z-index:2}
+.balanceBox{position:absolute;top:5px;left:5px;background:magenta;padding:5px 10px;border-radius:6px;font-weight:bold}
+h1,h2{text-align:center;margin:10px 0}
+main{padding:10px;display:grid;gap:15px}
+.card{background:#111;padding:15px;border-radius:12px;box-shadow:0 0 10px #ff2fa0;position:relative;z-index:1}
+button{padding:10px 20px;margin:5px;border:none;border-radius:8px;background:#ff2fa0;color:#fff;font-weight:bold;cursor:pointer;position:relative;z-index:9999}
+button:disabled{opacity:.6;cursor:not-allowed}
+.timer{font-size:0.8em;margin-top:4px;text-align:center}
+.spinner{width:18px;height:18px;border:3px solid #fff4;border-top:3px solid #fff;border-radius:50%;animation:spin 1s linear infinite;margin:6px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+footer{text-align:center;padding:10px;font-size:0.8em;background:#111}
