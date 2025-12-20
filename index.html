@@ -5,32 +5,34 @@
 <title>PAPER HOUSE INC</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css">
-
 <!-- Monetag SDK -->
 <script src="//libtl.com/sdk.js"
         data-zone="10276123"
         data-sdk="show_10276123"></script>
 
-<script type="module" src="app.js"></script>
-</head>
+<!-- Telegram WebApp -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+</head>
 <body>
 
-<header class="top-bar">
-  <div class="wallet magenta">₱ <span id="wallet">0.000</span></div>
-  <div class="user">@<span id="tgUser">loading</span></div>
+<header class="topbar">
+  <div class="wallet">
+    ₱<span id="wallet">0.000</span>
+  </div>
+  <div class="user">
+    <span class="dot"></span>
+    <span id="tgUser">Loading...</span>
+  </div>
 </header>
 
 <main>
   <h1>PAPER HOUSE INC</h1>
-  <p>Watch Ads • Earn Peso • Global</p>
-
-  <button class="main-btn" onclick="openRoom()">
-    🎬 Watched Ads Room 1
-  </button>
+  <button class="main-btn" onclick="goAds()">Watched Ads Room 1</button>
 </main>
 
+<script src="app.js"></script>
 </body>
 </html>
