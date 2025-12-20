@@ -1,38 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PAPER HOUSE INC</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>PAPER HOUSE INC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
 
-  <!-- Monetag SDK -->
-  <script src='//libtl.com/sdk.js'
-    data-zone='10276123'
-    data-sdk='show_10276123'></script>
+<!-- Telegram Mini App -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Monetag SDK -->
+<script src='//libtl.com/sdk.js'
+  data-zone='10276123'
+  data-sdk='show_10276123'></script>
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="wallet">₱<span id="wallet">0.000</span></div>
-    <div class="user">@<span id="username">guest</span></div>
-  </header>
+<header class="topbar">
+  <div class="wallet">₱<span id="wallet">0.000</span></div>
+  <div class="user">@<span id="username">loading</span></div>
+</header>
 
-  <main class="content">
-    <h1>PAPER HOUSE INC</h1>
-    <button class="primary-btn" onclick="openRoom()">
-      Watched Ads Room 1
-    </button>
-  </main>
+<main class="content" id="main">
+  <h1>PAPER HOUSE INC</h1>
+  <button class="primary-btn" onclick="openRoom()">
+    Watched Ads Room 1
+  </button>
+</main>
 
-  <nav class="bottom-nav">
-    <button>TOP</button>
-    <button>DATA</button>
-    <button>COMMUNITY</button>
-  </nav>
+<nav class="bottom-nav">
+  <button>TOP</button>
+  <button>DATA</button>
+  <button>COMMUNITY</button>
+</nav>
 
-  <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
