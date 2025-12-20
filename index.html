@@ -2,47 +2,90 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PAPER HOUSE INC</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAPER HOUSE INC</title>
 
-<!-- Monetag SDK -->
-<script src="//libtl.com/sdk.js"
-        data-zone="10276123"
-        data-sdk="show_10276123"></script>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
 
-<!-- Telegram WebApp -->
+<!-- Monetag -->
+<script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123"></script>
+<script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795"></script>
+<script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853"></script>
+
+<!-- Telegram -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+<!-- Firebase -->
+<script type="module" src="app.js"></script>
 </head>
-<body>
 
-<header class="topbar">
-  <div class="wallet">
-    ₱<span id="wallet">0.000</span>
+<body>
+<header>
+  <div class="balance">
+    <div id="tgName">Loading…</div>
+    <div>₱ <span id="balance">0.00</span></div>
   </div>
-  <div class="user">
-    <span class="dot"></span>
-    <span id="tgUser">Loading...</span>
-  </div>
+  <div class="title">PAPER HOUSE INC</div>
 </header>
 
-<main>
-  <h1>PAPER HOUSE INC</h1>
-
-  <div class="box">
-    <h2>Watched Ads Room 1</h2>
-    <p>Reward: ₱0.009 per ad × 4 ads</p>
-
-    <div id="adsLeft">Ads left: 4</div>
-    <div id="cooldownBox"></div>
-
-    <button class="watch-btn" onclick="startAds()">Watch Ads</button>
+<div id="home" class="page active">
+  <div class="card">
+    <h2>🔥 Sentinels Free Gcash Ads</h2>
+    <p>Top global real-time rewarded ads</p>
   </div>
+</div>
 
-</main>
+<div id="daily" class="page">
+  <div class="card">
+    <button onclick="dailyAd('v1')">🍍Daily Sign-In V1🍍</button>
+    <button onclick="dailyAd('v2')">🍍Daily Sign-In V2🍍</button>
+    <button onclick="dailyAd('v3')">🍍Daily Sign-In V3🍍</button>
+  </div>
+</div>
 
-<script src="app.js"></script>
+<div id="gift" class="page">
+  <div class="card">
+    <button class="small" onclick="giftAd('v1')">🍍Gift🍋</button>
+    <button class="small" onclick="giftAd('v2')">🍍Gift🍋</button>
+    <button class="small" onclick="giftAd('v3')">🍍Gift🍋</button>
+  </div>
+</div>
+
+<div id="unli" class="page">
+  <div class="card">
+    <button class="small" onclick="unliAd('v1')">🍍Ads V1🍋</button>
+    <button class="small" onclick="unliAd('v2')">🍍Ads V2🍋</button>
+    <button class="small" onclick="unliAd('v3')">🍍Ads V3🍋</button>
+  </div>
+</div>
+
+<div id="withdraw" class="page">
+  <div class="card">
+    <h3>Withdrawal Room</h3>
+    <input id="gcash" placeholder="GCash Number">
+    <button onclick="requestWithdraw()">Withdraw</button>
+    <div id="withdrawLog"></div>
+  </div>
+</div>
+
+<div id="admin" class="page">
+  <div class="card">
+    <input id="adminPass" type="password" placeholder="Admin Password">
+    <button onclick="adminLogin()">Enter Admin</button>
+    <div id="adminPanel"></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div onclick="show('daily')">Sentinels</div>
+  <div onclick="show('gift')">GIFT</div>
+  <div onclick="show('withdraw')">WITHDRAW</div>
+</nav>
+
+<footer>
+©2025 PAPER HOUSE INC · isaiahotico15@gmail.com<br>
+<span id="time"></span>
+</footer>
 </body>
 </html>
