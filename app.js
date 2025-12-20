@@ -1,108 +1,106 @@
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, increment
-} from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+/* ===== CONFIG ===== */
+const REWARD = 0.009;
+const MAX_ADS = 4;
+const COOLDOWN_MIN = 5;
 
-/* 🔥 Firebase Init */
-const firebaseConfig = {
-  apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
-  authDomain: "paper-house-inc.firebaseapp.com",
-  projectId: "paper-house-inc",
-  storageBucket: "paper-house-inc.firebasestorage.app",
-  messagingSenderId: "658389836376",
-  appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
-};
+/* ===== STATE ===== */
+let watched = 0;
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* 👤 Telegram */
-const tg = window.Telegram?.WebApp;
-const user = tg?.initDataUnsafe?.user || {};
-const uid = user.id || "guest";
-const username = user.username || "Guest";
-
-/* 🧾 UI */
-document.getElementById("tgUser")?.innerText = username;
-
-/* 💰 Wallet */
-const ref = doc(db, "users", uid);
-
-async function initUser() {
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    await setDoc(ref, {
-      username,
-      balance: 0,
-      lastWatch: 0
-    });
+/* ===== TELEGRAM REAL-TIME USER ===== */
+function loadTelegramUser() {
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    if (user) {
+      document.querySelectorAll("#tgUser").forEach(e => {
+        e.innerText = user.username
+          ? "@" + user.username
+          : user.first_name;
+      });
+      return;
+    }
   }
-  updateWallet();
-}
-initUser();
-
-async function updateWallet() {
-  const snap = await getDoc(ref);
-  document.getElementById("wallet").innerText =
-    snap.data().balance.toFixed(3);
+  document.querySelectorAll("#tgUser").forEach(e => e.innerText = "Guest");
 }
 
-/* 🔁 Navigation */
-window.openRoom = () => location.href = "ads.html";
-window.goBack = () => history.back();
-
-/* 🎯 Ads Config */
-let adsLeft = 4;
-const reward = 0.009;
-const cooldown = 5 * 60 * 1000;
-
-/* ⚡ Parallel Preload (warm 2 ads) */
-show_10276123('pop').catch(()=>{});
-show_10276123('pop').catch(()=>{});
-
-/* ▶ Start Ads */
-window.startAds = async () => {
-  const snap = await getDoc(ref);
-  if (Date.now() - snap.data().lastWatch < cooldown) {
-    alert("Cooldown active");
-    return;
-  }
-  playAd();
-};
-
-async function playAd() {
-  if (adsLeft <= 0) {
-    await updateDoc(ref, { lastWatch: Date.now() });
-    startCooldown();
-    return;
-  }
-
-  document.getElementById("adsLeft").innerText = adsLeft;
-
-  show_10276123('pop').then(async () => {
-    adsLeft--;
-    await updateDoc(ref, {
-      balance: increment(reward)
-    });
-    updateWallet();
-    playAd();
-  });
+/* ===== WALLET ===== */
+function getWallet() {
+  return parseFloat(localStorage.getItem("wallet") || "0");
 }
 
-/* ⏱ Cooldown UI */
+function updateWallet(v) {
+  const w = getWallet() + v;
+  localStorage.setItem("wallet", w.toFixed(3));
+  document.querySelectorAll("#wallet").forEach(e => e.innerText = w.toFixed(3));
+}
+
+/* ===== COOLDOWN ===== */
+function cooldownActive() {
+  const t = localStorage.getItem("cooldown");
+  return t && Date.now() < t;
+}
+
 function startCooldown() {
-  let t = cooldown / 1000;
-  const el = document.getElementById("cooldown");
+  localStorage.setItem(
+    "cooldown",
+    Date.now() + COOLDOWN_MIN * 60000
+  );
+}
+
+function showCooldown() {
+  const box = document.getElementById("cooldownBox");
+  const end = localStorage.getItem("cooldown");
 
   const timer = setInterval(() => {
-    el.innerText = `Cooldown: ${t--}s`;
-    if (t <= 0) {
+    let left = Math.max(0, end - Date.now());
+    let m = Math.floor(left / 60000);
+    let s = Math.floor((left % 60000) / 1000);
+    box.innerText = `Cooldown: ${m}:${s.toString().padStart(2, "0")}`;
+    if (left <= 0) {
       clearInterval(timer);
-      adsLeft = 4;
-      el.innerText = "Ready";
-      document.getElementById("adsLeft").innerText = adsLeft;
+      box.innerText = "";
     }
   }, 1000);
 }
+
+/* ===== PARALLEL ADS ===== */
+function startAds() {
+  if (cooldownActive()) {
+    showCooldown();
+    return;
+  }
+
+  watched = 0;
+  nextAd();
+}
+
+function nextAd() {
+  if (watched >= MAX_ADS) {
+    startCooldown();
+    showCooldown();
+    return;
+  }
+
+  show_10276123("pop").then(() => {
+    watched++;
+    updateWallet(REWARD);
+    document.getElementById("adsLeft").innerText =
+      "Ads left: " + (MAX_ADS - watched);
+    setTimeout(nextAd, 800);
+  });
+}
+
+/* ===== NAV ===== */
+function goAds() {
+  location.href = "Ads.html";
+}
+
+function goHome() {
+  location.href = "index.html";
+}
+
+/* ===== INIT ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("#wallet").forEach(e => e.innerText = getWallet().toFixed(3));
+  loadTelegramUser();
+});
