@@ -15,9 +15,6 @@
 
 <!-- Telegram -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<!-- Firebase -->
-<script type="module" src="app.js"></script>
 </head>
 
 <body>
@@ -29,57 +26,46 @@
   <div class="title">PAPER HOUSE INC</div>
 </header>
 
-<div id="home" class="page active">
+<div id="daily" class="page active">
   <div class="card">
-    <h2>🔥 Sentinels Free Gcash Ads</h2>
-    <p>Top global real-time rewarded ads</p>
-  </div>
-</div>
-
-<div id="daily" class="page">
-  <div class="card">
-    <button onclick="dailyAd('v1')">🍍Daily Sign-In V1🍍</button>
-    <button onclick="dailyAd('v2')">🍍Daily Sign-In V2🍍</button>
-    <button onclick="dailyAd('v3')">🍍Daily Sign-In V3🍍</button>
+    <h3>🍍 Daily Sign-In Room</h3>
+    <button onclick="dailyAd('v1')">Sentinel V1</button>
+    <button onclick="dailyAd('v2')">Sentinel V2</button>
+    <button onclick="dailyAd('v3')">Sentinel V3</button>
   </div>
 </div>
 
 <div id="gift" class="page">
   <div class="card">
-    <button class="small" onclick="giftAd('v1')">🍍Gift🍋</button>
-    <button class="small" onclick="giftAd('v2')">🍍Gift🍋</button>
-    <button class="small" onclick="giftAd('v3')">🍍Gift🍋</button>
+    <h3>🍋 Gift Room</h3>
+    <button class="small" onclick="giftAd('v1')">Gift V1</button>
+    <button class="small" onclick="giftAd('v2')">Gift V2</button>
+    <button class="small" onclick="giftAd('v3')">Gift V3</button>
   </div>
 </div>
 
 <div id="unli" class="page">
   <div class="card">
-    <button class="small" onclick="unliAd('v1')">🍍Ads V1🍋</button>
-    <button class="small" onclick="unliAd('v2')">🍍Ads V2🍋</button>
-    <button class="small" onclick="unliAd('v3')">🍍Ads V3🍋</button>
+    <h3>♾ Unlimited Ads</h3>
+    <button class="small" onclick="unliAd('v1')">Ads V1</button>
+    <button class="small" onclick="unliAd('v2')">Ads V2</button>
+    <button class="small" onclick="unliAd('v3')">Ads V3</button>
   </div>
 </div>
 
 <div id="withdraw" class="page">
   <div class="card">
-    <h3>Withdrawal Room</h3>
+    <h3>💸 Withdrawal Room</h3>
     <input id="gcash" placeholder="GCash Number">
-    <button onclick="requestWithdraw()">Withdraw</button>
+    <button onclick="withdraw()">Withdraw</button>
     <div id="withdrawLog"></div>
   </div>
 </div>
 
-<div id="admin" class="page">
-  <div class="card">
-    <input id="adminPass" type="password" placeholder="Admin Password">
-    <button onclick="adminLogin()">Enter Admin</button>
-    <div id="adminPanel"></div>
-  </div>
-</div>
-
 <nav class="nav">
-  <div onclick="show('daily')">Sentinels</div>
+  <div onclick="show('daily')">SENTINELS</div>
   <div onclick="show('gift')">GIFT</div>
+  <div onclick="show('unli')">UNLIMITED</div>
   <div onclick="show('withdraw')">WITHDRAW</div>
 </nav>
 
@@ -87,5 +73,7 @@
 ©2025 PAPER HOUSE INC · isaiahotico15@gmail.com<br>
 <span id="time"></span>
 </footer>
+
+<script src="app.js"></script>
 </body>
 </html>
