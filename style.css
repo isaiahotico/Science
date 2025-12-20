@@ -1,8 +1,8 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: #0b0b0b;
-  color: #fff;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
 }
 
 .topbar {
@@ -14,38 +14,24 @@ body {
 
 .wallet {
   background: magenta;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 20px;
   font-weight: bold;
 }
 
-.user {
-  opacity: 0.9;
-}
-
 .content {
-  padding: 20px;
+  padding: 25px;
   text-align: center;
 }
 
 .primary-btn {
   background: magenta;
   border: none;
-  color: #fff;
+  color: white;
   padding: 14px;
   width: 100%;
   border-radius: 8px;
   font-size: 16px;
-  margin-top: 10px;
-}
-
-.secondary-btn {
-  margin-top: 20px;
-  background: #222;
-  color: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
 }
 
 .bottom-nav {
@@ -60,13 +46,6 @@ body {
   flex: 1;
   background: none;
   border: none;
-  color: #fff;
+  color: white;
   padding: 14px;
-}
-
-.ads-box {
-  background: #161616;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 20px;
 }
