@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Withdrawal Room</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+<header><h2>🍋🍍🍍 Withdrawal Room 🍍🍍🍋</h2></header>
+
+<main class="card">
+  <input id="gcash" placeholder="GCash Number">
+  <button onclick="withdraw()">Withdraw</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Amount</th>
+        <th>GCash</th>
+        <th>Status</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="userHistory"></tbody>
+  </table>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
