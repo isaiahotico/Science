@@ -2,29 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PAPER HOUSE INC</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
 
-<!-- Monetag -->
+<!-- Monetag SDKs -->
 <script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123"></script>
 <script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795"></script>
 <script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853"></script>
 
-<!-- Telegram -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
 <body>
-
 <header>
-  <div class="balance">
+  <div class="balanceBox">
     <div id="tgName">Loading…</div>
-    <div>₱ <span id="balance">0.00</span></div>
+    ₱<span id="balance">0.00</span>
   </div>
-  <div class="title">PAPER HOUSE INC</div>
+  <h1>PAPER HOUSE INC</h1>
 </header>
 
 <main>
@@ -51,19 +49,24 @@
 </section>
 
 <section class="card">
-  <h2>💸 Withdrawal Room</h2>
-  <input id="gcash" placeholder="GCash Number">
-  <button onclick="withdraw()">Withdraw</button>
-  <div id="withdrawLog"></div>
+  <button onclick="location.href='withdraw.html'">
+    🍋🍍🍍 Withdrawal Room 🍍🍍🍋
+  </button>
+</section>
+
+<section class="card">
+  <button onclick="location.href='admin.html'">
+    🍋🍍🍍 Admin Room 🍍🍍🍋
+  </button>
 </section>
 
 </main>
 
 <footer>
 ©2025 PAPER HOUSE INC · isaiahotico15@gmail.com<br>
-<span id="time"></span>
+<span id="clock"></span>
 </footer>
 
-<script src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
