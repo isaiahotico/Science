@@ -30,7 +30,17 @@
 
 <main>
   <h1>PAPER HOUSE INC</h1>
-  <button class="main-btn" onclick="goAds()">Watched Ads Room 1</button>
+
+  <div class="box">
+    <h2>Watched Ads Room 1</h2>
+    <p>Reward: ₱0.009 per ad × 4 ads</p>
+
+    <div id="adsLeft">Ads left: 4</div>
+    <div id="cooldownBox"></div>
+
+    <button class="watch-btn" onclick="startAds()">Watch Ads</button>
+  </div>
+
 </main>
 
 <script src="app.js"></script>
