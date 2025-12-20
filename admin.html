@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Room</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<script>
+const p = prompt("Admin Password");
+if (p !== "Propetas6") location.href = "index.html";
+</script>
+
+<header><h2>🍋🍍🍍 Admin Room 🍍🍍🍋</h2></header>
+
+<main class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Amount</th>
+        <th>GCash</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="adminTable"></tbody>
+  </table>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
