@@ -18,6 +18,7 @@
 </head>
 
 <body>
+
 <header>
   <div class="balance">
     <div id="tgName">Loading…</div>
@@ -26,48 +27,37 @@
   <div class="title">PAPER HOUSE INC</div>
 </header>
 
-<div id="daily" class="page active">
-  <div class="card">
-    <h3>🍍 Daily Sign-In Room</h3>
-    <button onclick="dailyAd('v1')">Sentinel V1</button>
-    <button onclick="dailyAd('v2')">Sentinel V2</button>
-    <button onclick="dailyAd('v3')">Sentinel V3</button>
-  </div>
-</div>
+<main>
 
-<div id="gift" class="page">
-  <div class="card">
-    <h3>🍋 Gift Room</h3>
-    <button class="small" onclick="giftAd('v1')">Gift V1</button>
-    <button class="small" onclick="giftAd('v2')">Gift V2</button>
-    <button class="small" onclick="giftAd('v3')">Gift V3</button>
-  </div>
-</div>
+<section class="card">
+  <h2>🍍 Daily Sign-In Room</h2>
+  <button onclick="dailyAd('v1')">Sentinel V1</button>
+  <button onclick="dailyAd('v2')">Sentinel V2</button>
+  <button onclick="dailyAd('v3')">Sentinel V3</button>
+</section>
 
-<div id="unli" class="page">
-  <div class="card">
-    <h3>♾ Unlimited Ads</h3>
-    <button class="small" onclick="unliAd('v1')">Ads V1</button>
-    <button class="small" onclick="unliAd('v2')">Ads V2</button>
-    <button class="small" onclick="unliAd('v3')">Ads V3</button>
-  </div>
-</div>
+<section class="card">
+  <h2>🍋 Gift Room</h2>
+  <button class="small" onclick="giftAd('v1')">Gift V1</button>
+  <button class="small" onclick="giftAd('v2')">Gift V2</button>
+  <button class="small" onclick="giftAd('v3')">Gift V3</button>
+</section>
 
-<div id="withdraw" class="page">
-  <div class="card">
-    <h3>💸 Withdrawal Room</h3>
-    <input id="gcash" placeholder="GCash Number">
-    <button onclick="withdraw()">Withdraw</button>
-    <div id="withdrawLog"></div>
-  </div>
-</div>
+<section class="card">
+  <h2>♾ Unlimited Ads</h2>
+  <button class="small" onclick="unliAd('v1')">Ads V1</button>
+  <button class="small" onclick="unliAd('v2')">Ads V2</button>
+  <button class="small" onclick="unliAd('v3')">Ads V3</button>
+</section>
 
-<nav class="nav">
-  <div onclick="show('daily')">SENTINELS</div>
-  <div onclick="show('gift')">GIFT</div>
-  <div onclick="show('unli')">UNLIMITED</div>
-  <div onclick="show('withdraw')">WITHDRAW</div>
-</nav>
+<section class="card">
+  <h2>💸 Withdrawal Room</h2>
+  <input id="gcash" placeholder="GCash Number">
+  <button onclick="withdraw()">Withdraw</button>
+  <div id="withdrawLog"></div>
+</section>
+
+</main>
 
 <footer>
 ©2025 PAPER HOUSE INC · isaiahotico15@gmail.com<br>
