@@ -1,67 +1,52 @@
 body {
   margin: 0;
   background: #0b0b0b;
-  color: #fff;
-  font-family: Arial, sans-serif;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: #111;
-}
-
-.wallet {
-  background: magenta;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-}
-
-.content {
-  padding: 20px;
+  color: white;
+  font-family: Arial;
   text-align: center;
 }
 
-.primary-btn {
-  background: magenta;
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.magenta {
+  background: linear-gradient(90deg, magenta, purple);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+main {
+  padding: 30px 15px;
+}
+
+button {
   border: none;
-  color: white;
-  padding: 14px;
-  width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
+  padding: 15px 25px;
+  margin: 10px;
   font-size: 16px;
 }
 
-.secondary-btn {
-  margin-top: 15px;
-  background: #222;
+.main-btn {
+  background: magenta;
   color: white;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
 }
 
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  background: #111;
+.watch-btn {
+  background: #00ffc8;
+  color: black;
 }
 
-.bottom-nav button {
-  flex: 1;
-  background: none;
-  border: none;
+.back-btn {
+  background: #444;
   color: white;
-  padding: 14px;
 }
 
-.ads-box {
-  background: #161616;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 15px;
+.ad-box {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 15px;
 }
