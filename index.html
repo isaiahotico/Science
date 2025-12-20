@@ -26,40 +26,43 @@
 </header>
 
 <main>
-
+<!-- Daily Sign-In Room -->
 <section class="card">
   <h2>🍍 Daily Sign-In Room</h2>
-  <button onclick="dailyAd('v1')">Sentinel V1</button>
-  <button onclick="dailyAd('v2')">Sentinel V2</button>
-  <button onclick="dailyAd('v3')">Sentinel V3</button>
+  <button onclick="runDaily(this,'v1')">Sentinel V1 <div class="timer" id="daily_v1_timer">Ready</div></button>
+  <button onclick="runDaily(this,'v2')">Sentinel V2 <div class="timer" id="daily_v2_timer">Ready</div></button>
+  <button onclick="runDaily(this,'v3')">Sentinel V3 <div class="timer" id="daily_v3_timer">Ready</div></button>
 </section>
 
+<!-- Gift Room -->
 <section class="card">
   <h2>🍋 Gift Room</h2>
-  <button class="small" onclick="giftAd('v1')">Gift V1</button>
-  <button class="small" onclick="giftAd('v2')">Gift V2</button>
-  <button class="small" onclick="giftAd('v3')">Gift V3</button>
+  <button onclick="runGift(this,'v1')">Gift V1 <div class="timer" id="gift_v1_timer">Ready</div></button>
+  <button onclick="runGift(this,'v2')">Gift V2 <div class="timer" id="gift_v2_timer">Ready</div></button>
+  <button onclick="runGift(this,'v3')">Gift V3 <div class="timer" id="gift_v3_timer">Ready</div></button>
 </section>
 
+<!-- Unlimited Ads -->
 <section class="card">
   <h2>♾ Unlimited Ads</h2>
-  <button class="small" onclick="unliAd('v1')">Ads V1</button>
-  <button class="small" onclick="unliAd('v2')">Ads V2</button>
-  <button class="small" onclick="unliAd('v3')">Ads V3</button>
+  <button onclick="runUnli(this,'v1')">Ads V1 <div class="timer" id="unli_v1_timer">Ready</div></button>
+  <button onclick="runUnli(this,'v2')">Ads V2 <div class="timer" id="unli_v2_timer">Ready</div></button>
+  <button onclick="runUnli(this,'v3')">Ads V3 <div class="timer" id="unli_v3_timer">Ready</div></button>
 </section>
 
+<!-- Withdrawal Room -->
 <section class="card">
   <button onclick="location.href='withdraw.html'">
     🍋🍍🍍 Withdrawal Room 🍍🍍🍋
   </button>
 </section>
 
+<!-- Admin Room -->
 <section class="card">
   <button onclick="location.href='admin.html'">
     🍋🍍🍍 Admin Room 🍍🍍🍋
   </button>
 </section>
-
 </main>
 
 <footer>
