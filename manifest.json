@@ -1,8 +1,9 @@
 {
-  "name":"PAPER HOUSE INC",
-  "short_name":"PHI",
-  "start_url":"index.html",
-  "display":"standalone",
-  "background_color":"#020617",
-  "theme_color":"#22c55e"
+  "name": "PAPER HOUSE INC",
+  "short_name": "PHI",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff00ff",
+  "icons": []
 }
