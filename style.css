@@ -1,52 +1,58 @@
 body {
   margin: 0;
-  background: #0b0b0b;
-  color: white;
-  font-family: Arial;
+  background: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
   text-align: center;
 }
 
-.top-bar {
+.topbar {
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  background: #000;
+  border-bottom: 4px solid magenta;
 }
 
-.magenta {
-  background: linear-gradient(90deg, magenta, purple);
-  padding: 6px 12px;
-  border-radius: 20px;
+.wallet {
+  font-weight: bold;
 }
 
-main {
-  padding: 30px 15px;
+.user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-button {
-  border: none;
-  border-radius: 12px;
-  padding: 15px 25px;
-  margin: 10px;
-  font-size: 16px;
-}
-
-.main-btn {
+.dot {
+  width: 8px;
+  height: 8px;
   background: magenta;
-  color: white;
+  border-radius: 50%;
 }
 
+.main-btn,
 .watch-btn {
-  background: #00ffc8;
-  color: black;
+  background: magenta;
+  color: #fff;
+  border: none;
+  padding: 15px 25px;
+  font-size: 16px;
+  border-radius: 6px;
+  margin-top: 20px;
 }
 
-.back-btn {
-  background: #444;
-  color: white;
-}
-
-.ad-box {
-  background: #1a1a1a;
+.box {
+  margin: 30px;
   padding: 20px;
-  border-radius: 15px;
+  border: 2px solid magenta;
+  border-radius: 10px;
+}
+
+.back {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: magenta;
+  font-size: 16px;
 }
