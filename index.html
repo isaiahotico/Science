@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard</title>
+<title>User Wallet & Withdraw</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
@@ -10,38 +10,18 @@
 <body>
 
 <div class="card">
-  <h2>Owner Dashboard</h2>
-  <p>Total Users: <span id="userCount">0</span></p>
+  <h2>Wallet</h2>
+  <p>Telegram: <strong id="username">loading...</strong></p>
+  <p>Balance: ₱<strong id="balance">0</strong></p>
+
+  <input id="amount" type="number" placeholder="Withdraw amount (₱)">
+  <input id="gcash" type="text" placeholder="GCash number">
+  <button onclick="withdraw()">Withdraw</button>
 </div>
 
 <div class="card">
-  <h3>Users & Wallets</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Balance (₱)</th>
-      </tr>
-    </thead>
-    <tbody id="userList"></tbody>
-  </table>
-</div>
-
-<div class="card">
-  <h3>Withdrawal Requests</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>User</th>
-        <th>Amount</th>
-        <th>GCash</th>
-        <th>Status</th>
-        <th>Time</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="withdrawList"></tbody>
-  </table>
+  <h3>My Withdrawals</h3>
+  <ul id="history"></ul>
 </div>
 
 <script src="app.js"></script>
