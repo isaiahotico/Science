@@ -1,17 +1,77 @@
-body { font-family: Arial, sans-serif; background: #f0f0f5; margin:0; padding:0;}
-header { background: #ff66b2; color:white; padding: 15px; text-align:center; font-size:1.8em;}
-#balance { position:absolute; top:10px; left:10px; background: magenta; color:white; padding:5px 10px; border-radius:5px;}
-#telegramUser { position:absolute; top:10px; right:10px; background:#00bfff; color:white; padding:5px 10px; border-radius:5px;}
-.room-section { margin:20px; padding:15px; background:#fff; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-.room-title { font-size:1.3em; margin-bottom:10px; }
-.room-btn { display:block; margin:10px 0; padding:10px; background:#66ccff; border:none; border-radius:5px; cursor:pointer; font-size:1em;}
-.reward-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#ffcc00; padding:15px; border-radius:10px; display:none; font-weight:bold; font-size:1.2em; z-index:1000; animation: popupAnim 0.5s;}
-.ads-container { margin-top:10px; }
-.cooldown { font-size:0.9em; color:#555; margin-top:3px; }
+body {
+  margin: 0;
+  background: #0f1220;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-/* Popup animation */
-@keyframes popupAnim {
-  0% { transform: translate(-50%, -60%) scale(0.5); opacity:0; }
-  50% { transform: translate(-50%, -50%) scale(1.1); opacity:1; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity:1; }
+.card {
+  background: #181c3a;
+  width: 320px;
+  padding: 16px;
+  margin-top: 14px;
+  border-radius: 12px;
+  box-shadow: 0 0 18px rgba(0,0,0,.4);
+}
+
+h2, h3 {
+  text-align: center;
+  margin-top: 0;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #4caf50;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #43a047;
+}
+
+.status {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  border-bottom: 1px solid #2a2f55;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.pending {
+  color: #ffb300;
+}
+
+.approved {
+  color: #4caf50;
+}
+
+small {
+  display: block;
+  opacity: .6;
+  font-size: 11px;
 }
