@@ -1,97 +1,83 @@
-const WS_URL = "wss://YOUR_WS_URL";
-const ws = new WebSocket(WS_URL);
+const WSS_URL = "wss://YOUR_WS_URL";
+const ws = new WebSocket(WSS_URL);
 
-const userList = document.getElementById("userList");
-const userCount = document.getElementById("userCount");
-const withdrawList = document.getElementById("withdrawList");
+const usernameEl = document.getElementById("username");
+const balanceEl = document.getElementById("balance");
+const historyEl = document.getElementById("history");
 
-const users = {};   // username -> balance
-const withdrawals = {}; // id -> row
+const amountInput = document.getElementById("amount");
+const gcashInput = document.getElementById("gcash");
+
+let username = "guest_" + Math.floor(Math.random() * 9999);
+if (window.Telegram?.WebApp?.initDataUnsafe?.user?.username) {
+  username = Telegram.WebApp.initDataUnsafe.user.username;
+}
+usernameEl.innerText = username;
 
 ws.onopen = () => {
-  ws.send(JSON.stringify({
-    type: "AUTH",
-    role: "OWNER",
-    username: "ADMIN"
-  }));
+  ws.send(JSON.stringify({ type: "AUTH", role: "USER", username }));
 };
 
 ws.onmessage = e => {
   const data = JSON.parse(e.data);
 
-  // Initial full state
-  if(data.type==="INIT"){
-    userList.innerHTML="";
-    withdrawList.innerHTML="";
-    for(const u in data.balances){
-      addOrUpdateUser(u, data.balances[u]);
-    }
-    data.withdrawals.forEach(addOrUpdateWithdraw);
+  if (data.type === "INIT") {
+    balanceEl.innerText = data.balances[username] || 0;
+    historyEl.innerHTML = "";
+    data.withdrawals
+      .filter(w => w.username === username)
+      .forEach(render);
   }
 
-  // New withdrawal
-  if(data.type==="NEW_WITHDRAW"){
-    addOrUpdateWithdraw(data.req);
+  if (data.type === "NEW_WITHDRAW" && data.req.username === username) {
+    render(data.req);
   }
 
-  // Balance update
-  if(data.type==="BALANCE_UPDATE"){
-    addOrUpdateUser(data.username, data.balance);
+  if (data.type === "APPROVED" && data.username === username) {
+    updateStatus(data.id, "approved");
+    balanceEl.innerText = data.balance;
   }
 
-  // Approved / Rejected
-  if(data.type==="APPROVED" || data.type==="REJECTED"){
-    updateWithdrawStatus(data.id, data.status);
-    addOrUpdateUser(data.username, data.balance);
-  }
-
-  if(data.type==="ERROR"){
-    alert(data.msg);
+  if (data.type === "REJECTED" && data.username === username) {
+    updateStatus(data.id, "rejected");
   }
 };
 
-// User table
-function addOrUpdateUser(username, balance){
-  users[username] = balance;
-  let tr = document.getElementById("user-"+username);
-  if(!tr){
-    tr=document.createElement("tr");
-    tr.id="user-"+username;
-    tr.innerHTML=`<td>${username}</td><td>₱<span class="bal">${balance}</span></td>`;
-    userList.appendChild(tr);
-  } else {
-    tr.querySelector(".bal").innerText=balance;
+function withdraw() {
+  const amount = Number(amountInput.value);
+  const gcash = gcashInput.value.trim();
+
+  if (!amount || !gcash) {
+    alert("Please enter both amount and GCash number");
+    return;
   }
-  userCount.innerText=Object.keys(users).length;
+
+  // Send withdrawal request to server (admin dashboard)
+  ws.send(JSON.stringify({
+    type: "WITHDRAW",
+    username,
+    amount,
+    gcash
+  }));
+
+  amountInput.value = "";
+  gcashInput.value = "";
 }
 
-// Withdrawal table
-function addOrUpdateWithdraw(w){
-  if(withdrawals[w.id]) return;
-  const tr = document.createElement("tr");
-  tr.id="w-"+w.id;
-  tr.innerHTML=`
-    <td>${w.username}</td>
-    <td>₱${w.amount}</td>
-    <td>${w.gcash}</td>
-    <td class="${w.status}">${w.status}</td>
-    <td>${new Date(w.id).toLocaleString()}</td>
-    <td>${w.status==="pending"?`<button onclick="approve(${w.id})">Approve</button>`:"-"}</td>
+function render(w) {
+  const li = document.createElement("li");
+  li.id = "w-" + w.id;
+  li.innerHTML = `
+    ₱${w.amount} — <span class="${w.status}">${w.status}</span>
+    <br>GCash: ${w.gcash}
+    <small>${new Date(w.id).toLocaleString()}</small>
   `;
-  withdrawList.prepend(tr);
-  withdrawals[w.id]=tr;
+  historyEl.prepend(li);
 }
 
-// Update withdrawal status
-function updateWithdrawStatus(id, status){
-  const tr = withdrawals[id];
-  if(!tr) return;
-  tr.children[3].innerText=status;
-  tr.children[3].className=status;
-  tr.children[5].innerText="-";
-}
-
-// Approve button
-window.approve=id=>{
-  ws.send(JSON.stringify({type:"APPROVE",id}));
+function updateStatus(id, status) {
+  const el = document.getElementById("w-" + id);
+  if (!el) return;
+  el.querySelector("span").innerText = status;
+  el.querySelector("span").className = status;
 }
