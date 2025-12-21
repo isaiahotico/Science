@@ -1,45 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAPER HOUSE INC</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Withdraw System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>PAPER HOUSE INC</header>
-<div id="balance">Balance: 0.00 PHP</div>
-<div id="telegramUser">Telegram: Guest</div>
+<div class="card">
+  <h2>Withdraw Panel</h2>
 
-<!-- Multi-room sections -->
-<div class="room-section" id="dailySignInRoom">
-  <div class="room-title">🍍🍍🍋Daily Sign in Room🍋🍍🍍</div>
-  <div class="ads-container">
-    <button class="room-btn" id="btnV1">🍍Daily Sign In Sentinel V1🍍</button>
-    <div class="cooldown" id="cdV1"></div>
-
-    <button class="room-btn" id="btnV2">🍍Daily Sign In Sentinel V2🍍</button>
-    <div class="cooldown" id="cdV2"></div>
-
-    <button class="room-btn" id="btnV3">🍍Daily Sign In Sentinel V3🍍</button>
-    <div class="cooldown" id="cdV3"></div>
+  <div class="user">
+    Telegram: <strong id="username">loading...</strong>
   </div>
+
+  <div class="status">
+    Status: <span id="connection">Connecting...</span>
+  </div>
+
+  <input id="amount" type="number" placeholder="Amount (₱)">
+  <input id="gcash" type="text" placeholder="GCash Number">
+
+  <button onclick="withdraw()">Request Withdrawal</button>
 </div>
 
-<div class="room-section" id="giftRoom">
-  <div class="room-title">🍋🍍🍍Gift Room🍍🍍🍋</div>
-  <button class="room-btn" id="giftBtn1">🎁 Gift Sentinel 1</button>
-  <button class="room-btn" id="giftBtn2">🎁 Gift Sentinel 2</button>
+<div class="card">
+  <h3>My Withdrawal Status</h3>
+  <ul id="history"></ul>
 </div>
-
-<div class="room-section" id="unlimitedAdsRoom">
-  <div class="room-title">🍋🍍🍍UNLIMITED ADS🍍🍍🍋</div>
-  <button class="room-btn" id="unlimitedBtn1">🚀 Unlimited Sentinel 1</button>
-  <button class="room-btn" id="unlimitedBtn2">🚀 Unlimited Sentinel 2</button>
-</div>
-
-<div id="rewardPopup" class="reward-popup"></div>
 
 <script src="app.js"></script>
 </body>
