@@ -13,11 +13,11 @@
 
 <div class="card">
   <h1>Balance: ₱<span id="balance">0</span></h1>
-  <button onclick="watchAd()">🎥 Watch Ads (₱50)</button>
+  <button id="watchAdBtn">🎥 Watch Ads (₱50)</button>
 
   <h3>Withdraw to GCash</h3>
   <input id="gcash" placeholder="GCash Number">
-  <button onclick="withdraw()">💸 Withdraw ₱50</button>
+  <button id="withdrawBtn">💸 Withdraw ₱50</button>
 </div>
 
 <div class="card">
@@ -54,7 +54,7 @@
 <div class="card" id="ownerPasswordCard">
   <h3>🔒 Enter Owner Password</h3>
   <input id="ownerPass" placeholder="Password">
-  <button onclick="unlockOwner()">Unlock</button>
+  <button id="unlockOwnerBtn">Unlock</button>
 </div>
 
 <script src="app.js"></script>
