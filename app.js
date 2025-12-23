@@ -2,7 +2,6 @@
  GLOBAL REAL-TIME USERNAME
 *********************************/
 const channel = new BroadcastChannel("global_user_sync");
-
 let username = localStorage.getItem("tgUser");
 if (!username) {
   username = "user_" + Math.floor(Math.random() * 100000);
@@ -13,10 +12,8 @@ function renderUsername(name) {
   const el = document.getElementById("globalUsername");
   if (el) el.innerText = "@" + name;
 }
-
 renderUsername(username);
 channel.postMessage({ user: username });
-
 channel.onmessage = e => {
   if (e.data.user) {
     username = e.data.user;
@@ -24,7 +21,6 @@ channel.onmessage = e => {
     renderUsername(username);
   }
 };
-
 window.addEventListener("storage", e => {
   if (e.key === "tgUser") renderUsername(e.newValue);
 });
@@ -33,7 +29,6 @@ window.addEventListener("storage", e => {
  BALANCE
 *********************************/
 let balance = Number(localStorage.getItem(username + "_bal")) || 0;
-
 function updateBalance() {
   const el = document.getElementById("balance");
   if (el) el.innerText = balance;
@@ -56,7 +51,6 @@ function watchAd() {
 function withdraw() {
   const gcash = document.getElementById("gcash").value.trim();
   if (!gcash || balance < 50) return alert("Invalid withdrawal");
-
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
   withdrawals.push({
     user: username,
@@ -65,7 +59,6 @@ function withdraw() {
     status: "PENDING",
     time: new Date().toLocaleString()
   });
-
   localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
   balance -= 50;
   updateBalance();
@@ -78,10 +71,8 @@ function withdraw() {
 function loadHistory() {
   const table = document.getElementById("history");
   if (!table) return;
-
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
   table.innerHTML = "";
-
   withdrawals.filter(w => w.user === username)
     .forEach(w => {
       table.innerHTML += `
@@ -98,19 +89,18 @@ function loadHistory() {
 *********************************/
 function adminLogin() {
   if (document.getElementById("adminPass").value !== "Propetas6")
-    return alert("Wrong password");
-
+    return alert("❌ Wrong password");
   localStorage.setItem("adminLogged", "true");
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("adminPanel").style.display = "block";
   loadAdmin();
   checkAdminUnlock();
 }
+document.getElementById("adminLoginBtn")?.addEventListener("click", adminLogin);
 
 if (localStorage.getItem("adminLogged") === "true") {
   document.getElementById("loginBox")?.remove();
-  document.getElementById("adminPanel") &&
-    (document.getElementById("adminPanel").style.display = "block");
+  document.getElementById("adminPanel")?.style.display = "block";
 }
 
 /********************************
@@ -119,10 +109,8 @@ if (localStorage.getItem("adminLogged") === "true") {
 function loadAdmin() {
   const table = document.getElementById("adminTable");
   if (!table) return;
-
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
   table.innerHTML = "";
-
   withdrawals.forEach((w, i) => {
     table.innerHTML += `
       <tr>
@@ -137,13 +125,11 @@ function loadAdmin() {
       </tr>`;
   });
 }
-
 function approve(i) {
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
   withdrawals[i].status = "PAID";
   localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
 }
-
 function reject(i) {
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
   withdrawals[i].status = "REJECTED";
@@ -156,10 +142,8 @@ function reject(i) {
 function loadOwner() {
   const table = document.getElementById("ownerTable");
   if (!table) return;
-
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
   table.innerHTML = "";
-
   withdrawals.forEach(w => {
     table.innerHTML += `
       <tr>
@@ -185,6 +169,7 @@ function unlockOwner() {
     alert("❌ Wrong password");
   }
 }
+document.getElementById("unlockOwnerBtn")?.addEventListener("click", unlockOwner);
 
 /********************************
  ADMIN AUTO UNLOCK OWNER TABLE
@@ -197,11 +182,7 @@ function checkAdminUnlock() {
     loadOwner();
   }
 }
-
-// run on page load
-window.addEventListener("load", () => {
-  checkAdminUnlock();
-});
+window.addEventListener("load", checkAdminUnlock);
 
 /********************************
  NAVIGATE OWNER PAGE
@@ -209,6 +190,7 @@ window.addEventListener("load", () => {
 function goOwner() {
   window.location.href = "owner.html";
 }
+document.getElementById("goOwnerBtn")?.addEventListener("click", goOwner);
 
 /********************************
  AUTO REAL-TIME UPDATE
