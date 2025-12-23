@@ -1,6 +1,6 @@
-/***********************
- USER IDENTIFICATION
-************************/
+/********************************
+ USER IDENTIFICATION (REAL-TIME)
+*********************************/
 let username = localStorage.getItem("tgUser");
 
 if (!username) {
@@ -11,9 +11,9 @@ if (!username) {
 const userEl = document.getElementById("username");
 if (userEl) userEl.innerText = "👤 @" + username;
 
-/***********************
+/********************************
  BALANCE SYSTEM
-************************/
+*********************************/
 let balance = Number(localStorage.getItem(username + "_bal")) || 0;
 
 function updateBalance() {
@@ -23,18 +23,18 @@ function updateBalance() {
 }
 updateBalance();
 
-/***********************
- WATCH ADS (₱50)
-************************/
+/********************************
+ WATCH ADS (INSTANT ₱50)
+*********************************/
 function watchAd() {
   balance += 50;
   updateBalance();
   alert("🎉 ₱50 added instantly!");
 }
 
-/***********************
+/********************************
  WITHDRAW SYSTEM
-************************/
+*********************************/
 function withdraw() {
   const gcash = document.getElementById("gcash").value.trim();
   if (!gcash) return alert("❌ Enter GCash number");
@@ -58,9 +58,9 @@ function withdraw() {
   alert("⏳ Withdrawal submitted");
 }
 
-/***********************
- USER HISTORY TABLE
-************************/
+/********************************
+ USER WITHDRAW HISTORY
+*********************************/
 function loadHistory() {
   const table = document.getElementById("history");
   if (!table) return;
@@ -82,9 +82,32 @@ function loadHistory() {
 }
 loadHistory();
 
-/***********************
- ADMIN DASHBOARD
-************************/
+/********************************
+ ADMIN LOGIN (PASSWORD)
+*********************************/
+function adminLogin() {
+  const pass = document.getElementById("adminPass").value;
+  if (pass !== "Propetas6") {
+    alert("❌ Wrong password");
+    return;
+  }
+
+  localStorage.setItem("adminLogged", "true");
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+  document.getElementById("adminUser").innerText = "Logged in as ADMIN";
+  loadAdmin();
+}
+
+if (localStorage.getItem("adminLogged") === "true") {
+  document.getElementById("loginBox")?.remove();
+  document.getElementById("adminPanel").style.display = "block";
+  document.getElementById("adminUser").innerText = "Logged in as ADMIN";
+}
+
+/********************************
+ ADMIN DASHBOARD (REAL-TIME)
+*********************************/
 function loadAdmin() {
   const table = document.getElementById("adminTable");
   if (!table) return;
@@ -122,5 +145,4 @@ function reject(i) {
   loadAdmin();
 }
 
-loadAdmin();
 setInterval(loadAdmin, 2000);
