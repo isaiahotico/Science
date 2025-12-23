@@ -11,21 +11,27 @@
   👤 <span id="globalUsername">Loading...</span>
 </div>
 
-<h1>👑 OWNER DASHBOARD</h1>
-<p>All User Payout Records (Real-Time)</p>
+<div id="ownerCard" style="display:none">
+  <h1>👑 OWNER DASHBOARD</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>GCash</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="ownerTable"></tbody>
+  </table>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>GCash</th>
-      <th>Amount</th>
-      <th>Status</th>
-      <th>Time</th>
-    </tr>
-  </thead>
-  <tbody id="ownerTable"></tbody>
-</table>
+<div id="ownerPasswordCard">
+  <h3>🔒 Enter Owner Password</h3>
+  <input id="ownerPass" placeholder="Password">
+  <button onclick="unlockOwner()">Unlock</button>
+</div>
 
 <script src="app.js"></script>
 </body>
