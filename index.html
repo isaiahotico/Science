@@ -34,7 +34,8 @@
   </table>
 </div>
 
-<div class="card">
+<!-- OWNER TABLE PASSWORD PROTECTED -->
+<div class="card" id="ownerCard" style="display:none">
   <h3>👑 Owner Payout Records (Live)</h3>
   <table>
     <thead>
@@ -48,6 +49,12 @@
     </thead>
     <tbody id="ownerTable"></tbody>
   </table>
+</div>
+
+<div class="card" id="ownerPasswordCard">
+  <h3>🔒 Enter Owner Password</h3>
+  <input id="ownerPass" placeholder="Password">
+  <button onclick="unlockOwner()">Unlock</button>
 </div>
 
 <script src="app.js"></script>
