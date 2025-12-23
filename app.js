@@ -1,83 +1,126 @@
-const WSS_URL = "wss://YOUR_WS_URL";
-const ws = new WebSocket(WSS_URL);
+/***********************
+ USER IDENTIFICATION
+************************/
+let username = localStorage.getItem("tgUser");
 
-const usernameEl = document.getElementById("username");
-const balanceEl = document.getElementById("balance");
-const historyEl = document.getElementById("history");
-
-const amountInput = document.getElementById("amount");
-const gcashInput = document.getElementById("gcash");
-
-let username = "guest_" + Math.floor(Math.random() * 9999);
-if (window.Telegram?.WebApp?.initDataUnsafe?.user?.username) {
-  username = Telegram.WebApp.initDataUnsafe.user.username;
+if (!username) {
+  username = "user_" + Math.floor(Math.random() * 100000);
+  localStorage.setItem("tgUser", username);
 }
-usernameEl.innerText = username;
 
-ws.onopen = () => {
-  ws.send(JSON.stringify({ type: "AUTH", role: "USER", username }));
-};
+const userEl = document.getElementById("username");
+if (userEl) userEl.innerText = "👤 @" + username;
 
-ws.onmessage = e => {
-  const data = JSON.parse(e.data);
+/***********************
+ BALANCE SYSTEM
+************************/
+let balance = Number(localStorage.getItem(username + "_bal")) || 0;
 
-  if (data.type === "INIT") {
-    balanceEl.innerText = data.balances[username] || 0;
-    historyEl.innerHTML = "";
-    data.withdrawals
-      .filter(w => w.username === username)
-      .forEach(render);
-  }
+function updateBalance() {
+  const balEl = document.getElementById("balance");
+  if (balEl) balEl.innerText = balance;
+  localStorage.setItem(username + "_bal", balance);
+}
+updateBalance();
 
-  if (data.type === "NEW_WITHDRAW" && data.req.username === username) {
-    render(data.req);
-  }
+/***********************
+ WATCH ADS (₱50)
+************************/
+function watchAd() {
+  balance += 50;
+  updateBalance();
+  alert("🎉 ₱50 added instantly!");
+}
 
-  if (data.type === "APPROVED" && data.username === username) {
-    updateStatus(data.id, "approved");
-    balanceEl.innerText = data.balance;
-  }
-
-  if (data.type === "REJECTED" && data.username === username) {
-    updateStatus(data.id, "rejected");
-  }
-};
-
+/***********************
+ WITHDRAW SYSTEM
+************************/
 function withdraw() {
-  const amount = Number(amountInput.value);
-  const gcash = gcashInput.value.trim();
+  const gcash = document.getElementById("gcash").value.trim();
+  if (!gcash) return alert("❌ Enter GCash number");
+  if (balance < 50) return alert("❌ Minimum ₱50 required");
 
-  if (!amount || !gcash) {
-    alert("Please enter both amount and GCash number");
-    return;
-  }
+  let withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
 
-  // Send withdrawal request to server (admin dashboard)
-  ws.send(JSON.stringify({
-    type: "WITHDRAW",
-    username,
-    amount,
-    gcash
-  }));
+  withdrawals.push({
+    user: username,
+    gcash: gcash,
+    amount: 50,
+    status: "PENDING",
+    time: new Date().toLocaleString()
+  });
 
-  amountInput.value = "";
-  gcashInput.value = "";
+  localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+
+  balance -= 50;
+  updateBalance();
+  loadHistory();
+  alert("⏳ Withdrawal submitted");
 }
 
-function render(w) {
-  const li = document.createElement("li");
-  li.id = "w-" + w.id;
-  li.innerHTML = `
-    ₱${w.amount} — <span class="${w.status}">${w.status}</span>
-    <br>GCash: ${w.gcash}
-    <small>${new Date(w.id).toLocaleString()}</small>
-  `;
-  historyEl.prepend(li);
+/***********************
+ USER HISTORY TABLE
+************************/
+function loadHistory() {
+  const table = document.getElementById("history");
+  if (!table) return;
+
+  let withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
+  table.innerHTML = "";
+
+  withdrawals
+    .filter(w => w.user === username)
+    .forEach(w => {
+      table.innerHTML += `
+        <tr>
+          <td>${w.gcash}</td>
+          <td>₱${w.amount}</td>
+          <td>${w.status}</td>
+        </tr>
+      `;
+    });
+}
+loadHistory();
+
+/***********************
+ ADMIN DASHBOARD
+************************/
+function loadAdmin() {
+  const table = document.getElementById("adminTable");
+  if (!table) return;
+
+  let withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
+  table.innerHTML = "";
+
+  withdrawals.forEach((w, i) => {
+    table.innerHTML += `
+      <tr>
+        <td>@${w.user}</td>
+        <td>${w.gcash}</td>
+        <td>₱${w.amount}</td>
+        <td>${w.status}</td>
+        <td>
+          <button onclick="approve(${i})">✅ PAID</button>
+          <button onclick="reject(${i})">❌ REJECT</button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
-function updateStatus(id, status) {
-  const el = document.getElementById("w-" + id);
-  if (!el) return;
-  el.querySelector("span").innerText = status;
-  el.querySelector("span").className = status;
+function approve(i) {
+  let withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
+  withdrawals[i].status = "PAID";
+  localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+  loadAdmin();
 }
+
+function reject(i) {
+  let withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
+  withdrawals[i].status = "REJECTED";
+  localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+  loadAdmin();
+}
+
+loadAdmin();
+setInterval(loadAdmin, 2000);
