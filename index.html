@@ -1,27 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>User Wallet & Withdraw</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>TOP WORLD ADS</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="card">
-  <h2>Wallet</h2>
-  <p>Telegram: <strong id="username">loading...</strong></p>
-  <p>Balance: ₱<strong id="balance">0</strong></p>
+  <h2 id="username">👤 Loading...</h2>
+  <h1>Balance: ₱<span id="balance">0</span></h1>
 
-  <input id="amount" type="number" placeholder="Withdraw amount (₱)">
-  <input id="gcash" type="text" placeholder="GCash number">
-  <button onclick="withdraw()">Withdraw</button>
+  <button onclick="watchAd()">🎥 Watch Ads (₱50)</button>
+
+  <h3>Withdraw to GCash</h3>
+  <input id="gcash" placeholder="GCash Number">
+  <button onclick="withdraw()">💸 Withdraw ₱50</button>
 </div>
 
 <div class="card">
-  <h3>My Withdrawals</h3>
-  <ul id="history"></ul>
+  <h3>Withdrawal History</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>GCash</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="history"></tbody>
+  </table>
 </div>
 
 <script src="app.js"></script>
