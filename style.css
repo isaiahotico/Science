@@ -1,75 +1,49 @@
 body {
-  margin: 0;
-  background: #0f1220;
+  background: #0b0b0b;
+  color: white;
   font-family: Arial, sans-serif;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 20px;
 }
 
-.card {
-  background: #181c3a;
-  width: 330px;
-  padding: 16px;
-  margin-top: 14px;
-  border-radius: 14px;
-  box-shadow: 0 0 18px rgba(0,0,0,.45);
-}
-
-h2, h3 {
+h1, h2, h3 {
   text-align: center;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  border: none;
+.card {
+  background: #151515;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  background: #4caf50;
+  padding: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+  background: gold;
   border: none;
-  color: white;
-  border-radius: 6px;
-  font-size: 16px;
   cursor: pointer;
 }
 
 button:hover {
-  background: #43a047;
+  opacity: 0.9;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
 }
 
-li {
-  border-bottom: 1px solid #2a2f55;
-  padding: 6px 0;
-  font-size: 14px;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
 
-.pending {
-  color: #ffb300;
-}
-
-.approved {
-  color: #4caf50;
-}
-
-.rejected {
-  color: #e53935;
-}
-
-small {
-  display: block;
-  opacity: .6;
-  font-size: 11px;
+th, td {
+  border: 1px solid #444;
+  padding: 8px;
+  text-align: center;
 }
