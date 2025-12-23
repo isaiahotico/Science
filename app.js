@@ -104,6 +104,7 @@ function adminLogin() {
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("adminPanel").style.display = "block";
   loadAdmin();
+  checkAdminUnlock();
 }
 
 if (localStorage.getItem("adminLogged") === "true") {
@@ -150,7 +151,7 @@ function reject(i) {
 }
 
 /********************************
- OWNER TABLE (INDEX + OWNER PAGE)
+ OWNER TABLE
 *********************************/
 function loadOwner() {
   const table = document.getElementById("ownerTable");
@@ -171,6 +172,40 @@ function loadOwner() {
   });
 }
 
+/********************************
+ OWNER PASSWORD UNLOCK
+*********************************/
+function unlockOwner() {
+  const pass = document.getElementById("ownerPass")?.value;
+  if(pass === "Propetas6") {
+    document.getElementById("ownerCard")?.style.display = "block";
+    document.getElementById("ownerPasswordCard")?.style.display = "none";
+    loadOwner();
+  } else {
+    alert("❌ Wrong password");
+  }
+}
+
+/********************************
+ ADMIN AUTO UNLOCK OWNER TABLE
+*********************************/
+function checkAdminUnlock() {
+  const isAdmin = localStorage.getItem("adminLogged") === "true";
+  if (isAdmin) {
+    document.getElementById("ownerCard")?.style.display = "block";
+    document.getElementById("ownerPasswordCard")?.style.display = "none";
+    loadOwner();
+  }
+}
+
+// run on page load
+window.addEventListener("load", () => {
+  checkAdminUnlock();
+});
+
+/********************************
+ NAVIGATE OWNER PAGE
+*********************************/
 function goOwner() {
   window.location.href = "owner.html";
 }
