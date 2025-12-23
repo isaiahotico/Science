@@ -7,20 +7,24 @@
 </head>
 <body>
 
+<div id="topUserBar">
+  👤 <span id="globalUsername">Loading...</span>
+</div>
+
 <div id="loginBox" class="card">
   <h2>🔐 Admin Login</h2>
-  <input type="password" id="adminPass" placeholder="Enter admin password">
+  <input type="password" id="adminPass" placeholder="Password">
   <button onclick="adminLogin()">Login</button>
 </div>
 
 <div id="adminPanel" style="display:none">
-  <h1>🔥 LIVE WITHDRAWALS – ADMIN</h1>
-  <p id="adminUser"></p>
+  <h1>ADMIN WITHDRAWALS</h1>
+  <button onclick="goOwner()">👑 Owner Dashboard</button>
 
   <table>
     <thead>
       <tr>
-        <th>Username</th>
+        <th>User</th>
         <th>GCash</th>
         <th>Amount</th>
         <th>Status</th>
