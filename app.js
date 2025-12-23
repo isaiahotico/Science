@@ -1,18 +1,21 @@
 /********************************
- GLOBAL REAL-TIME USERNAME
+ REAL-TIME USERNAME (INSTANT)
 *********************************/
-const channel = new BroadcastChannel("global_user_sync");
 let username = localStorage.getItem("tgUser");
 if (!username) {
   username = "user_" + Math.floor(Math.random() * 100000);
   localStorage.setItem("tgUser", username);
 }
 
+// Display instantly
 function renderUsername(name) {
   const el = document.getElementById("globalUsername");
   if (el) el.innerText = "@" + name;
 }
 renderUsername(username);
+
+// Broadcast to other tabs instantly
+const channel = new BroadcastChannel("global_user_sync");
 channel.postMessage({ user: username });
 channel.onmessage = e => {
   if (e.data.user) {
@@ -21,6 +24,8 @@ channel.onmessage = e => {
     renderUsername(username);
   }
 };
+
+// Listen to storage changes instantly (multi-tab sync)
 window.addEventListener("storage", e => {
   if (e.key === "tgUser") renderUsername(e.newValue);
 });
@@ -33,22 +38,25 @@ function updateBalance() {
   const el = document.getElementById("balance");
   if (el) el.innerText = balance;
   localStorage.setItem(username + "_bal", balance);
+  loadHistory();
+  loadOwner();
+  loadAdmin();
 }
 updateBalance();
 
 /********************************
- WATCH ADS
+ WATCH ADS - INSTANT ₱50
 *********************************/
-function watchAd() {
+document.getElementById("watchAdBtn")?.addEventListener("click", () => {
   balance += 50;
   updateBalance();
-  alert("🎉 ₱50 added instantly!");
-}
+  alert("🎉 Instant ₱50 added!");
+});
 
 /********************************
  WITHDRAW
 *********************************/
-function withdraw() {
+document.getElementById("withdrawBtn")?.addEventListener("click", () => {
   const gcash = document.getElementById("gcash").value.trim();
   if (!gcash || balance < 50) return alert("Invalid withdrawal");
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
@@ -62,8 +70,7 @@ function withdraw() {
   localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
   balance -= 50;
   updateBalance();
-  loadHistory();
-}
+});
 
 /********************************
  USER HISTORY
@@ -97,7 +104,6 @@ function adminLogin() {
   checkAdminUnlock();
 }
 document.getElementById("adminLoginBtn")?.addEventListener("click", adminLogin);
-
 if (localStorage.getItem("adminLogged") === "true") {
   document.getElementById("loginBox")?.remove();
   document.getElementById("adminPanel")?.style.display = "block";
@@ -129,11 +135,13 @@ function approve(i) {
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
   withdrawals[i].status = "PAID";
   localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+  updateBalance();
 }
 function reject(i) {
   const withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
   withdrawals[i].status = "REJECTED";
   localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
+  updateBalance();
 }
 
 /********************************
@@ -165,9 +173,7 @@ function unlockOwner() {
     document.getElementById("ownerCard")?.style.display = "block";
     document.getElementById("ownerPasswordCard")?.style.display = "none";
     loadOwner();
-  } else {
-    alert("❌ Wrong password");
-  }
+  } else alert("❌ Wrong password");
 }
 document.getElementById("unlockOwnerBtn")?.addEventListener("click", unlockOwner);
 
@@ -199,4 +205,4 @@ setInterval(() => {
   loadHistory();
   loadAdmin();
   loadOwner();
-}, 2000);
+}, 1000); // update every 1s for real-time
