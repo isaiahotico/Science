@@ -2,11 +2,20 @@ body {
   background: #0b0b0b;
   color: white;
   font-family: Arial, sans-serif;
-  padding: 20px;
+  padding: 80px 20px 20px;
 }
 
-h1, h2, h3, p {
+#topUserBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, gold, orange);
+  color: black;
+  font-weight: bold;
+  padding: 12px;
   text-align: center;
+  z-index: 9999;
 }
 
 .card {
@@ -24,10 +33,6 @@ button {
   background: gold;
   border: none;
   cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.9;
 }
 
 input {
