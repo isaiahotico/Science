@@ -1,33 +1,37 @@
 /********************************
- REAL-TIME USERNAME (INSTANT)
+ FAST TELEGRAM USERNAME
 *********************************/
-let username = localStorage.getItem("tgUser");
-if (!username) {
-  username = "user_" + Math.floor(Math.random() * 100000);
-  localStorage.setItem("tgUser", username);
-}
+const usernameKey = "tgUser";
 
-// Display instantly
+let username = localStorage.getItem(usernameKey);
 function renderUsername(name) {
   const el = document.getElementById("globalUsername");
-  if (el) el.innerText = "@" + name;
+  if (el) el.innerText = name ? "@" + name : "Guest";
 }
 renderUsername(username);
 
-// Broadcast to other tabs instantly
+function setTelegramUsername(name) {
+  username = name;
+  localStorage.setItem(usernameKey, username);
+  renderUsername(username);
+}
+
+// Prompt user to enter Telegram username if not set
+if (!username) {
+  setTimeout(() => {
+    const tg = prompt("Enter your Telegram username (without @):");
+    if (tg) setTelegramUsername(tg);
+  }, 100);
+}
+
+// Broadcast username across tabs
 const channel = new BroadcastChannel("global_user_sync");
 channel.postMessage({ user: username });
 channel.onmessage = e => {
-  if (e.data.user) {
-    username = e.data.user;
-    localStorage.setItem("tgUser", username);
-    renderUsername(username);
-  }
+  if (e.data.user) setTelegramUsername(e.data.user);
 };
-
-// Listen to storage changes instantly (multi-tab sync)
 window.addEventListener("storage", e => {
-  if (e.key === "tgUser") renderUsername(e.newValue);
+  if (e.key === usernameKey) renderUsername(e.newValue);
 });
 
 /********************************
@@ -205,4 +209,4 @@ setInterval(() => {
   loadHistory();
   loadAdmin();
   loadOwner();
-}, 1000); // update every 1s for real-time
+}, 1000);
