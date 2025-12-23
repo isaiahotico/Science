@@ -2,25 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ADMIN – Withdrawals</title>
+  <title>ADMIN PANEL</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🔥 LIVE WITHDRAWALS (ADMIN)</h1>
+<div id="loginBox" class="card">
+  <h2>🔐 Admin Login</h2>
+  <input type="password" id="adminPass" placeholder="Enter admin password">
+  <button onclick="adminLogin()">Login</button>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>GCash</th>
-      <th>Amount</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="adminTable"></tbody>
-</table>
+<div id="adminPanel" style="display:none">
+  <h1>🔥 LIVE WITHDRAWALS – ADMIN</h1>
+  <p id="adminUser"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>GCash</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="adminTable"></tbody>
+  </table>
+</div>
 
 <script src="app.js"></script>
 </body>
