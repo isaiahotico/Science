@@ -1,20 +1,25 @@
-/* ===============================
-   Telegram Mini App REAL Login
-================================ */
+/* Telegram REAL login */
 const tg = window.Telegram?.WebApp
-if(tg){
+if (tg) {
   tg.ready()
   const u = tg.initDataUnsafe?.user
   document.getElementById('user').innerText =
     u ? '@' + (u.username || u.first_name) : '@unknown'
-}else{
-  document.getElementById('user').innerText='@guest'
+} else {
+  document.getElementById('user').innerText = '@guest'
 }
 
-/* ===============================
-   Wallet + UI
-================================ */
+/* Parallel preload */
+window.addEventListener('load',()=>{
+  try{
+    show_10276123({type:'inApp'})
+    show_10337795({type:'inApp'})
+    show_10337853({type:'inApp'})
+  }catch(e){}
+})
+
 let balance = 0
+const COOLDOWN = 120 // ✅ 2 MINUTES FOR ALL
 const toast = document.getElementById('toast')
 
 function openPage(id){
@@ -24,65 +29,49 @@ function openPage(id){
 
 function showToast(msg){
   toast.innerText = msg
-  toast.classList.add('show')
-  setTimeout(()=>toast.classList.remove('show'),2000)
+  toast.style.display = 'block'
+  setTimeout(()=>toast.style.display='none',2000)
 }
 
-function reward(amt){
-  balance += amt
-  document.getElementById('balance').innerText = balance.toFixed(2)
-  showToast(`🍋 Congratulations gain ₱${amt} 🎉🍋`)
-}
-
-/* ===============================
-   CPM Smart Rotation
-================================ */
+/* CPM Smart Rotation (no zero CPM) */
 const adPool = [
-  { fn: () => show_10276123(), weight: 3 },
-  { fn: () => show_10337795(), weight: 2 },
-  { fn: () => show_10337853(), weight: 1 }
+  { fn:()=>show_10276123(), w:3 },
+  { fn:()=>show_10337795(), w:2 },
+  { fn:()=>show_10337853(), w:1 }
 ]
 
 function pickAd(){
   const bag=[]
-  adPool.forEach(a=>{for(let i=0;i<a.weight;i++) bag.push(a)})
+  adPool.forEach(a=>{for(let i=0;i<a.w;i++) bag.push(a)})
   return bag[Math.floor(Math.random()*bag.length)]
 }
 
-/* ===============================
-   Parallel Preload
-================================ */
-window.onload = ()=>{
-  try{
-    show_10276123({type:'inApp',inAppSettings:{frequency:1,capping:0.05}})
-    show_10337795({type:'inApp',inAppSettings:{frequency:1,capping:0.05}})
-    show_10337853({type:'inApp',inAppSettings:{frequency:1,capping:0.05}})
-  }catch(e){}
-}
-
-/* ===============================
-   Ads + 5-Minute Cooldown
-================================ */
-const COOLDOWN = 300
-
 function rewardAd(key,amt){
   if(lock(key)) return
-  pickAd().fn().then(()=>reward(amt))
+  pickAd().fn().then(()=>{
+    add(amt)
+    showToast(`+₱${amt}`)
+  })
 }
 
-function rewardPopup(key,amt){
+function rewardPop(key,amt){
   if(lock(key)) return
-  pickAd().fn('pop').then(()=>reward(amt))
+  pickAd().fn().then(()=>{
+    add(amt)
+    showToast(`+₱${amt}`)
+  })
 }
 
-function showUnlimited(key){
+function countAd(key){
   if(lock(key)) return
-  pickAd().fn().then(()=>showToast('🍍 Ad viewed'))
+  pickAd().fn().then(()=>showToast('Ad viewed'))
 }
 
-/* ===============================
-   Cooldown Engine
-================================ */
+function add(v){
+  balance+=v
+  document.getElementById('balance').innerText=balance.toFixed(2)
+}
+
 function lock(k){
   const t = localStorage.getItem(k)
   if(t && Date.now()<t) return true
@@ -96,11 +85,7 @@ function tick(k){
   if(!el) return
   const i=setInterval(()=>{
     const t=localStorage.getItem(k)-Date.now()
-    if(t<=0){
-      el.innerText='Ready'
-      clearInterval(i)
-    }else{
-      el.innerText=`Cooldown ${Math.ceil(t/60)} min`
-    }
+    if(t<=0){el.innerText='Ready';clearInterval(i)}
+    else el.innerText=`Cooldown ${Math.ceil(t/1000)}s`
   },1000)
 }
