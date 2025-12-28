@@ -1,69 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TOP WORLD ADS</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PAPER HOUSE INC</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+
+<!-- Monetag SDKs (Parallel Async Load) -->
+<script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123" async></script>
+<script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795" async></script>
+<script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853" async></script>
 </head>
+
 <body>
+<header>
+  <div class="stripe"></div>
+  <div id="tgUser">@telegram_user</div>
+  <div class="wallet">₱<span id="balance">0.00</span></div>
+</header>
 
-<div id="topUserBar">
-  👤 <span id="globalUsername">Loading...</span>
-</div>
+<main>
+<section id="home" class="page active">
+  <h1>🍍 PAPER HOUSE INC 🍍</h1>
+  <button onclick="openPage('signin')">🍍🍍🍋Daily Sign in Room🍋🍍🍍</button>
+  <button onclick="openPage('gift')">🍋🍍🍍Gift Room🍍🍍🍋</button>
+  <button onclick="openPage('unlimited')">🍋🍍🍍UNLIMITED ADS🍍🍍🍋</button>
+</section>
 
-<!-- Telegram Login -->
-<div class="card">
-  <h3>Login with Telegram</h3>
-  <a id="tgLoginBtn" href="http://t.me/Key_52_bot/start/" target="_blank">
-    🔗 Start Telegram Bot
-  </a>
-</div>
+<section id="signin" class="page">
+  <h2>Daily Sign In</h2>
+  <div class="card">
+    <button onclick="rewardAd('s1',0.01,300)">🍍 Sentinel V1</button>
+    <span id="cd-s1"></span>
+  </div>
+  <div class="card">
+    <button onclick="rewardAd('s2',0.01,300)">🍍 Sentinel V2</button>
+    <span id="cd-s2"></span>
+  </div>
+  <div class="card">
+    <button onclick="rewardAd('s3',0.01,300)">🍍 Sentinel V3</button>
+    <span id="cd-s3"></span>
+  </div>
+  <button class="back" onclick="openPage('home')">⬅ Back</button>
+</section>
 
-<div class="card">
-  <h1>Balance: ₱<span id="balance">0</span></h1>
-  <button id="watchAdBtn">🎥 Watch Ads (₱50)</button>
+<section id="gift" class="page">
+  <h2>Gift Room</h2>
+  <div class="card">
+    <button onclick="rewardPopup('g1',0.012,900)">🍋 Gift 1</button>
+    <span id="cd-g1"></span>
+  </div>
+  <div class="card">
+    <button onclick="rewardPopup('g2',0.012,900)">🍋 Gift 2</button>
+    <span id="cd-g2"></span>
+  </div>
+  <div class="card">
+    <button onclick="rewardPopup('g3',0.012,900)">🍋 Gift 3</button>
+    <span id="cd-g3"></span>
+  </div>
+  <button class="back" onclick="openPage('home')">⬅ Back</button>
+</section>
 
-  <h3>Withdraw to GCash</h3>
-  <input id="gcash" placeholder="GCash Number">
-  <button id="withdrawBtn">💸 Withdraw ₱50</button>
-</div>
+<section id="unlimited" class="page">
+  <h2>Unlimited Ads</h2>
+  <div class="card">
+    <button onclick="showUnlimited('u1')">🍍 Ads V1</button>
+    <span id="cd-u1"></span>
+  </div>
+  <div class="card">
+    <button onclick="showUnlimited('u2')">🍍 Ads V2</button>
+    <span id="cd-u2"></span>
+  </div>
+  <div class="card">
+    <button onclick="showUnlimited('u3')">🍍 Ads V3</button>
+    <span id="cd-u3"></span>
+  </div>
+  <button class="back" onclick="openPage('home')">⬅ Back</button>
+</section>
+</main>
 
-<div class="card">
-  <h3>My Withdrawal History</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>GCash</th>
-        <th>Amount</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="history"></tbody>
-  </table>
-</div>
-
-<!-- OWNER TABLE PASSWORD PROTECTED -->
-<div class="card" id="ownerCard" style="display:none">
-  <h3>👑 Owner Payout Records (Live)</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>User</th>
-        <th>GCash</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody id="ownerTable"></tbody>
-  </table>
-</div>
-
-<div class="card" id="ownerPasswordCard">
-  <h3>🔒 Enter Owner Password</h3>
-  <input id="ownerPass" placeholder="Password">
-  <button id="unlockOwnerBtn">Unlock</button>
-</div>
+<div id="toast"></div>
 
 <script src="app.js"></script>
 </body>
