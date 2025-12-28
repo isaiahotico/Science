@@ -2,12 +2,43 @@ body{margin:0;font-family:system-ui;background:#0b0b12;color:#fff}
 header{display:flex;gap:10px;padding:12px;background:#14001f;align-items:center}
 .stripe{width:6px;height:20px;background:magenta;border-radius:3px}
 .wallet{margin-left:auto;font-weight:700}
+
 .page{display:none;padding:20px}
 .page.active{display:block}
-button{width:100%;padding:14px;margin:10px 0;border:none;border-radius:14px;
-background:linear-gradient(135deg,#ffd000,#ff4ecd);font-weight:800}
-.card{background:#111;border-radius:16px;padding:14px;margin-bottom:12px}
+
+button{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ffd000,#ff4ecd);
+  font-weight:800;
+}
+
+.card{
+  background:#111;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+.cooldown{
+  font-size:12px;
+  color:#aaa;
+  margin-top:6px;
+}
+
 .back{background:#333;color:#fff}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-background:#222;padding:14px 22px;border-radius:22px;display:none}
+
+#toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#222;
+  padding:14px 22px;
+  border-radius:22px;
+  display:none;
+}
 #toast.show{display:block}
