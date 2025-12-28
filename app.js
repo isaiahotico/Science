@@ -1,212 +1,80 @@
-/********************************
- FAST TELEGRAM USERNAME
-*********************************/
-const usernameKey = "tgUser";
+let balance = 0
+const toast = document.getElementById('toast')
 
-let username = localStorage.getItem(usernameKey);
-function renderUsername(name) {
-  const el = document.getElementById("globalUsername");
-  if (el) el.innerText = name ? "@" + name : "Guest";
-}
-renderUsername(username);
+// Telegram username placeholder (Mini App ready)
+document.getElementById('tgUser').innerText =
+  window.Telegram?.WebApp?.initDataUnsafe?.user?.username
+  ? '@' + Telegram.WebApp.initDataUnsafe.user.username
+  : '@guest'
 
-function setTelegramUsername(name) {
-  username = name;
-  localStorage.setItem(usernameKey, username);
-  renderUsername(username);
-}
+// CPM Smart Rotation Pool
+const adPool = [
+  { fn: () => show_10276123(), weight: 3 },
+  { fn: () => show_10337795(), weight: 2 },
+  { fn: () => show_10337853(), weight: 1 }
+]
 
-// Prompt user to enter Telegram username if not set
-if (!username) {
-  setTimeout(() => {
-    const tg = prompt("Enter your Telegram username (without @):");
-    if (tg) setTelegramUsername(tg);
-  }, 100);
+function pickAd(){
+  const bag=[]
+  adPool.forEach(a=>{for(let i=0;i<a.weight;i++) bag.push(a)})
+  return bag[Math.floor(Math.random()*bag.length)]
 }
 
-// Broadcast username across tabs
-const channel = new BroadcastChannel("global_user_sync");
-channel.postMessage({ user: username });
-channel.onmessage = e => {
-  if (e.data.user) setTelegramUsername(e.data.user);
-};
-window.addEventListener("storage", e => {
-  if (e.key === usernameKey) renderUsername(e.newValue);
-});
-
-/********************************
- BALANCE
-*********************************/
-let balance = Number(localStorage.getItem(username + "_bal")) || 0;
-function updateBalance() {
-  const el = document.getElementById("balance");
-  if (el) el.innerText = balance;
-  localStorage.setItem(username + "_bal", balance);
-  loadHistory();
-  loadOwner();
-  loadAdmin();
-}
-updateBalance();
-
-/********************************
- WATCH ADS - INSTANT ₱50
-*********************************/
-document.getElementById("watchAdBtn")?.addEventListener("click", () => {
-  balance += 50;
-  updateBalance();
-  alert("🎉 Instant ₱50 added!");
-});
-
-/********************************
- WITHDRAW
-*********************************/
-document.getElementById("withdrawBtn")?.addEventListener("click", () => {
-  const gcash = document.getElementById("gcash").value.trim();
-  if (!gcash || balance < 50) return alert("Invalid withdrawal");
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
-  withdrawals.push({
-    user: username,
-    gcash,
-    amount: 50,
-    status: "PENDING",
-    time: new Date().toLocaleString()
-  });
-  localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
-  balance -= 50;
-  updateBalance();
-});
-
-/********************************
- USER HISTORY
-*********************************/
-function loadHistory() {
-  const table = document.getElementById("history");
-  if (!table) return;
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
-  table.innerHTML = "";
-  withdrawals.filter(w => w.user === username)
-    .forEach(w => {
-      table.innerHTML += `
-        <tr>
-          <td>${w.gcash}</td>
-          <td>₱${w.amount}</td>
-          <td>${w.status}</td>
-        </tr>`;
-    });
+// Parallel preload
+window.onload = () => {
+  try{
+    show_10276123({type:'inApp',inAppSettings:{frequency:1,capping:0.05}})
+    show_10337795({type:'inApp',inAppSettings:{frequency:1,capping:0.05}})
+    show_10337853({type:'inApp',inAppSettings:{frequency:1,capping:0.05}})
+  }catch(e){}
 }
 
-/********************************
- ADMIN LOGIN
-*********************************/
-function adminLogin() {
-  if (document.getElementById("adminPass").value !== "Propetas6")
-    return alert("❌ Wrong password");
-  localStorage.setItem("adminLogged", "true");
-  document.getElementById("loginBox").style.display = "none";
-  document.getElementById("adminPanel").style.display = "block";
-  loadAdmin();
-  checkAdminUnlock();
-}
-document.getElementById("adminLoginBtn")?.addEventListener("click", adminLogin);
-if (localStorage.getItem("adminLogged") === "true") {
-  document.getElementById("loginBox")?.remove();
-  document.getElementById("adminPanel")?.style.display = "block";
+function openPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+  document.getElementById(id).classList.add('active')
 }
 
-/********************************
- ADMIN TABLE
-*********************************/
-function loadAdmin() {
-  const table = document.getElementById("adminTable");
-  if (!table) return;
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
-  table.innerHTML = "";
-  withdrawals.forEach((w, i) => {
-    table.innerHTML += `
-      <tr>
-        <td>@${w.user}</td>
-        <td>${w.gcash}</td>
-        <td>₱${w.amount}</td>
-        <td>${w.status}</td>
-        <td>
-          <button onclick="approve(${i})">PAID</button>
-          <button onclick="reject(${i})">REJECT</button>
-        </td>
-      </tr>`;
-  });
-}
-function approve(i) {
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
-  withdrawals[i].status = "PAID";
-  localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
-  updateBalance();
-}
-function reject(i) {
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawals"));
-  withdrawals[i].status = "REJECTED";
-  localStorage.setItem("withdrawals", JSON.stringify(withdrawals));
-  updateBalance();
+function rewardAd(key,amt,cd){
+  if(lock(key,cd)) return
+  pickAd().fn().then(()=> reward(amt))
 }
 
-/********************************
- OWNER TABLE
-*********************************/
-function loadOwner() {
-  const table = document.getElementById("ownerTable");
-  if (!table) return;
-  const withdrawals = JSON.parse(localStorage.getItem("withdrawals")) || [];
-  table.innerHTML = "";
-  withdrawals.forEach(w => {
-    table.innerHTML += `
-      <tr>
-        <td>@${w.user}</td>
-        <td>${w.gcash}</td>
-        <td>₱${w.amount}</td>
-        <td>${w.status}</td>
-        <td>${w.time}</td>
-      </tr>`;
-  });
+function rewardPopup(key,amt,cd){
+  if(lock(key,cd)) return
+  pickAd().fn('pop').then(()=> reward(amt))
 }
 
-/********************************
- OWNER PASSWORD UNLOCK
-*********************************/
-function unlockOwner() {
-  const pass = document.getElementById("ownerPass")?.value;
-  if(pass === "Propetas6") {
-    document.getElementById("ownerCard")?.style.display = "block";
-    document.getElementById("ownerPasswordCard")?.style.display = "none";
-    loadOwner();
-  } else alert("❌ Wrong password");
+function showUnlimited(key){
+  if(lock(key,300)) return
+  pickAd().fn()
 }
-document.getElementById("unlockOwnerBtn")?.addEventListener("click", unlockOwner);
 
-/********************************
- ADMIN AUTO UNLOCK OWNER TABLE
-*********************************/
-function checkAdminUnlock() {
-  const isAdmin = localStorage.getItem("adminLogged") === "true";
-  if (isAdmin) {
-    document.getElementById("ownerCard")?.style.display = "block";
-    document.getElementById("ownerPasswordCard")?.style.display = "none";
-    loadOwner();
-  }
+function reward(amt){
+  balance += amt
+  document.getElementById('balance').innerText = balance.toFixed(2)
+  showToast(`🍋 Congratulations gain ₱${amt} 🎉🍋`)
 }
-window.addEventListener("load", checkAdminUnlock);
 
-/********************************
- NAVIGATE OWNER PAGE
-*********************************/
-function goOwner() {
-  window.location.href = "owner.html";
+function showToast(msg){
+  toast.innerText = msg
+  toast.classList.add('show')
+  setTimeout(()=>toast.classList.remove('show'),2000)
 }
-document.getElementById("goOwnerBtn")?.addEventListener("click", goOwner);
 
-/********************************
- AUTO REAL-TIME UPDATE
-*********************************/
-setInterval(() => {
-  loadHistory();
-  loadAdmin();
-  loadOwner();
-}, 1000);
+function lock(k,s){
+  const t = localStorage.getItem(k)
+  if(t && Date.now()<t) return true
+  localStorage.setItem(k, Date.now()+s*1000)
+  cooldown(k)
+  return false
+}
+
+function cooldown(k){
+  const el = document.getElementById('cd-'+k)
+  if(!el) return
+  const i = setInterval(()=>{
+    const t = localStorage.getItem(k)-Date.now()
+    if(t<=0){ el.innerText='Ready'; clearInterval(i) }
+    else el.innerText = `Cooldown ${Math.ceil(t/1000)}s`
+  },1000)
+}
