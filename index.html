@@ -8,7 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
 
-<!-- Monetag SDKs (Parallel Async Load) -->
+<!-- Telegram Mini App SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Monetag SDKs (parallel async preload) -->
 <script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123" async></script>
 <script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795" async></script>
 <script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853" async></script>
@@ -17,7 +20,7 @@
 <body>
 <header>
   <div class="stripe"></div>
-  <div id="tgUser">@telegram_user</div>
+  <div id="user">Loading…</div>
   <div class="wallet">₱<span id="balance">0.00</span></div>
 </header>
 
@@ -32,16 +35,16 @@
 <section id="signin" class="page">
   <h2>Daily Sign In</h2>
   <div class="card">
-    <button onclick="rewardAd('s1',0.01,300)">🍍 Sentinel V1</button>
-    <span id="cd-s1"></span>
+    <button onclick="rewardAd('s1',0.01)">🍍 Sentinel V1</button>
+    <div class="cooldown" id="cd-s1"></div>
   </div>
   <div class="card">
-    <button onclick="rewardAd('s2',0.01,300)">🍍 Sentinel V2</button>
-    <span id="cd-s2"></span>
+    <button onclick="rewardAd('s2',0.01)">🍍 Sentinel V2</button>
+    <div class="cooldown" id="cd-s2"></div>
   </div>
   <div class="card">
-    <button onclick="rewardAd('s3',0.01,300)">🍍 Sentinel V3</button>
-    <span id="cd-s3"></span>
+    <button onclick="rewardAd('s3',0.01)">🍍 Sentinel V3</button>
+    <div class="cooldown" id="cd-s3"></div>
   </div>
   <button class="back" onclick="openPage('home')">⬅ Back</button>
 </section>
@@ -49,16 +52,16 @@
 <section id="gift" class="page">
   <h2>Gift Room</h2>
   <div class="card">
-    <button onclick="rewardPopup('g1',0.012,900)">🍋 Gift 1</button>
-    <span id="cd-g1"></span>
+    <button onclick="rewardPopup('g1',0.012)">🍋 Gift 1</button>
+    <div class="cooldown" id="cd-g1"></div>
   </div>
   <div class="card">
-    <button onclick="rewardPopup('g2',0.012,900)">🍋 Gift 2</button>
-    <span id="cd-g2"></span>
+    <button onclick="rewardPopup('g2',0.012)">🍋 Gift 2</button>
+    <div class="cooldown" id="cd-g2"></div>
   </div>
   <div class="card">
-    <button onclick="rewardPopup('g3',0.012,900)">🍋 Gift 3</button>
-    <span id="cd-g3"></span>
+    <button onclick="rewardPopup('g3',0.012)">🍋 Gift 3</button>
+    <div class="cooldown" id="cd-g3"></div>
   </div>
   <button class="back" onclick="openPage('home')">⬅ Back</button>
 </section>
@@ -67,15 +70,15 @@
   <h2>Unlimited Ads</h2>
   <div class="card">
     <button onclick="showUnlimited('u1')">🍍 Ads V1</button>
-    <span id="cd-u1"></span>
+    <div class="cooldown" id="cd-u1"></div>
   </div>
   <div class="card">
     <button onclick="showUnlimited('u2')">🍍 Ads V2</button>
-    <span id="cd-u2"></span>
+    <div class="cooldown" id="cd-u2"></div>
   </div>
   <div class="card">
     <button onclick="showUnlimited('u3')">🍍 Ads V3</button>
-    <span id="cd-u3"></span>
+    <div class="cooldown" id="cd-u3"></div>
   </div>
   <button class="back" onclick="openPage('home')">⬅ Back</button>
 </section>
