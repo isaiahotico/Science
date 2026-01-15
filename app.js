@@ -33,7 +33,7 @@ window.onYouTubeIframeAPIReady = () => {
       onReady:()=>{syncTime(); initPoints();},
       onStateChange:e=>{
         if(e.data===YT.PlayerState.ENDED){
-          earnPoints(5); // Earn points
+          earnPoints(5); // Earn points per video watched
           nextRandom();
         }
       }
@@ -76,7 +76,7 @@ async function spendPoints(amount){
   return true;
 }
 
-/* ================= PLAYLIST TABLE ================= */
+/* ================= PLAYLIST TABLE (GLOBAL) ================= */
 const playlistEl = document.getElementById("playlist");
 onSnapshot(query(playlistCol,orderBy("createdAt")), snap=>{
   playlist=[];
@@ -94,7 +94,7 @@ onSnapshot(query(playlistCol,orderBy("createdAt")), snap=>{
   });
 });
 
-/* ================= ADD URL FIXED ================= */
+/* ================= ADD URL GLOBAL ================= */
 document.getElementById("addBtn").addEventListener("click", async ()=>{
   const url = document.getElementById("ytUrl").value.trim();
   if(!url) return alert("Please paste a YouTube link.");
@@ -102,7 +102,8 @@ document.getElementById("addBtn").addEventListener("click", async ()=>{
   if(!videoId) return alert("Invalid YouTube link.");
 
   try{
-    const snapshot = await getDocs(query(playlistCol,orderBy("createdAt")));
+    // Count user videos for points
+    const snapshot = await getDocs(query(playlistCol, orderBy("createdAt")));
     const userVideos = snapshot.docs.filter(d=>d.data().addedBy===username);
 
     if(userVideos.length>=5){
@@ -110,13 +111,14 @@ document.getElementById("addBtn").addEventListener("click", async ()=>{
       if(!ok) return alert("Not enough points! Watch videos to earn more.");
     }
 
+    // Add video globally
     await addDoc(playlistCol,{
       videoId: videoId,
       addedBy: username,
       createdAt: Date.now()
     });
 
-    // Auto update global state
+    // Auto-update global state
     await setDoc(stateDoc,{
       currentVideoId: videoId,
       startedAt: serverTimestamp(),
@@ -126,7 +128,7 @@ document.getElementById("addBtn").addEventListener("click", async ()=>{
     document.getElementById("ytUrl").value="";
   }catch(err){
     console.error("Failed to add video:", err);
-    alert("Failed to add video. Check console for errors.");
+    alert("Failed to add video. Check console.");
   }
 });
 
@@ -175,7 +177,7 @@ window.playNow = async videoId=>{
 
 /* ================= RANDOM NEXT ================= */
 async function nextRandom(){
-  const snap = await stateDoc.get();
+  const snap = await getDoc(stateDoc);
   let played = snap.data()?.played || [];
   if(played.length>=playlist.length) played=[];
   const remaining = playlist.filter(v=>!played.includes(v));
