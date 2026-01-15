@@ -1,3 +1,6 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, get, child, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
 /* ================= TELEGRAM ================= */
 const tg = window.Telegram?.WebApp;
 tg?.ready();
@@ -6,9 +9,6 @@ const username = user?.username || user?.first_name || "Guest";
 document.getElementById("userBar").innerText = "👤 " + username;
 
 /* ================= FIREBASE ================= */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, get, child, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyAj6o2HbMEC472gDoNuFSDmdOSJj8k9S_U",
   authDomain: "fir-493d0.firebaseapp.com",
@@ -18,11 +18,16 @@ const firebaseConfig = {
   messagingSenderId: "935141131610",
   appId: "1:935141131610:web:7998e21d07d7b4c71b5f63"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ================= YOUTUBE ================= */
+/* ================= GLOBAL STATE REFS ================= */
+const playlistRef = ref(db, "playlist");
+const stateRef = ref(db, "global/state");
+const viewersRef = ref(db, "global/viewers");
+const usersRef = ref(db, "users");
+
+/* ================= YOUTUBE PLAYER ================= */
 let player;
 let playlist = [];
 let currentVideoId = null;
@@ -47,12 +52,6 @@ window.onYouTubeIframeAPIReady = () => {
 const extractId = url => url.match(/(?:v=|youtu\.be\/|shorts\/)([^?&]+)/)?.[1];
 const pickRandom = arr => arr[Math.floor(Math.random()*arr.length)];
 
-/* ================= GLOBAL STATE REFS ================= */
-const playlistRef = ref(db, "playlist");
-const stateRef = ref(db, "global/state");
-const viewersRef = ref(db, "global/viewers");
-const usersRef = ref(db, "users");
-
 /* ================= VIEWERS ================= */
 const uid = username;
 set(ref(db,"global/viewers/"+uid),{joinedAt:Date.now()});
@@ -65,27 +64,15 @@ onValue(viewersRef,snap=>{
 let points = 0;
 async function initPoints(){
   const snap = await get(child(usersRef,username));
-  if(!snap.exists()) {
-    await set(ref(db,"users/"+username),{points:0});
-    points=0;
-  } else points = snap.val().points || 0;
+  if(!snap.exists()) { await set(ref(db,"users/"+username),{points:0}); points=0; }
+  else points = snap.val().points || 0;
   updatePointsUI();
 }
 function updatePointsUI(){ document.getElementById("points").innerText = `⭐ ${points} points`; }
-function earnPoints(amount){
-  points += amount;
-  update(ref(db,"users/"+username),{points});
-  updatePointsUI();
-}
-async function spendPoints(amount){
-  if(points<amount) return false;
-  points -= amount;
-  await update(ref(db,"users/"+username),{points});
-  updatePointsUI();
-  return true;
-}
+function earnPoints(amount){ points += amount; update(ref(db,"users/"+username),{points}); updatePointsUI(); }
+async function spendPoints(amount){ if(points<amount) return false; points-=amount; await update(ref(db,"users/"+username),{points}); updatePointsUI(); return true; }
 
-/* ================= PLAYLIST TABLE ================= */
+/* ================= PLAYLIST TABLE (AUTO UPDATE) ================= */
 const playlistEl = document.getElementById("playlist");
 onValue(playlistRef,snap=>{
   playlist=[];
@@ -109,7 +96,6 @@ document.getElementById("addBtn").addEventListener("click", async ()=>{
   const id = extractId(url);
   if(!id) return alert("Invalid YouTube link");
 
-  // Check user quota (5 free, 20 points per video after)
   const snap = await get(playlistRef);
   const userVideos = [];
   snap.forEach(childSnap=>{ if(childSnap.val().addedBy===username) userVideos.push(childSnap.val()); });
@@ -118,7 +104,6 @@ document.getElementById("addBtn").addEventListener("click", async ()=>{
     if(!ok) return alert("Not enough points! Watch videos to earn more.");
   }
 
-  // Add video
   await push(playlistRef,{
     videoId:id,
     addedBy:username,
