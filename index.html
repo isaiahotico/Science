@@ -1,76 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Global YouTube Sync Player</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://www.youtube.com/iframe_api"></script>
-
-<style>
-body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
-.container{max-width:720px;margin:auto;padding:12px}
-
-#topBar{
-  display:flex;
-  justify-content:space-between;
-  font-weight:bold;
-  margin-bottom:6px
-}
-
-#playerWrap{
-  aspect-ratio:16/9;
-  background:#000;
-  border-radius:14px;
-  overflow:hidden;
-  margin-bottom:10px
-}
-
-input,button{
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  width:48%;
-  margin-top:6px
-}
-
-button{background:#22c55e;font-weight:bold;cursor:pointer}
-button.playBtn{background:#3b82f6}
-
-table{width:100%;margin-top:10px;border-collapse:collapse}
-td,th{padding:8px;border-bottom:1px solid #334155}
-</style>
+  <meta charset="UTF-8">
+  <title>Telegram Aide YouTube Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      color: #000;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      background: #1b74e4;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .video-card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 20px;
+      background: #fff;
+    }
+    .video-card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .video-info {
+      margin-top: 10px;
+    }
+    .video-info p {
+      margin: 4px 0;
+    }
+    .buttons {
+      margin-top: 12px;
+    }
+    .buttons button {
+      margin-right: 10px;
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
+  <div class="container">
+    <h2>Telegram Aide YouTube Player</h2>
+    <input type="text" id="youtubeUrl" placeholder="Paste YouTube URL here">
+    <button onclick="loadVideo()">Load Video</button>
+    <div id="videoContainer"></div>
+  </div>
 
-<div id="topBar">
-  <div id="userBar">👤 User</div>
-  <div id="points">⭐ 0 points</div>
-  <div id="viewers">👀 0 watching</div>
-</div>
-
-<div id="playerWrap">
-  <div id="player"></div>
-</div>
-
-<input id="ytUrl" placeholder="Paste YouTube link here" />
-<br>
-<button id="addBtn">➕ Add URL</button>
-<button id="playBtn" class="playBtn">▶️ Play Video</button>
-<button onclick="nextRandom()">🎲 Next (Random)</button>
-
-<table>
-<thead>
-<tr><th>#</th><th>Video</th><th>Added By</th><th>Actions</th></tr>
-</thead>
-<tbody id="playlist"></tbody>
-</table>
-
-</div>
-
-<script type="module" src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
