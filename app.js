@@ -43,7 +43,10 @@ window.onYouTubeIframeAPIReady = () => {
 
 /* ================= HELPERS ================= */
 const extractId = url => {
-  const match = url.match(/(?:v=|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+  if(!url) return null;
+  url = url.trim();
+  const cleanUrl = url.split(/[?&]/)[0]; // Remove extra parameters
+  const match = cleanUrl.match(/(?:v=|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
 };
 const pickRandom = arr => arr[Math.floor(Math.random()*arr.length)];
@@ -96,8 +99,7 @@ onSnapshot(query(playlistCol,orderBy("createdAt")), snap=>{
 
 /* ================= ADD URL GLOBAL ================= */
 document.getElementById("addBtn").addEventListener("click", async ()=>{
-  const url = document.getElementById("ytUrl").value.trim();
-  if(!url) return alert("Please paste a YouTube link.");
+  const url = document.getElementById("ytUrl").value;
   const videoId = extractId(url);
   if(!videoId) return alert("Invalid YouTube link.");
 
@@ -132,9 +134,9 @@ document.getElementById("addBtn").addEventListener("click", async ()=>{
   }
 });
 
-/* ================= PLAY VIDEO ================= */
+/* ================= PLAY VIDEO BUTTON ================= */
 document.getElementById("playBtn").addEventListener("click", async ()=>{
-  const url = document.getElementById("ytUrl").value.trim();
+  const url = document.getElementById("ytUrl").value;
   const videoId = extractId(url);
   if(!videoId) return alert("Invalid YouTube link.");
 
