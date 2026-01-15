@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Global YouTube Sync</title>
+<title>Global YouTube Sync Player</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -12,61 +12,59 @@
 body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
 .container{max-width:720px;margin:auto;padding:12px}
 
+#topBar{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  margin-bottom:6px
+}
+
 #playerWrap{
-  width:100%;
   aspect-ratio:16/9;
   background:#000;
   border-radius:14px;
   overflow:hidden;
-  margin-bottom:12px;
+  margin-bottom:10px
 }
-
-#userBar{font-weight:bold;margin-bottom:6px}
 
 input,button{
   padding:10px;
   border-radius:10px;
   border:none;
-  width:100%;
+  width:48%;
   margin-top:6px;
 }
 
-button{
-  background:#22c55e;
-  font-weight:bold;
-  cursor:pointer;
-}
+button{background:#22c55e;font-weight:bold;cursor:pointer}
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:12px
-}
+button.playBtn{background:#3b82f6}
 
-td,th{
-  padding:8px;
-  border-bottom:1px solid #334155
-}
+table{width:100%;margin-top:10px;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #334155}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<div id="userBar">👤 Loading…</div>
+<div id="topBar">
+  <div id="userBar">👤 User</div>
+  <div id="viewers">👀 0 watching</div>
+</div>
 
-<!-- ✅ PLAYER ALWAYS ON TOP -->
 <div id="playerWrap">
   <div id="player"></div>
 </div>
 
 <input id="ytUrl" placeholder="Paste YouTube link" />
-<button onclick="addVideo()">➕ Add & Play (Global)</button>
+<br>
+<button id="addBtn">➕ Add URL</button>
+<button id="playBtn" class="playBtn">▶️ Play Video</button>
 <button onclick="nextRandom()">🎲 Next (Random)</button>
 
 <table>
 <thead>
-<tr><th>#</th><th>Video</th><th>Play</th></tr>
+<tr><th>#</th><th>Video</th><th>Actions</th></tr>
 </thead>
 <tbody id="playlist"></tbody>
 </table>
