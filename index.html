@@ -2,58 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAPER HOUSE INC</title>
+<title>Global YouTube Random Sync</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Telegram WebApp -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123" async></script>
-<script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795" async></script>
-<script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853" async></script>
+<!-- YouTube API -->
+<script src="https://www.youtube.com/iframe_api"></script>
 
-<link rel="stylesheet" href="style.css">
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
+.container{max-width:720px;margin:auto;padding:14px}
+#userBar{font-weight:bold;margin-bottom:10px}
+input,button{padding:10px;border-radius:10px;border:none}
+button{background:#22c55e;font-weight:bold;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+td,th{padding:8px;border-bottom:1px solid #334155}
+</style>
 </head>
+
 <body>
+<div class="container">
 
-<header>
-  <div class="badge"></div>
-  <div id="user">Loading…</div>
-  <div class="wallet">₱<span id="balance">0.00</span></div>
-</header>
+<div id="userBar">👤 Loading user...</div>
 
-<div id="home" class="page active">
-  <h2>🍍 PAPER HOUSE INC 🍍</h2>
-  <button onclick="openPage('signin')">Daily Sign-In Room</button>
-  <button onclick="openPage('gift')">Gift Room</button>
-  <button onclick="openPage('unlimited')">UNLIMITED ADS</button>
+<div id="player"></div>
+
+<br>
+
+<input id="ytUrl" placeholder="Paste YouTube URL" style="width:100%">
+<br><br>
+
+<button onclick="addVideo()">➕ Add</button>
+<button onclick="nextRandom()">🎲 Next (Random)</button>
+
+<table>
+<thead>
+<tr><th>#</th><th>Video ID</th><th>Play</th></tr>
+</thead>
+<tbody id="playlist"></tbody>
+</table>
+
 </div>
 
-<div id="signin" class="page">
-  <h3>Daily Sign In</h3>
-  <div class="box"><button onclick="rewardAd('v1',0.01)">V1</button><div class="cooldown" id="cd-v1"></div></div>
-  <div class="box"><button onclick="rewardAd('v2',0.01)">V2</button><div class="cooldown" id="cd-v2"></div></div>
-  <div class="box"><button onclick="rewardAd('v3',0.01)">V3</button><div class="cooldown" id="cd-v3"></div></div>
-  <button onclick="openPage('home')">⬅ Back</button>
-</div>
-
-<div id="gift" class="page">
-  <h3>Gift Room</h3>
-  <div class="box"><button onclick="rewardPop('g1',0.012)">Gift 1</button><div class="cooldown" id="cd-g1"></div></div>
-  <div class="box"><button onclick="rewardPop('g2',0.012)">Gift 2</button><div class="cooldown" id="cd-g2"></div></div>
-  <div class="box"><button onclick="rewardPop('g3',0.012)">Gift 3</button><div class="cooldown" id="cd-g3"></div></div>
-  <button onclick="openPage('home')">⬅ Back</button>
-</div>
-
-<div id="unlimited" class="page">
-  <h3>Unlimited Ads</h3>
-  <div class="box"><button onclick="countAd('u1')">Ads V1</button><div class="cooldown" id="cd-u1"></div></div>
-  <div class="box"><button onclick="countAd('u2')">Ads V2</button><div class="cooldown" id="cd-u2"></div></div>
-  <div class="box"><button onclick="countAd('u3')">Ads V3</button><div class="cooldown" id="cd-u3"></div></div>
-  <button onclick="openPage('home')">⬅ Back</button>
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
