@@ -1,91 +1,157 @@
-/* Telegram REAL login */
-const tg = window.Telegram?.WebApp
-if (tg) {
-  tg.ready()
-  const u = tg.initDataUnsafe?.user
-  document.getElementById('user').innerText =
-    u ? '@' + (u.username || u.first_name) : '@unknown'
-} else {
-  document.getElementById('user').innerText = '@guest'
+/* ================= TELEGRAM ================= */
+const tg = window.Telegram?.WebApp;
+tg?.ready();
+
+const tgUser = tg?.initDataUnsafe?.user;
+const username = tgUser
+  ? `@${tgUser.username || tgUser.first_name}`
+  : "Guest";
+
+document.getElementById("userBar").innerText =
+  "👤 User: " + username;
+
+/* ================= FIREBASE ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from
+  "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAj6o2HbMEC472gDoNuFSDmdOSJj8k9S_U",
+  authDomain: "fir-493d0.firebaseapp.com",
+  projectId: "fir-493d0",
+  storageBucket: "fir-493d0.firebasestorage.app",
+  messagingSenderId: "935141131610",
+  appId: "1:935141131610:web:7998e21d07d7b4c71b5f63"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+signInAnonymously(getAuth(app));
+
+/* ================= YOUTUBE ================= */
+let player;
+let playlist = [];
+
+window.onYouTubeIframeAPIReady = () => {
+  player = new YT.Player("player", {
+    height: "360",
+    width: "100%",
+    playerVars: { playsinline: 1 },
+    events: {
+      onStateChange: e => {
+        if (e.data === YT.PlayerState.ENDED) {
+          nextRandom();
+        }
+      }
+    }
+  });
+};
+
+/* ================= HELPERS ================= */
+const extractId = url => {
+  const m = url.match(/(?:v=|youtu\.be\/)([^&]+)/);
+  return m ? m[1] : null;
+};
+
+const randomFrom = arr =>
+  arr[Math.floor(Math.random() * arr.length)];
+
+/* ================= PLAYLIST ================= */
+window.addVideo = async () => {
+  const id = extractId(ytUrl.value);
+  if (!id) return alert("Invalid YouTube URL");
+
+  await addDoc(collection(db, "playlist"), {
+    videoId: id,
+    createdAt: Date.now()
+  });
+  ytUrl.value = "";
+};
+
+/* ================= GLOBAL STATE ================= */
+const stateRef = doc(db, "global", "state");
+
+const stateSnap = await getDoc(stateRef);
+if (!stateSnap.exists()) {
+  await setDoc(stateRef, {
+    currentIndex: 0,
+    currentVideoId: "",
+    updatedAt: Date.now(),
+    played: []
+  });
 }
 
-/* Parallel preload */
-window.addEventListener('load',()=>{
-  try{
-    show_10276123({type:'inApp'})
-    show_10337795({type:'inApp'})
-    show_10337853({type:'inApp'})
-  }catch(e){}
-})
+/* ================= GLOBAL SYNC ================= */
+onSnapshot(stateRef, snap => {
+  const d = snap.data();
+  if (!d?.currentVideoId) return;
 
-let balance = 0
-const COOLDOWN = 120 // ✅ 2 MINUTES FOR ALL
-const toast = document.getElementById('toast')
+  if (
+    player &&
+    player.getVideoData().video_id !== d.currentVideoId
+  ) {
+    player.loadVideoById(d.currentVideoId);
+  }
+});
 
-function openPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
-  document.getElementById(id).classList.add('active')
-}
+/* ================= PLAYLIST SYNC ================= */
+const q = query(collection(db, "playlist"), orderBy("createdAt"));
+onSnapshot(q, snap => {
+  playlist = [];
+  playlistEl.innerHTML = "";
 
-function showToast(msg){
-  toast.innerText = msg
-  toast.style.display = 'block'
-  setTimeout(()=>toast.style.display='none',2000)
-}
+  snap.forEach((doc, i) => {
+    const id = doc.data().videoId;
+    playlist.push(id);
+    playlistEl.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${id}</td>
+        <td><button onclick="playDirect('${id}')">▶️</button></td>
+      </tr>`;
+  });
+});
 
-/* CPM Smart Rotation (no zero CPM) */
-const adPool = [
-  { fn:()=>show_10276123(), w:3 },
-  { fn:()=>show_10337795(), w:2 },
-  { fn:()=>show_10337853(), w:1 }
-]
+/* ================= PLAY DIRECT ================= */
+window.playDirect = async videoId => {
+  await setDoc(stateRef, {
+    currentVideoId: videoId,
+    updatedAt: Date.now(),
+    played: [videoId]
+  }, { merge: true });
+};
 
-function pickAd(){
-  const bag=[]
-  adPool.forEach(a=>{for(let i=0;i<a.w;i++) bag.push(a)})
-  return bag[Math.floor(Math.random()*bag.length)]
-}
+/* ================= PURE RANDOM NEXT ================= */
+window.nextRandom = async () => {
+  const snap = await getDoc(stateRef);
+  const state = snap.data();
 
-function rewardAd(key,amt){
-  if(lock(key)) return
-  pickAd().fn().then(()=>{
-    add(amt)
-    showToast(`+₱${amt}`)
-  })
-}
+  let played = state.played || [];
 
-function rewardPop(key,amt){
-  if(lock(key)) return
-  pickAd().fn().then(()=>{
-    add(amt)
-    showToast(`+₱${amt}`)
-  })
-}
+  // Reset if all watched
+  if (played.length >= playlist.length) {
+    played = [];
+  }
 
-function countAd(key){
-  if(lock(key)) return
-  pickAd().fn().then(()=>showToast('Ad viewed'))
-}
+  const remaining = playlist.filter(v => !played.includes(v));
+  const next = randomFrom(remaining);
 
-function add(v){
-  balance+=v
-  document.getElementById('balance').innerText=balance.toFixed(2)
-}
+  played.push(next);
 
-function lock(k){
-  const t = localStorage.getItem(k)
-  if(t && Date.now()<t) return true
-  localStorage.setItem(k,Date.now()+COOLDOWN*1000)
-  tick(k)
-  return false
-}
-
-function tick(k){
-  const el=document.getElementById('cd-'+k)
-  if(!el) return
-  const i=setInterval(()=>{
-    const t=localStorage.getItem(k)-Date.now()
-    if(t<=0){el.innerText='Ready';clearInterval(i)}
-    else el.innerText=`Cooldown ${Math.ceil(t/1000)}s`
-  },1000)
-}
+  await setDoc(stateRef, {
+    currentVideoId: next,
+    updatedAt: Date.now(),
+    played
+  }, { merge: true });
+};
