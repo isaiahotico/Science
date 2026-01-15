@@ -1,19 +1,17 @@
 /* ================= TELEGRAM ================= */
 const tg = window.Telegram?.WebApp;
 tg?.ready();
-
 const user = tg?.initDataUnsafe?.user;
 document.getElementById("userBar").innerText =
-  "👤 User: " + (user?.username ? "@"+user.username : user?.first_name || "Guest");
+  "👤 " + (user?.username ? "@"+user.username : user?.first_name || "Guest");
 
 /* ================= FIREBASE ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, doc, setDoc,
+  getFirestore, collection, addDoc, doc, setDoc, deleteDoc,
   onSnapshot, query, orderBy, getDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInAnonymously } from
-  "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAj6o2HbMEC472gDoNuFSDmdOSJj8k9S_U",
@@ -26,119 +24,149 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-signInAnonymously(getAuth(app));
+const auth = getAuth(app);
+signInAnonymously(auth);
 
 /* ================= YOUTUBE ================= */
 let player;
 let playlist = [];
+let currentVideoId = null;
+let startedAt = null;
 
 window.onYouTubeIframeAPIReady = () => {
   player = new YT.Player("player", {
-    width: "100%",
-    height: "100%",
-    playerVars: {
-      playsinline: 1,
-      origin: location.origin
-    },
-    events: {
-      onStateChange: e => {
-        if (e.data === YT.PlayerState.ENDED) nextRandom();
+    playerVars:{playsinline:1, autoplay:0},
+    events:{
+      onReady:syncTime,
+      onStateChange:e=>{
+        if(e.data===YT.PlayerState.ENDED) nextRandom();
       }
     }
   });
 };
 
 /* ================= HELPERS ================= */
-const extractId = url => {
-  const m = url.match(/(?:v=|youtu\.be\/|shorts\/)([^?&]+)/);
-  return m ? m[1] : null;
-};
+const extractId = url =>
+  url.match(/(?:v=|youtu\.be\/|shorts\/)([^?&]+)/)?.[1];
 
-const pickRandom = arr =>
-  arr[Math.floor(Math.random() * arr.length)];
+const pickRandom = arr => arr[Math.floor(Math.random()*arr.length)];
 
 /* ================= GLOBAL STATE ================= */
 const stateRef = doc(db,"global","state");
+const playlistEl = document.getElementById("playlist");
 
-if (!(await getDoc(stateRef)).exists()) {
-  await setDoc(stateRef,{
-    currentVideoId:"",
-    played:[],
-    updatedAt:Date.now()
+/* ================= VIEWERS ================= */
+onAuthStateChanged(auth, async u=>{
+  if(!u) return;
+  const viewerRef = doc(db,"global/viewers",u.uid);
+  await setDoc(viewerRef,{joinedAt:Date.now()});
+  window.addEventListener("beforeunload",()=>deleteDoc(viewerRef));
+});
+
+onSnapshot(collection(db,"global/viewers"),snap=>{
+  document.getElementById("viewers").innerText = `👀 ${snap.size} watching`;
+});
+
+/* ================= PLAYLIST SYNC ================= */
+function renderPlaylist(snapshot){
+  playlist = [];
+  playlistEl.innerHTML="";
+  snapshot.forEach((d,i)=>{
+    const id = d.data().videoId;
+    playlist.push(id);
+    playlistEl.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${id}</td>
+        <td>
+          <button onclick="playNow('${id}')" class="playBtn">▶️ Play</button>
+        </td>
+      </tr>`;
   });
 }
 
-/* ================= ADD & PLAY (FIXED VIEW ISSUE) ================= */
-window.addVideo = async () => {
-  const id = extractId(ytUrl.value);
-  if (!id) return alert("Invalid YouTube link");
+onSnapshot(
+  query(collection(db,"playlist"),orderBy("createdAt")),
+  renderPlaylist
+);
+
+/* ================= ADD URL ================= */
+document.getElementById("addBtn").addEventListener("click", async ()=>{
+  const url = document.getElementById("ytUrl").value;
+  const id = extractId(url);
+  if(!id) return alert("Invalid YouTube link");
 
   await addDoc(collection(db,"playlist"),{
     videoId:id,
     createdAt:Date.now()
   });
 
-  // 🔥 THIS IS WHAT COUNTS THE VIEW
+  document.getElementById("ytUrl").value="";
+});
+
+/* ================= PLAY VIDEO ================= */
+document.getElementById("playBtn").addEventListener("click", async ()=>{
+  const url = document.getElementById("ytUrl").value;
+  const id = extractId(url);
+  if(!id) return alert("Invalid YouTube link");
+
+  // Play globally
   await setDoc(stateRef,{
     currentVideoId:id,
-    played:[id],
-    updatedAt:Date.now()
+    startedAt:serverTimestamp(),
+    played:[id]
   },{merge:true});
 
-  ytUrl.value="";
-};
+  document.getElementById("ytUrl").value="";
+});
 
-/* ================= GLOBAL SYNC (FAST) ================= */
-onSnapshot(stateRef,snap=>{
-  const d=snap.data();
-  if (!d?.currentVideoId || !player) return;
+/* ================= GLOBAL SYNC ================= */
+onSnapshot(stateRef, snap=>{
+  const d = snap.data();
+  if(!d?.currentVideoId || !player) return;
 
-  if (player.getVideoData().video_id !== d.currentVideoId) {
-    player.loadVideoById(d.currentVideoId);
+  currentVideoId = d.currentVideoId;
+  startedAt = d.startedAt?.toMillis?.();
+
+  if(player.getVideoData().video_id!==currentVideoId){
+    player.loadVideoById(currentVideoId);
+    player.playVideo();
+  } else syncTime();
+});
+
+/* ================= EXACT SECOND SYNC ================= */
+function syncTime(){
+  if(!startedAt || !player?.getCurrentTime) return;
+  const now = Date.now();
+  const seek = (now - startedAt)/1000;
+  if(Math.abs(player.getCurrentTime() - seek) > 1){
+    player.seekTo(seek, true);
   }
-});
-
-/* ================= PLAYLIST SYNC ================= */
-onSnapshot(
-  query(collection(db,"playlist"),orderBy("createdAt")),
-  snap=>{
-    playlist=[];
-    playlistEl.innerHTML="";
-    snap.forEach((doc,i)=>{
-      const id=doc.data().videoId;
-      playlist.push(id);
-      playlistEl.innerHTML+=`
-        <tr>
-          <td>${i+1}</td>
-          <td>${id}</td>
-          <td><button onclick="playNow('${id}')">▶️</button></td>
-        </tr>`;
-    });
-});
+}
 
 /* ================= DIRECT PLAY ================= */
-window.playNow = async id => {
+window.playNow = async id=>{
   await setDoc(stateRef,{
     currentVideoId:id,
-    updatedAt:Date.now()
+    startedAt:serverTimestamp(),
+    played:[id]
   },{merge:true});
 };
 
-/* ================= PURE RANDOM NEXT ================= */
-window.nextRandom = async () => {
+/* ================= RANDOM NEXT ================= */
+window.nextRandom = async ()=>{
   const snap = await getDoc(stateRef);
-  let played = snap.data().played || [];
+  let played = snap.data().played||[];
 
-  if (played.length >= playlist.length) played = [];
-
-  const remaining = playlist.filter(v => !played.includes(v));
+  if(played.length >= playlist.length) played=[];
+  const remaining = playlist.filter(v=>!played.includes(v));
   const next = pickRandom(remaining);
 
   played.push(next);
 
   await setDoc(stateRef,{
     currentVideoId:next,
-    played,
-    updatedAt:Date.now()
+    startedAt:serverTimestamp(),
+    played
   },{merge:true});
 };
