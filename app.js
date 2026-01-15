@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, setDoc, doc, onSnapshot, query, orderBy, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, setDoc, doc, onSnapshot, query, orderBy, getDocs, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ================= TELEGRAM ================= */
 const tg = window.Telegram?.WebApp;
@@ -42,7 +42,10 @@ window.onYouTubeIframeAPIReady = () => {
 };
 
 /* ================= HELPERS ================= */
-const extractId = url => url.match(/(?:v=|youtu\.be\/|shorts\/)([^?&]+)/)?.[1];
+const extractId = url => {
+  const match = url.match(/(?:v=|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+};
 const pickRandom = arr => arr[Math.floor(Math.random()*arr.length)];
 
 /* ================= FIRESTORE REFS ================= */
@@ -91,51 +94,63 @@ onSnapshot(query(playlistCol,orderBy("createdAt")), snap=>{
   });
 });
 
-/* ================= ADD URL ================= */
+/* ================= ADD URL FIXED ================= */
 document.getElementById("addBtn").addEventListener("click", async ()=>{
-  const url = document.getElementById("ytUrl").value;
-  const id = extractId(url);
-  if(!id) return alert("Invalid YouTube link");
+  const url = document.getElementById("ytUrl").value.trim();
+  if(!url) return alert("Please paste a YouTube link.");
+  const videoId = extractId(url);
+  if(!videoId) return alert("Invalid YouTube link.");
 
-  const snap = await playlistCol.get();
-  const userVideos = snap.docs.filter(d=>d.data().addedBy===username);
-  if(userVideos.length >=5){
-    const ok = await spendPoints(20);
-    if(!ok) return alert("Not enough points! Watch videos to earn more.");
+  try{
+    const snapshot = await getDocs(query(playlistCol,orderBy("createdAt")));
+    const userVideos = snapshot.docs.filter(d=>d.data().addedBy===username);
+
+    if(userVideos.length>=5){
+      const ok = await spendPoints(20);
+      if(!ok) return alert("Not enough points! Watch videos to earn more.");
+    }
+
+    await addDoc(playlistCol,{
+      videoId: videoId,
+      addedBy: username,
+      createdAt: Date.now()
+    });
+
+    // Auto update global state
+    await setDoc(stateDoc,{
+      currentVideoId: videoId,
+      startedAt: serverTimestamp(),
+      played: [videoId]
+    },{merge:true});
+
+    document.getElementById("ytUrl").value="";
+  }catch(err){
+    console.error("Failed to add video:", err);
+    alert("Failed to add video. Check console for errors.");
   }
-
-  await addDoc(playlistCol,{
-    videoId:id,
-    addedBy:username,
-    createdAt:Date.now()
-  });
-
-  document.getElementById("ytUrl").value="";
 });
 
 /* ================= PLAY VIDEO ================= */
 document.getElementById("playBtn").addEventListener("click", async ()=>{
-  const url = document.getElementById("ytUrl").value;
-  const id = extractId(url);
-  if(!id) return alert("Invalid YouTube link");
+  const url = document.getElementById("ytUrl").value.trim();
+  const videoId = extractId(url);
+  if(!videoId) return alert("Invalid YouTube link.");
 
   await setDoc(stateDoc,{
-    currentVideoId:id,
-    startedAt:serverTimestamp(),
-    played:[id]
+    currentVideoId: videoId,
+    startedAt: serverTimestamp(),
+    played: [videoId]
   },{merge:true});
 
   document.getElementById("ytUrl").value="";
 });
 
 /* ================= GLOBAL SYNC ================= */
-onSnapshot(stateDoc, snap=>{
+onSnapshot(stateDoc,snap=>{
   const d = snap.data();
   if(!d?.currentVideoId || !player) return;
-
   currentVideoId = d.currentVideoId;
   startedAt = d.startedAt?.toMillis?.();
-
   if(player.getVideoData().video_id!==currentVideoId){
     player.loadVideoById(currentVideoId);
     player.playVideo();
@@ -150,11 +165,11 @@ function syncTime(){
 }
 
 /* ================= DIRECT PLAY ================= */
-window.playNow = async id=>{
+window.playNow = async videoId=>{
   await setDoc(stateDoc,{
-    currentVideoId:id,
-    startedAt:serverTimestamp(),
-    played:[id]
+    currentVideoId: videoId,
+    startedAt: serverTimestamp(),
+    played:[videoId]
   },{merge:true});
 };
 
@@ -162,11 +177,13 @@ window.playNow = async id=>{
 async function nextRandom(){
   const snap = await stateDoc.get();
   let played = snap.data()?.played || [];
-
   if(played.length>=playlist.length) played=[];
   const remaining = playlist.filter(v=>!played.includes(v));
   const next = pickRandom(remaining);
   played.push(next);
-
-  await setDoc(stateDoc,{currentVideoId:next, startedAt:serverTimestamp(), played},{merge:true});
+  await setDoc(stateDoc,{
+    currentVideoId: next,
+    startedAt: serverTimestamp(),
+    played
+  },{merge:true});
 }
