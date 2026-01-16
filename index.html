@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
     
+    <!-- SDKs -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -16,24 +17,29 @@
     
     <style>
         :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 120px; text-align: center; color: var(--secondary); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 130px; text-align: center; color: var(--secondary); }
         #header { background: var(--secondary); color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--primary); }
-        .page { display: none; padding: 15px; }
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .active { display: block; }
-        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; color: #333; text-decoration: none;}
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; color: #333; }
         .btn:disabled { background: #ccc !important; box-shadow: 0 4px #999 !important; cursor: not-allowed; }
         .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
         input { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-        .table-container { overflow-x: auto; margin-top: 15px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .table-container { overflow-x: auto; margin-top: 15px; background: #fff; border-radius: 8px; border: 1px solid #ddd; }
         table { width: 100%; font-size: 11px; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #eee; }
-        .cooldown { font-size: 13px; color: #e65100; font-weight: bold; margin-bottom: 5px; }
-        .claim-btn { background: #4caf50 !important; color: white !important; display: none; }
-        .status-paid { color: green; font-weight: bold; }
-        .status-denied { color: red; font-weight: bold; }        .status-pending { color: orange; font-weight: bold; }
-        #footer { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 10px 0; font-size: 11px; border-top: 3px solid var(--primary); }
-        .social-link { background: #fff; color: #333; padding: 12px; border-radius: 8px; display: block; margin: 10px; font-weight: bold; text-decoration: none; border: 1px solid #ddd; }
+        th { background: #f2f2f2; }
+        
+        .cooldown { font-size: 12px; color: #e65100; font-weight: bold; margin-bottom: 4px; }
+        .claim-btn { background: #4caf50 !important; color: white !important; display: none; }        .status-paid { color: green; font-weight: bold; }
+        .status-denied { color: red; font-weight: bold; }
+        .status-pending { color: orange; font-weight: bold; }
+        
+        #footer { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 10px 0; font-size: 11px; border-top: 3px solid var(--primary); z-index: 1000; }
+        .social-link { background: #fff; color: #333; padding: 12px; border-radius: 8px; display: block; margin: 10px; font-weight: bold; text-decoration: none; border: 1px solid #ddd;}
     </style>
 </head>
 <body>
@@ -56,7 +62,7 @@
     <button class="btn" onclick="checkAdmin()" style="background:#607d8b; color:white; margin-top:15px;">🛠 Owner Dashboard</button>
 </div>
 
-<!-- TASK TEMPLATES -->
+<!-- ADS AREA -->
 <div id="adsAreaPage" class="page">
     <h2>🍍 ADS AREA 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_1"></div><button class="btn" id="btn_1" onclick="runTask(1, 10276123, 0.02)">Watch Ad #1</button><button class="btn claim-btn" id="claim_1" onclick="claimReward(1)">CLAIM 0.02</button></div>
@@ -64,20 +70,28 @@
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- SIGN IN AREA (4 BUTTONS) -->
 <div id="signInPage" class="page">
     <h2>🍍 SIGN IN 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_S1"></div><button class="btn" id="btn_S1" onclick="runTask('S1', 10276123, 0.025)">Watch Sign-In #1</button><button class="btn claim-btn" id="claim_S1" onclick="claimReward('S1')">CLAIM 0.025</button></div>
-    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
+    <div class="card"><div class="cooldown" id="timer_S2"></div><button class="btn" id="btn_S2" onclick="runTask('S2', 10337795, 0.025)">Watch Sign-In #2</button><button class="btn claim-btn" id="claim_S2" onclick="claimReward('S2')">CLAIM 0.025</button></div>
+    <div class="card"><div class="cooldown" id="timer_S3"></div><button class="btn" id="btn_S3" onclick="runTask('S3', 10337853, 0.025)">Watch Sign-In #3</button><button class="btn claim-btn" id="claim_S3" onclick="claimReward('S3')">CLAIM 0.025</button></div>
+    <div class="card"><div class="cooldown" id="timer_S4"></div><button class="btn" id="btn_S4" onclick="runTask('S4', 10276123, 0.025)">Watch Sign-In #4</button><button class="btn claim-btn" id="claim_S4" onclick="claimReward('S4')">CLAIM 0.025</button></div>
+    <buttonclass="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- GIFT AREA (4 BUTTONS) -->
 <div id="giftPage" class="page">
     <h2>🍍 GIFT AREA 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_G1"></div><button class="btn" id="btn_G1" onclick="runTask('G1', 10337795, 0.02, 'pop')">Watch Gift #1</button><button class="btn claim-btn" id="claim_G1" onclick="claimReward('G1')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_G2"></div><button class="btn" id="btn_G2" onclick="runTask('G2', 10337853, 0.02, 'pop')">Watch Gift #2</button><button class="btn claim-btn" id="claim_G2" onclick="claimReward('G2')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_G3"></div><button class="btn" id="btn_G3" onclick="runTask('G3', 10276123, 0.02, 'pop')">Watch Gift #3</button><button class="btn claim-btn" id="claim_G3" onclick="claimReward('G3')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_G4"></div><button class="btn" id="btn_G4" onclick="runTask('G4', 10337795, 0.02, 'pop')">Watch Gift #4</button><button class="btn claim-btn" id="claim_G4" onclick="claimReward('G4')">CLAIM 0.02</button></div>
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
 <div id="helpPage" class="page">
-    <h2>❓ HELP & UPDATES</h2>
+    <h2>❓ HELP & SUPPORT</h2>
     <div class="card">
         <a href="https://t.me/paperhouseinc" target="_blank" class="social-link">📢 Telegram Group</a>
         <a href="https://facebook.com/groups/1193693469083843/" target="_blank" class="social-link">👥 Facebook Group</a>
@@ -87,15 +101,14 @@
 </div>
 
 <div id="referralPage" class="page">
-    <h2>👥 Referral System</h2>
+    <h2>👥 Lifetime Referral</h2>
     <div class="card">
         <p>Your Username: <b id="myRefCode">...</b></p>
         <input type="text" id="inviterInput" placeholder="Enter Inviter Username">
-        <button class="btn" onclick="linkReferral()">Activate Referral</button>
+        <button class="btn" onclick="linkReferral()">Link Inviter</button>
     </div>
     <div class="card">
-        <p>Total Invites: <span id="refCount">0</span></p>
-        <p>Total Earnings: <span id="refEarned">0.00</span> PHP</p>
+        <p>Invites: <span id="refCount">0</span> | Earnings: <span id="refEarned">0.00</span> PHP</p>
     </div>
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
@@ -108,6 +121,7 @@
         <button class="btn" onclick="requestWithdraw('GCash')">GCash</button>
         <button class="btn" onclick="requestWithdraw('FaucetPay')" style="background:#ff9800">FaucetPay</button>
     </div>
+    <h3>My Withdraw History</h3>
     <div id="historyTable" class="table-container"></div>
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
@@ -115,7 +129,7 @@
 <div id="adminPage" class="page">
     <h2>🛠 Admin Panel</h2>
     <div class="card" style="background:#333; color:white;">
-        <p>Total Approved Amount:</p>
+        <p>Total Approved Paid:</p>
         <h2 id="globalStats">0.00 PHP</h2>
     </div>
     <h3>Pending Requests</h3>
