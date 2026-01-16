@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
     
-    <!-- SDKs -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -15,105 +14,81 @@
     <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
     
+    <link rel="stylesheet" href="style.css"> <!-- Optional for external CSS -->
     <style>
         :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; text-align: center; color: var(--secondary); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; text-align: center; }
         #header { background: var(--secondary); color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--primary); }
-        .title-text { font-size: 26px; font-weight: 900; color: #5d4037; margin: 20px 0; }
-        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .page { display: none; padding: 15px; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px #f57f17; }
-        .btn:disabled { background: #ccc; box-shadow: 0 4px #999; cursor: not-allowed; }
-        
-        .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-        table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 10px; background: #fff; }
+        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; }
+        .btn:disabled { background: #ccc; box-shadow: 0 4px #999; }
+        .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        input { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; }
+        .table-container { overflow-x: auto; background: white; border-radius: 8px; margin-top: 10px; }
+        table { width: 100%; font-size: 11px; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .cooldown { font-size: 13px; color: #e65100; font-weight: bold; margin-top: 5px; }        .claim-btn { background: #4caf50 !important; color: white !important; display: none; }
-        .status-pending { color: orange; font-weight: bold; }
+        .cooldown { font-size: 12px; color: #e65100; font-weight: bold; }
+        .claim-btn { background: #4caf50 !important; color: white !important; display: none; }
         .status-paid { color: green; font-weight: bold; }
         .status-denied { color: red; font-weight: bold; }
+        .status-pending { color: orange; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <div id="userBar">👤 User: Guest</div>
-    <div id="balanceDisplay">💰 PHP 0.000</div>
+    <div id="userBar">👤 User: Guest</div>    <div id="balanceDisplay">💰 PHP 0.000</div>
 </div>
 
-<h1 class="title-text">PAPERHOUSE INC</h1>
+<h1 style="color: #5d4037;">PAPERHOUSE INC</h1>
 
-<!-- PAGES -->
+<!-- MAIN NAVIGATION -->
 <div id="homePage" class="page active">
     <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>
-    <button class="btn" onclick="showPage('signInPage')">🍍 Paper house Sign In 🍍</button>
-    <button class="btn" onclick="showPage('giftPage')">🍍 Paper house Gift 🍍</button>
-    <button class="btn" onclick="showPage('referralPage')" style="background:#03a9f4; color:white;">👥 Referral System</button>
-    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50; color:white;">💰 Withdraw Money</button>
-    <button class="btn" onclick="checkAdmin()" style="background:#607d8b; color:white; margin-top:30px;">🛠 Owner Dashboard</button>
+    <button class="btn" onclick="showPage('signInPage')">🍍 Sign In 🍍</button>
+    <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>
+    <button class="btn" onclick="showPage('referralPage')" style="background:#03a9f4;color:white">👥 Referral</button>
+    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;color:white">💰 Withdraw</button>
+    <button class="btn" onclick="checkAdmin()" style="background:#607d8b;color:white;margin-top:20px">🛠 Owner</button>
 </div>
 
+<!-- TASK PAGES (Structure is similar) -->
 <div id="adsAreaPage" class="page">
-    <h2>🍍 ADS AREA 🍍</h2>
-    <div class="card"><button class="btn" id="btn_task1" onclick="runTask(1, 10276123, 0.02)">🤑 Task #1 🤑</button><button class="btn claim-btn" id="claim_task1" onclick="claimReward(1)">CLAIM 0.02</button><div class="cooldown" id="timer_task1"></div></div>
-    <div class="card"><button class="btn" id="btn_task2" onclick="runTask(2, 10337795, 0.02)">🤑 Task #2 🤑</button><button class="btn claim-btn" id="claim_task2" onclick="claimReward(2)">CLAIM 0.02</button><div class="cooldown" id="timer_task2"></div></div>
-    <div class="card"><button class="btn" id="btn_task3" onclick="runTask(3, 10337853, 0.02)">🤑 Task #3 🤑</button><button class="btn claim-btn" id="claim_task3" onclick="claimReward(3)">CLAIM 0.02</button><div class="cooldown" id="timer_task3"></div></div>
+    <div class="card"><button class="btn" id="btn_task1" onclick="runTask(1, 10276123, 0.02)">Watch Ad 1</button><button class="btn claim-btn" id="claim_task1" onclick="claimReward(1)">CLAIM 0.02</button><div class="cooldown" id="timer_task1"></div></div>
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
-<div id="signInPage" class="page">
-    <h2>🍍 SIGN IN 🍍</h2>    <div class="card"><button class="btn" id="btn_taskS1" onclick="runTask('S1', 10276123, 0.025)">🍍 Task #1 🍍</button><button class="btn claim-btn" id="claim_taskS1" onclick="claimReward('S1')">CLAIM 0.025</button><div class="cooldown" id="timer_taskS1"></div></div>
-    <div class="card"><button class="btn" id="btn_taskS2" onclick="runTask('S2', 10337795, 0.025)">🍍 Task #2 🍍</button><button class="btn claim-btn" id="claim_taskS2" onclick="claimReward('S2')">CLAIM 0.025</button><div class="cooldown" id="timer_taskS2"></div></div>
-    <div class="card"><button class="btn" id="btn_taskS3" onclick="runTask('S3', 10337853, 0.025)">🍍 Task #3 🍍</button><button class="btn claim-btn" id="claim_taskS3" onclick="claimReward('S3')">CLAIM 0.025</button><div class="cooldown" id="timer_taskS3"></div></div>
-    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
-</div>
-
-<div id="giftPage" class="page">
-    <h2>🍍 GIFT AREA 🍍</h2>
-    <div class="card"><button class="btn" id="btn_taskG1" onclick="runTask('G1', 10276123, 0.02, 'pop')">🎁 Gift #1 🎁</button><button class="btn claim-btn" id="claim_taskG1" onclick="claimReward('G1')">CLAIM 0.02</button><div class="cooldown" id="timer_taskG1"></div></div>
-    <div class="card"><button class="btn" id="btn_taskG2" onclick="runTask('G2', 10337795, 0.02, 'pop')">🎁 Gift #2 🎁</button><button class="btn claim-btn" id="claim_taskG2" onclick="claimReward('G2')">CLAIM 0.02</button><div class="cooldown" id="timer_taskG2"></div></div><div class="card"><button class="btn" id="btn_taskG3" onclick="runTask('G3', 10337853, 0.02, 'pop')">🎁 Gift #3 🎁</button><button class="btn claim-btn" id="claim_taskG3" onclick="claimReward('G3')">CLAIM 0.02</button><div class="cooldown" id="timer_taskG3"></div></div>
-    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
-</div>
-
+<!-- REFERRAL PAGE -->
 <div id="referralPage" class="page">
-    <h2>👥 Referral System</h2>
     <div class="card">
-        <p>Invite friends and earn 10% of their earnings!</p>
-        <p>Your Referral ID: <b id="myReferralCode">...</b></p>
-        <input type="text" id="inviterInput" placeholder="Enter Inviter Username">
-        <button class="btn" onclick="linkReferral()">Activate Referral</button>
-    </div>
-    <div class="card">
-        <p>Total Invites: <span id="refCount">0</span></p>
-        <p>Total Earnings: <span id="refEarned">0.00</span> PHP</p>
+        <p>Your ID: <b id="myRefId">...</b></p>
+        <input type="text" id="inviterInput" placeholder="Inviter Username">
+        <button class="btn" onclick="linkReferral()">Link Inviter</button>
+        <p>Invites: <span id="refCount">0</span> | Total Earned: <span id="refEarned">0.00</span></p>
     </div>
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- WITHDRAW PAGE -->
 <div id="withdrawPage" class="page">
-    <h2>Withdraw your Money here</h2>
     <div class="card">
         <input type="number" id="wAmount" placeholder="Amount PHP">
-        <input type="text" id="wInfo" placeholder="GCash Number or FP Email">
-        <button class="btn" onclick="requestWithdraw('GCash')">Withdraw to GCash</button>
-        <button class="btn" onclick="requestWithdraw('FaucetPay')" style="background:#ff9800">Withdraw to FaucetPay (USDT)</button>
+        <input type="text" id="wInfo" placeholder="GCash/Email">
+        <button class="btn" onclick="handleWithdraw()">Submit Request</button>
     </div>
-    <h3>Withdrawal History</h3>
-    <div id="historyTable"></div>
+    <h3>History</h3>
+    <div id="historyTable" class="table-container"></div>
     <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- ADMIN PAGE -->
 <div id="adminPage" class="page">
-    <h2>Owner Dashboard</h2>
-    <div class="card" style="background:#333; color:white;">
-        <p>Total Global Withdrawn:</p>
-        <h2 id="globalStats">0.00 PHP</h2>
-    </div>
-    <div id="adminTable"></div>
+    <div class="card" style="background:#222;color:white">Total Global: <h2 id="globalStats">0.00</h2></div>
+    <h3>Pending</h3>
+    <div id="adminPending" class="table-container"></div>
+    <h3>History (Last 100)</h3>
+    <div id="adminHistory" class="table-container"></div>
     <button class="btn" onclick="showPage('homePage')">⬅ Close</button>
 </div>
 
