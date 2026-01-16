@@ -1,4 +1,43 @@
-        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPERHOUSE INC</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Monetag SDKs -->
+    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
+
+    <style>
+        :root { --p: #f1c40f; --s: #27ae60; --a: #e67e22; --bg: #fffdf2; --dark: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); }
+        
+        .header { background: var(--p); padding: 10px; text-align: center; border-bottom: 3px solid #d4ac0d; position: sticky; top: 0; z-index: 1000; height: 75px; }
+        .balance-box { font-size: 1.5rem; font-weight: 900; color: #1e8449; }
+
+        .container { padding: 10px; max-width: 500px; margin: auto; }
+        .page { display: none; text-align: center; }
+        .active { display: block; }
+
+        .btn { background: var(--a); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; margin: 6px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
+        .btn:disabled { background: #bdc3c7; box-shadow: none; opacity: 0.8; }
+
+        /* Chat Window */
+        #chatMessages { height: 45vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; }
+        .msg { margin-bottom: 10px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; }
+        .msg-u { font-weight: bold; color: var(--a); font-size: 0.9rem; }
+        .msg-t { font-size: 0.85rem; color: #333; display: block; }
+        .msg-d { font-size: 0.65rem; color: #aaa; }
+
+        .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 10px; overflow: hidden; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: center; font-size: 0.85rem; }
+        th { background: #fdf2d0; }
+
+        input { width: 85%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
