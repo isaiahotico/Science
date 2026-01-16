@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Monetag SDKs -->
     <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
@@ -13,104 +13,130 @@
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
 
     <style>
-        :root { --p: #f1c40f; --s: #27ae60; --a: #e67e22; --bg: #fffdf2; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
-        .header { background: var(--p); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; border-bottom: 3px solid #d4ac0d; }
-        #userBar { font-weight: bold; margin-bottom: 5px; }
-        .balance-box { font-size: 1.5rem; font-weight: 800; color: #1e8449; }
+        :root { --p: #f1c40f; --s: #27ae60; --a: #e67e22; --bg: #fffdf2; --dark: #2c3e50; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); padding-bottom: 60px; }
+        .header { background: var(--p); padding: 15px; text-align: center; border-bottom: 3px solid #d4ac0d; position: sticky; top: 0; z-index: 1000; }
+        .balance-box { font-size: 1.6rem; font-weight: 900; color: #1e8449; text-shadow: 1px 1px 0px white; }
         
-        .container { padding: 20px; text-align: center; }
-        .page { display: none; }
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        .page { display: none; text-align: center; }
         .active { display: block; }
 
-        .nav-btn { background: var(--a); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1.1rem; font-weight: bold; margin: 10px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
-        .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px #a04000; }
-
-        .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .task-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
-        .claim-btn { background: #9b59b6; color: white; border: none; padding: 10px 20px; border-radius: 8px; margin-top: 10px; display: none; width: 100%; cursor: pointer; }
+        .btn { background: var(--a); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1.1rem; font-weight: bold; margin: 8px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
+        .btn:disabled { background: #bdc3c7; box-shadow: none; cursor: not-allowed; }
         
-        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.8rem; }
-        th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
-        .status-paid { color: green; font-weight: bold; }        .status-pending { color: orange; font-weight: bold; }
-        .status-denied { color: red; font-weight: bold; }
+        .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .timer-box { font-size: 0.9rem; color: #e74c3c; font-weight: bold; margin-top: 5px; }
+        
+        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; background: white; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: center; }
+        
+        .footer { font-size: 0.75rem; color: #7f8c8d; text-align: center; margin-top: 20px; padding: 10px; }
+        .help-btn { background: #3498db; }        .claim-area { background: #ebfef2; padding: 10px; border-radius: 10px; border: 1px dashed var(--s); margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div id="userBar">👤 User: Guest</div>
-        <div class="balance-box">₱ <span id="userBalance">0.000</span></div>
+        <div class="balance-box">₱ <span id="balance">0.000</span></div>
     </div>
 
     <div class="container">
-        <!-- Home Page -->
+        <!-- Home -->
         <div id="homePage" class="page active">
-            <h1>🍍 PAPERHOUSE INC </h1>
-            <button class="nav-btn" onclick="showPage('adsArea')">🍍 ADS AREA 🍍</button>
-            <button class="nav-btn" onclick="showPage('signInArea')">🍍 Paper house Sign In 🍍</button>
-            <button class="nav-btn" onclick="showPage('giftArea')">🍍 Paper house Gift 🍍</button>
-            <button class="nav-btn" style="background:#2980b9" onclick="showPage('withdrawPage')">💸 Withdraw Money 💸</button>
-            <p onclick="adminLogin()" style="color:gray; font-size:0.7rem; margin-top:20px;">Owner Dashboard</p>
+            <h1>🍍 PAPERHOUSE INC</h1>
+            <button class="btn" onclick="showPage('adsArea')">🍍 ADS AREA 🍍</button>
+            <button class="btn" onclick="showPage('signInArea')">🍍 Paper house Sign In 🍍</button>
+            <button class="btn" onclick="showPage('giftArea')">🍍 Paper house Gift 🍍</button>
+            <button class="btn" style="background:#8e44ad" onclick="showPage('referralPage')">👥 Referral System 👥</button>
+            <button class="btn" style="background:#2980b9" onclick="showPage('withdrawPage')">💸 Withdraw Money 💸</button>
+            <button class="btn help-btn" onclick="showPage('helpPage')">❓ Help / Support</button>
+            <p onclick="adminLogin()" style="color:gray; font-size:0.7rem; cursor:pointer;">Owner Dashboard</p>
         </div>
 
         <!-- Ads Area -->
         <div id="adsArea" class="page">
-            <button onclick="showPage('homePage')">Back</button>
-            <h2>🍍 ADS AREA</h2>
+            <button class="btn" onclick="showPage('homePage')">Back</button>
+            <h2>🍍 ADS AREA (5m Cooldown)</h2>
             <div id="adsList"></div>
         </div>
 
-        <!-- Sign In -->
+        <!-- Sign In Area -->
         <div id="signInArea" class="page">
-            <button onclick="showPage('homePage')">Back</button>
-            <h2>🍍 SIGN IN</h2>
+            <button class="btn" onclick="showPage('homePage')">Back</button>
+            <h2>🍍 SIGN IN (3h Cooldown)</h2>
             <div id="signInList"></div>
         </div>
 
         <!-- Gift Area -->
         <div id="giftArea" class="page">
-            <button onclick="showPage('homePage')">Back</button>
-            <h2>🍍 GIFT AREA</h2>
+            <button class="btn" onclick="showPage('homePage')">Back</button>
+            <h2>🍍 GIFT AREA (20m Cooldown)</h2>
             <div id="giftList"></div>
         </div>
 
-        <!-- Withdrawal Page -->
+        <!-- Referral Page -->
+        <div id="referralPage" class="page">
+            <button class="btn" onclick="showPage('homePage')">Back</button>
+            <h2>👥 Referral System</h2>
+            <div class="card">                <p>Your Referral Code: <br><strong id="myCode" style="color:var(--a); font-size:1.2rem;">...</strong></p>
+                <div id="refInputArea">
+                    <input type="text" id="refCodeInput" placeholder="Enter Referral Code">
+                    <button class="btn" style="padding:10px" onclick="setReferral()">Submit Code</button>
+                </div>
+            </div>
+            <div class="claim-area">
+                <p>Available Commission: ₱ <span id="refBonus">0.00</span></p>
+                <button class="btn" style="background:var(--s)" onclick="claimRefBonus()">Claim Bonus</button>
+            </div>
+            <table>
+                <thead><tr><th>Invites</th><th>Total Gains</th></tr></thead>
+                <tbody><tr><td id="refCount">0</td><td id="refTotalGains">₱ 0.00</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- Withdraw Page -->
         <div id="withdrawPage" class="page">
-            <button onclick="showPage('homePage')">Back</button>
-            <h2>Withdraw your Money here</h2>
-            
+            <button class="btn" onclick="showPage('homePage')">Back</button>
+            <h2>Withdraw Money</h2>
             <div class="card">
-                <h3>GCash</h3>
-                <input type="number" id="gcashAmt" placeholder="Amount (PHP)">
-                <input type="text" id="gcashNum" placeholder="GCash Number">
-                <button class="task-btn" onclick="requestWithdraw('GCash')">Submit GCash</button>
-            </div>
-
-            <div class="card">
-                <h3>FaucetPay</h3>
-                <input type="number" id="fpAmt" placeholder="Amount (PHP)">
-                <input type="email" id="fpEmail" placeholder="FaucetPay Email">
-                <button class="task-btn" style="background:#8e44ad" onclick="requestWithdraw('FaucetPay')">Submit USDT</button>
-            </div>
-
-            <h3>Withdrawal History</h3>
+                <input type="number" id="wAmt" placeholder="Amount PHP">
+                <input type="text" id="wTarget" placeholder="GCash No. or FP Email">
+                <button class="btn" style="background:var(--s)" onclick="withdraw('GCash')">Withdraw GCash</button>
+                <button class="btn" style="background:#8e44ad" onclick="withdraw('FaucetPay')">Withdraw FaucetPay</button></div>
+            <h3>Recent History</h3>
             <table id="historyTable">
-                <thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+                <thead><tr><th>Date</th><th>Method</th><th>Status</th></tr></thead>
                 <tbody id="historyBody"></tbody>
             </table>
         </div>
 
-        <!-- Admin Dashboard -->
+        <!-- Help Page -->
+        <div id="helpPage" class="page">
+            <button class="btn" onclick="showPage('homePage')">Back</button>
+            <h2>Help & Support</h2>
+            <div class="card">
+                <p>For inquiries, payment issues, or technical help, please email us:</p>
+                <a href="mailto:otico.isai2@gmail.com" style="color:var(--a); font-weight:bold; font-size:1.1rem;">otico.isai2@gmail.com</a>
+            </div>
+        </div>
+
+        <!-- Admin Page -->
         <div id="adminPage" class="page">
-            <button onclick="showPage('homePage')">Logout</button>
-            <h2>Owner Dashboard</h2>
-            <p>Total Withdrawn: ₱ <span id="adminTotalWithdrawn">0.00</span></p>
-            <table id="adminTable">
-                <thead><tr><th>User</th><th>Details</th><th>Amt</th><th>Action</th></tr></thead>
+            <button class="btn" onclick="showPage('homePage')">Exit Admin</button>
+            <h2>Admin Dashboard</h2>
+            <p>Total Paid Out: ₱ <span id="adminTotal">0.00</span></p>
+            <table style="font-size:0.7rem">
+                <thead><tr><th>User</th><th>Amt</th><th>Action</th></tr></thead>
                 <tbody id="adminBody"></tbody>
             </table>
+        </div>
+
+        <div class="footer">
+            <p>© PAPERHOUSE INC</p>
+            <p id="footerDateTime"></p>
         </div>
     </div>
 
