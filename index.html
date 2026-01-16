@@ -25,25 +25,24 @@
         .btn { background: var(--a); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; margin: 6px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
         .btn:disabled { background: #bdc3c7; box-shadow: none; opacity: 0.8; }
 
-        /* Chat Window */
+        /* Chat Window (Half Screen) */
         #chatMessages { height: 45vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; }
-        .msg { margin-bottom: 10px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; }
-        .msg-u { font-weight: bold; color: var(--a); font-size: 0.9rem; }
-        .msg-t { font-size: 0.85rem; color: #333; display: block; }
-        .msg-d { font-size: 0.65rem; color: #aaa; }
+        .msg { margin-bottom: 8px; padding: 5px; border-radius: 8px; background: #fdfdfd; border: 1px solid #eee; }
+        .msg-u { font-weight: bold; color: var(--s); font-size: 0.9rem; }
+        .msg-t { font-size: 0.9rem; margin-left: 5px; color: #333; }
+        .msg-d { font-size: 0.6rem; color: #aaa; display: block; text-align: right; }
 
         .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 10px; overflow: hidden; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: center; font-size: 0.85rem; }
-        th { background: #fdf2d0; }
-
-        input { width: 85%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { border: 1px solid #eee; padding: 8px; text-align: center; font-size: 0.8rem; }
+        th { background: #fdf2d0; }        input { width: 85%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
+        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div id="userBar">👤 User: Loading...</div>
+        <div id="userBar">👤 Loading...</div>
         <div class="balance-box">₱ <span id="balance">0.000</span></div>
     </div>
 
@@ -65,6 +64,7 @@
         <!-- Chat -->
         <div id="chatPage" class="page">
             <button class="btn" style="width:30%" onclick="nav('homePage')">Back</button>
+            <h3>Global Community Chat</h3>
             <div id="chatMessages"></div>
             <div class="card">
                 <input type="text" id="chatInput" placeholder="Write message...">
@@ -72,84 +72,76 @@
             </div>
         </div>
 
-        <!-- Ads -->
-        <div id="adsArea" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div id="adsList"></div>
-        </div>
-
-        <!-- Sign In -->
-        <div id="signInArea" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div id="signInList"></div>
-        </div>
-
-        <!-- Gift -->
-        <div id="giftArea" class="page">            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div id="giftList"></div>
-        </div>
-
         <!-- Referral -->
         <div id="refPage" class="page">
             <button class="btn" onclick="nav('homePage')">Back</button>
             <div class="card">
-                <p>Your Code: <strong id="myCode">--</strong></p>
-                <div id="refInputSection">
-                    <input type="text" id="refInput" placeholder="Enter Code">
-                    <button class="btn" onclick="setInviter()">Save</button>
+                <p>Your Code: <strong id="myCode" style="color:var(--a)">--</strong></p>
+                <div id="refInputSection">                    <input type="text" id="refInput" placeholder="Enter Referral Code">
+                    <button class="btn" style="padding:10px" onclick="setInviter()">Save</button>
                 </div>
             </div>
             <div class="card">
-                <h3>Referral Bonus: ₱<span id="refBonus">0.00</span></h3>
-                <button class="btn" style="background:var(--s)" onclick="claimBonus()">Claim to Balance</button>
+                <h3>Commission: ₱<span id="refBonus">0.00</span></h3>
+                <button class="btn" style="background:var(--s)" onclick="claimBonus()">Claim Bonus</button>
             </div>
             <div class="card">
-                <h3>Referral Stats</h3>
+                <h3>My Stats</h3>
                 <table>
-                    <thead><tr><th>Invites</th><th>Total Gains</th></tr></thead>
+                    <thead><tr><th>Invites</th><th>Earnings</th></tr></thead>
                     <tbody><tr><td id="refCount">0</td><td id="refTotal">₱ 0.00</td></tr></tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- Ads/Sign In/Gift Areas -->
+        <div id="adsArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="adsList"></div> </div>
+        <div id="signInArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="signInList"></div> </div>
+        <div id="giftArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="giftList"></div> </div>
+
+        <!-- Withdraw -->
+        <div id="withdrawPage" class="page">
+            <button class="btn" onclick="nav('homePage')">Back</button>
+            <div class="card">
+                <input type="number" id="wAmt" placeholder="Amount (Min 1 PHP)">
+                <input type="text" id="wTarget" placeholder="GCash No / FaucetPay Email">
+                <button class="btn" style="background:var(--s)" onclick="requestW()">Withdraw</button>
+            </div>
+            <h3>My History</h3>
+            <table id="wHistory">
+                <thead><tr><th>Date</th><th>Method</th><th>Status</th></tr></thead>
+                <tbody id="wHistoryBody"></tbody>
+            </table>
         </div>
 
         <!-- Leaderboard -->
         <div id="leadPage" class="page">
             <button class="btn" onclick="nav('homePage')">Back</button>
             <h3>🏆 Top 20</h3>
-            <table id="leaderboard">
+            <table>
                 <thead><tr><th>#</th><th>User</th><th>Balance</th></tr></thead>
                 <tbody id="leadBody"></tbody>
-            </table>
-        </div>
-
-        <!-- Withdraw -->
-        <div id="withdrawPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div class="card">
-                <input type="number" id="wAmt" placeholder="PHP Amount">
-                <input type="text" id="wTarget" placeholder="GCash/FaucetPay">
-                <button class="btn" style="background:var(--s)" onclick="requestW()">Submit Request</button>
-            </div>
-            <table>
-                <thead><tr><th>Date</th><th>Method</th><th>Status</th></tr></thead>
-                <tbody id="wHistory"></tbody>
             </table>
         </div>
 
         <!-- Help -->
         <div id="helpPage" class="page">
             <button class="btn" onclick="nav('homePage')">Back</button>
-            <div class="card">
-                <p>Support Email:</p>
-                <a href="mailto:otico.isai2@gmail.com">otico.isai2@gmail.com</a>
-            </div>
+            <div class="card"><h3>Help</h3><p>Email us at: <b>otico.isai2@gmail.com</b></p></div>
         </div>
 
         <!-- Admin -->
         <div id="adminPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Logout</button>
-            <h3>Admin Panel</h3>
+            <button class="btn" onclick="nav('homePage')">Exit</button>
+            <h3>Owner Control</h3>
+            <p>Total Paid: ₱<span id="adminTotal">0.00</span></p>
+            <h3>Pending Requests</h3>
             <div id="adminReqs"></div>
+            <h3>Payment History</h3>
+            <table style="font-size: 0.6rem">
+                <thead><tr><th>User</th><th>Amt</th><th>Target</th><th>Status</th></tr></thead>
+                <tbody id="adminHistory"></tbody>
+            </table>
         </div>
 
         <div class="footer">
@@ -157,7 +149,6 @@
             <span id="realTime"></span>
         </div>
     </div>
-
     <script type="module" src="app.js"></script>
 </body>
 </html>
