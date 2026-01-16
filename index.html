@@ -27,23 +27,23 @@
 
         /* Chat System */
         #chatRoomsContainer { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-        .chat-room { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); cursor: pointer; transition: transform 0.2s; }
-        .chat-room:hover { transform: translateY(-3px); }
+        .chat-room { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .chat-room:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .chat-room.active-room { border-color: var(--s); box-shadow: 0 0 15px rgba(39, 174, 96, 0.5); }
         .room-name { font-weight: bold; font-size: 1.1rem; }
-        .room-users { font-size: 0.8rem; color: gray; }
+        .room-desc { font-size: 0.8rem; color: gray; }
 
-        #chatMessages { height: 40vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; }
-        .msg { margin-bottom: 8px; padding: 5px; border-radius: 8px; background: #fdfdfd; border: 1px solid #eee; }
-        .msg-u { font-weight: bold; color: var(--s); font-size: 0.9rem; }
-        .msg-t { font-size: 0.9rem; margin-left: 5px; color: #333; }        .msg-d { font-size: 0.6rem; color: #aaa; display: block; text-align: right; }
+        #chatMessages { height: 40vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+        .msg { margin-bottom: 0; padding: 8px 10px; border-radius: 10px; background: #e0f2f1; border: 1px solid #c8e6e5; word-wrap: break-word; }        .msg-u { font-weight: bold; color: var(--s); font-size: 0.95rem; }
+        .msg-t { font-size: 0.9rem; margin-left: 5px; color: #333; display: inline; }
+        .msg-d { font-size: 0.65rem; color: #888; display: block; text-align: right; margin-top: 5px;}
 
         .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
         th, td { border: 1px solid #eee; padding: 8px; text-align: center; font-size: 0.8rem; }
         th { background: #fdf2d0; }
 
-        input { width: 85%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
+        input { width: calc(85% - 20px); padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
         .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
     </style>
 </head>
@@ -73,11 +73,17 @@
         <div id="chatPage" class="page">
             <button class="btn" style="width:30%" onclick="nav('homePage')">Back</button>
             <h3>Exclusive Chat Rooms</h3>
-            <div id="chatRoomsContainer">
-                <!-- Rooms will be dynamically loaded here -->
-            </div>            <div id="roomChat" class="page"> <!-- This will be shown when a room is selected -->
-                <button class="btn" style="width:30%; background:#e74c3c;" onclick="backToRooms()">Back to Rooms</button>
-                <h4 id="currentRoomName">Room Name</h4>
+            <!-- List of Chat Rooms -->
+            <div id="chatRoomsList">
+                <div id="chatRoomsContainer">
+                    <!-- Rooms will be dynamically loaded here by JS -->
+                </div>
+            </div>
+
+            <!-- Specific Chat Room Content (Initially Hidden) -->
+            <div id="roomChatContent" style="display:none;"> 
+                <button class="btn" style="width:30%; background:#e74c3c; margin-bottom: 10px;" onclick="backToRooms()">Back to Rooms</button>
+                <h4 id="currentRoomName">Select a Room</h4>
                 <div id="chatMessages"></div>
                 <div class="card">
                     <input type="text" id="chatInput" placeholder="Message...">
