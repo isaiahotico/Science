@@ -4,172 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <!-- SDKs -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <!-- Monetag SDKs -->
     <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
-
+    
     <style>
-        :root { --p: #f1c40f; --s: #27ae60; --a: #e67e22; --bg: #fffdf2; --dark: #2c3e50; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); }
-        
-        .header { background: var(--p); padding: 10px; text-align: center; border-bottom: 3px solid #d4ac0d; position: sticky; top: 0; z-index: 1000; height: 75px; }
-        .balance-box { font-size: 1.5rem; font-weight: 900; color: #1e8449; }
-
-        .container { padding: 10px; max-width: 500px; margin: auto; }
-        .page { display: none; text-align: center; }
+        :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; text-align: center; color: var(--secondary); }
+        #header { background: var(--secondary); color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--primary); }
+        .title-text { font-size: 26px; font-weight: 900; color: #5d4037; margin: 20px 0; }
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .active { display: block; }
-
-        .btn { background: var(--a); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; margin: 6px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
-        .btn:disabled { background: #bdc3c7; box-shadow: none; opacity: 0.8; }
-
-        /* Chat System */
-        #chatRoomsContainer { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-        .chat-room { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .chat-room:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .chat-room.active-room { border-color: var(--s); box-shadow: 0 0 15px rgba(39, 174, 96, 0.5); }
-        .room-name { font-weight: bold; font-size: 1.1rem; }
-        .room-desc { font-size: 0.8rem; color: gray; }
-
-        #chatMessages { height: 40vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; display: flex; flex-direction: column; gap: 8px; }
-        .msg { margin-bottom: 0; padding: 8px 10px; border-radius: 10px; background: #e0f2f1; border: 1px solid #c8e6e5; word-wrap: break-word; }        .msg-u { font-weight: bold; color: var(--s); font-size: 0.95rem; }
-        .msg-t { font-size: 0.9rem; margin-left: 5px; color: #333; display: inline; }
-        .msg-d { font-size: 0.65rem; color: #888; display: block; text-align: right; margin-top: 5px;}
-
-        .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
-        th, td { border: 1px solid #eee; padding: 8px; text-align: center; font-size: 0.8rem; }
-        th { background: #fdf2d0; }
-
-        input { width: calc(85% - 20px); padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
-        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px #f57f17; }
+        .btn:disabled { background: #ccc; box-shadow: 0 4px #999; cursor: not-allowed; }
+        
+        .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
+        table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 10px; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .cooldown { font-size: 13px; color: #e65100; font-weight: bold; margin-top: 5px; }        .claim-btn { background: #4caf50 !important; color: white !important; display: none; }
+        .status-pending { color: orange; font-weight: bold; }
+        .status-paid { color: green; font-weight: bold; }
+        .status-denied { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div id="userBar">👤 Loading...</div>
-        <div class="balance-box">₱ <span id="balance">0.000</span></div>
+<div id="header">
+    <div id="userBar">👤 User: Guest</div>
+    <div id="balanceDisplay">💰 PHP 0.000</div>
+</div>
+
+<h1 class="title-text">PAPERHOUSE INC</h1>
+
+<!-- PAGES -->
+<div id="homePage" class="page active">
+    <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>
+    <button class="btn" onclick="showPage('signInPage')">🍍 Paper house Sign In 🍍</button>
+    <button class="btn" onclick="showPage('giftPage')">🍍 Paper house Gift 🍍</button>
+    <button class="btn" onclick="showPage('referralPage')" style="background:#03a9f4; color:white;">👥 Referral System</button>
+    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50; color:white;">💰 Withdraw Money</button>
+    <button class="btn" onclick="checkAdmin()" style="background:#607d8b; color:white; margin-top:30px;">🛠 Owner Dashboard</button>
+</div>
+
+<div id="adsAreaPage" class="page">
+    <h2>🍍 ADS AREA 🍍</h2>
+    <div class="card"><button class="btn" id="btn_task1" onclick="runTask(1, 10276123, 0.02)">🤑 Task #1 🤑</button><button class="btn claim-btn" id="claim_task1" onclick="claimReward(1)">CLAIM 0.02</button><div class="cooldown" id="timer_task1"></div></div>
+    <div class="card"><button class="btn" id="btn_task2" onclick="runTask(2, 10337795, 0.02)">🤑 Task #2 🤑</button><button class="btn claim-btn" id="claim_task2" onclick="claimReward(2)">CLAIM 0.02</button><div class="cooldown" id="timer_task2"></div></div>
+    <div class="card"><button class="btn" id="btn_task3" onclick="runTask(3, 10337853, 0.02)">🤑 Task #3 🤑</button><button class="btn claim-btn" id="claim_task3" onclick="claimReward(3)">CLAIM 0.02</button><div class="cooldown" id="timer_task3"></div></div>
+    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
+<div id="signInPage" class="page">
+    <h2>🍍 SIGN IN 🍍</h2>    <div class="card"><button class="btn" id="btn_taskS1" onclick="runTask('S1', 10276123, 0.025)">🍍 Task #1 🍍</button><button class="btn claim-btn" id="claim_taskS1" onclick="claimReward('S1')">CLAIM 0.025</button><div class="cooldown" id="timer_taskS1"></div></div>
+    <div class="card"><button class="btn" id="btn_taskS2" onclick="runTask('S2', 10337795, 0.025)">🍍 Task #2 🍍</button><button class="btn claim-btn" id="claim_taskS2" onclick="claimReward('S2')">CLAIM 0.025</button><div class="cooldown" id="timer_taskS2"></div></div>
+    <div class="card"><button class="btn" id="btn_taskS3" onclick="runTask('S3', 10337853, 0.025)">🍍 Task #3 🍍</button><button class="btn claim-btn" id="claim_taskS3" onclick="claimReward('S3')">CLAIM 0.025</button><div class="cooldown" id="timer_taskS3"></div></div>
+    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
+<div id="giftPage" class="page">
+    <h2>🍍 GIFT AREA 🍍</h2>
+    <div class="card"><button class="btn" id="btn_taskG1" onclick="runTask('G1', 10276123, 0.02, 'pop')">🎁 Gift #1 🎁</button><button class="btn claim-btn" id="claim_taskG1" onclick="claimReward('G1')">CLAIM 0.02</button><div class="cooldown" id="timer_taskG1"></div></div>
+    <div class="card"><button class="btn" id="btn_taskG2" onclick="runTask('G2', 10337795, 0.02, 'pop')">🎁 Gift #2 🎁</button><button class="btn claim-btn" id="claim_taskG2" onclick="claimReward('G2')">CLAIM 0.02</button><div class="cooldown" id="timer_taskG2"></div></div><div class="card"><button class="btn" id="btn_taskG3" onclick="runTask('G3', 10337853, 0.02, 'pop')">🎁 Gift #3 🎁</button><button class="btn claim-btn" id="claim_taskG3" onclick="claimReward('G3')">CLAIM 0.02</button><div class="cooldown" id="timer_taskG3"></div></div>
+    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
+<div id="referralPage" class="page">
+    <h2>👥 Referral System</h2>
+    <div class="card">
+        <p>Invite friends and earn 10% of their earnings!</p>
+        <p>Your Referral ID: <b id="myReferralCode">...</b></p>
+        <input type="text" id="inviterInput" placeholder="Enter Inviter Username">
+        <button class="btn" onclick="linkReferral()">Activate Referral</button>
     </div>
-
-    <div class="container">
-        <!-- Home -->
-        <div id="homePage" class="page active">
-            <h1>🍍 PAPERHOUSE INC</h1>
-            <button class="btn" onclick="nav('adsArea')">🍍 ADS AREA 🍍</button>
-            <button class="btn" onclick="nav('signInArea')">🍍 Sign In 🍍</button>
-            <button class="btn" onclick="nav('giftArea')">🍍 Gift Area 🍍</button>
-            <button class="btn" style="background:#8e44ad" onclick="nav('refPage')">👥 Referral System 👥</button>
-            <button class="btn" style="background:#34495e" onclick="nav('leadPage')">🏆 Leaderboard 🏆</button>
-            <button class="btn" style="background:#1abc9c" onclick="nav('chatPage')">💬 Top Chat Rooms 💬</button>
-            <button class="btn" style="background:#2980b9" onclick="nav('withdrawPage')">💸 Withdraw Money 💸</button>
-            <button class="btn" style="background:#3498db" onclick="nav('helpPage')">❓ Help</button>
-            <p onclick="adminLogin()" style="color:#ddd; font-size:0.6rem; cursor:pointer;">Owner</p>
-        </div>
-
-        <!-- Chat System -->
-        <div id="chatPage" class="page">
-            <button class="btn" style="width:30%" onclick="nav('homePage')">Back</button>
-            <h3>Exclusive Chat Rooms</h3>
-            <!-- List of Chat Rooms -->
-            <div id="chatRoomsList">
-                <div id="chatRoomsContainer">
-                    <!-- Rooms will be dynamically loaded here by JS -->
-                </div>
-            </div>
-
-            <!-- Specific Chat Room Content (Initially Hidden) -->
-            <div id="roomChatContent" style="display:none;"> 
-                <button class="btn" style="width:30%; background:#e74c3c; margin-bottom: 10px;" onclick="backToRooms()">Back to Rooms</button>
-                <h4 id="currentRoomName">Select a Room</h4>
-                <div id="chatMessages"></div>
-                <div class="card">
-                    <input type="text" id="chatInput" placeholder="Message...">
-                    <button class="btn" style="background:var(--s)" onclick="sendMsg()">Send</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Referral -->
-        <div id="refPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div class="card">
-                <p>Your Code: <strong id="myCode" style="color:var(--a)">--</strong></p>
-                <div id="refInputSection">
-                    <input type="text" id="refInput" placeholder="Enter Referral Code">
-                    <button class="btn" style="padding:10px" onclick="setInviter()">Save</button>
-                </div>
-            </div>
-            <div class="card">
-                <h3>Commission: ₱<span id="refBonus">0.00</span></h3>
-                <button class="btn" style="background:var(--s)" onclick="claimBonus()">Claim Bonus</button>
-            </div>
-            <div class="card">
-                <h3>My Stats</h3>
-                <table>
-                    <thead><tr><th>Invites</th><th>Earnings</th></tr></thead>
-                    <tbody><tr><td id="refCount">0</td><td id="refTotal">₱ 0.00</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Ads/Sign In/Gift Areas -->
-        <div id="adsArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="adsList"></div> </div>
-        <div id="signInArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="signInList"></div> </div>
-        <div id="giftArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="giftList"></div> </div>
-
-        <!-- Withdraw -->
-        <div id="withdrawPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div class="card">
-                <input type="number" id="wAmt" placeholder="Amount (Min 1 PHP)">
-                <input type="text" id="wTarget" placeholder="GCash No / FaucetPay Email">
-                <button class="btn" style="background:var(--s)" onclick="requestW()">Withdraw</button>
-            </div>
-            <h3>My History</h3>
-            <table id="wHistory">
-                <thead><tr><th>Date</th><th>Method</th><th>Status</th></tr></thead>
-                <tbody id="wHistoryBody"></tbody>
-            </table>
-        </div>
-
-        <!-- Leaderboard -->
-        <div id="leadPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <h3>🏆 Top 20</h3>
-            <table>
-                <thead><tr><th>#</th><th>User</th><th>Balance</th></tr></thead>
-                <tbody id="leadBody"></tbody>
-            </table>
-        </div>
-
-        <!-- Help -->
-        <div id="helpPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <div class="card"><h3>Help</h3><p>Email us at: <b>otico.isai2@gmail.com</b></p></div>
-        </div>
-
-        <!-- Admin -->
-        <div id="adminPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Exit</button>
-            <h3>Owner Control</h3>
-            <p>Total Paid: ₱<span id="adminTotal">0.00</span></p>
-            <h3>Pending Requests</h3>
-            <div id="adminReqs"></div>
-            <h3>Payment History</h3>
-            <table style="font-size: 0.6rem">
-                <thead><tr><th>User</th><th>Amt</th><th>Target</th><th>Status</th></tr></thead>
-                <tbody id="adminHistory"></tbody>
-            </table>
-        </div>
-
-        <div class="footer">
-            © PAPERHOUSE INC<br>
-            <span id="realTime"></span>
-        </div>
+    <div class="card">
+        <p>Total Invites: <span id="refCount">0</span></p>
+        <p>Total Earnings: <span id="refEarned">0.00</span> PHP</p>
     </div>
-    <script type="module" src="app.js"></script>
+    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
+<div id="withdrawPage" class="page">
+    <h2>Withdraw your Money here</h2>
+    <div class="card">
+        <input type="number" id="wAmount" placeholder="Amount PHP">
+        <input type="text" id="wInfo" placeholder="GCash Number or FP Email">
+        <button class="btn" onclick="requestWithdraw('GCash')">Withdraw to GCash</button>
+        <button class="btn" onclick="requestWithdraw('FaucetPay')" style="background:#ff9800">Withdraw to FaucetPay (USDT)</button>
+    </div>
+    <h3>Withdrawal History</h3>
+    <div id="historyTable"></div>
+    <button class="btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
+<div id="adminPage" class="page">
+    <h2>Owner Dashboard</h2>
+    <div class="card" style="background:#333; color:white;">
+        <p>Total Global Withdrawn:</p>
+        <h2 id="globalStats">0.00 PHP</h2>
+    </div>
+    <div id="adminTable"></div>
+    <button class="btn" onclick="showPage('homePage')">⬅ Close</button>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
