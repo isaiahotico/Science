@@ -3,41 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPERHOUSE INC - TOP CHAT</title>
+    <title>PAPERHOUSE INC</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Monetag Ads -->
+    <!-- Monetag SDKs -->
     <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
 
     <style>
         :root { --p: #f1c40f; --s: #27ae60; --a: #e67e22; --bg: #fffdf2; --dark: #2c3e50; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); overflow-x: hidden;}
-        .header { background: var(--p); padding: 10px; text-align: center; border-bottom: 3px solid #d4ac0d; position: sticky; top: 0; z-index: 1000; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--dark); }
+        
+        .header { background: var(--p); padding: 10px; text-align: center; border-bottom: 3px solid #d4ac0d; position: sticky; top: 0; z-index: 1000; height: 75px; }
         .balance-box { font-size: 1.5rem; font-weight: 900; color: #1e8449; }
+
         .container { padding: 10px; max-width: 500px; margin: auto; }
         .page { display: none; text-align: center; }
         .active { display: block; }
+
         .btn { background: var(--a); color: white; border: none; padding: 12px; width: 100%; border-radius: 12px; font-size: 1rem; font-weight: bold; margin: 6px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
         .btn:disabled { background: #bdc3c7; box-shadow: none; opacity: 0.8; }
-        
-        /* Chat Styling */
-        .chat-room { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin: 10px 0; cursor: pointer; }
-        #chatMessages { height: 45vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; }
-        .msg { margin-bottom: 8px; padding: 8px; border-radius: 8px; background: #f0f0f0; border: 1px solid #ddd; }
-        .msg-u { font-weight: bold; color: var(--s); }
-        
+
+        /* Chat System */
+        #chatRoomsContainer { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .chat-room { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .chat-room:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .chat-room.active-room { border-color: var(--s); box-shadow: 0 0 15px rgba(39, 174, 96, 0.5); }
+        .room-name { font-weight: bold; font-size: 1.1rem; }
+        .room-desc { font-size: 0.8rem; color: gray; }
+
+        #chatMessages { height: 40vh; overflow-y: auto; background: white; border: 2px solid var(--p); border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+        .msg { margin-bottom: 0; padding: 8px 10px; border-radius: 10px; background: #e0f2f1; border: 1px solid #c8e6e5; word-wrap: break-word; }        .msg-u { font-weight: bold; color: var(--s); font-size: 0.95rem; }
+        .msg-t { font-size: 0.9rem; margin-left: 5px; color: #333; display: inline; }
+        .msg-d { font-size: 0.65rem; color: #888; display: block; text-align: right; margin-top: 5px;}
+
         .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        th, td { border: 1px solid #eee; padding: 8px; text-align: center; }
-        input { width: 80%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
+        th, td { border: 1px solid #eee; padding: 8px; text-align: center; font-size: 0.8rem; }
+        th { background: #fdf2d0; }
+
+        input { width: calc(85% - 20px); padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #ddd; }
+        .footer { font-size: 0.7rem; color: #7f8c8d; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div id="userBar">👤 @...</div>
+        <div id="userBar">👤 Loading...</div>
         <div class="balance-box">₱ <span id="balance">0.000</span></div>
     </div>
 
@@ -47,26 +60,36 @@
             <h1>🍍 PAPERHOUSE INC</h1>
             <button class="btn" onclick="nav('adsArea')">🍍 ADS AREA 🍍</button>
             <button class="btn" onclick="nav('signInArea')">🍍 Sign In 🍍</button>
+            <button class="btn" onclick="nav('giftArea')">🍍 Gift Area 🍍</button>
             <button class="btn" style="background:#8e44ad" onclick="nav('refPage')">👥 Referral System 👥</button>
-            <button class="btn" style="background:#1abc9c" onclick="nav('chatListPage')">💬 Top Chat Rooms 💬</button>
+            <button class="btn" style="background:#34495e" onclick="nav('leadPage')">🏆 Leaderboard 🏆</button>
+            <button class="btn" style="background:#1abc9c" onclick="nav('chatPage')">💬 Top Chat Rooms 💬</button>
             <button class="btn" style="background:#2980b9" onclick="nav('withdrawPage')">💸 Withdraw Money 💸</button>
-            <p onclick="adminLogin()" style="color:#ccc; font-size:0.6rem; margin-top:20px;">Owner Dashboard</p>
+            <button class="btn" style="background:#3498db" onclick="nav('helpPage')">❓ Help</button>
+            <p onclick="adminLogin()" style="color:#ddd; font-size:0.6rem; cursor:pointer;">Owner</p>
         </div>
 
-        <!-- Chat Room Selection -->
-        <div id="chatListPage" class="page">
-            <button class="btn" onclick="nav('homePage')">Back</button>
-            <h3>Select a Room</h3>
-            <div id="roomsContainer"></div>
-        </div>
+        <!-- Chat System -->
+        <div id="chatPage" class="page">
+            <button class="btn" style="width:30%" onclick="nav('homePage')">Back</button>
+            <h3>Exclusive Chat Rooms</h3>
+            <!-- List of Chat Rooms -->
+            <div id="chatRoomsList">
+                <div id="chatRoomsContainer">
+                    <!-- Rooms will be dynamically loaded here by JS -->
+                </div>
+            </div>
 
-        <!-- Actual Chat Room -->
-        <div id="chatRoomPage" class="page">
-            <button class="btn" onclick="nav('chatListPage')">Exit Room</button>
-            <h3 id="roomTitle">Room</h3>
-            <div id="chatMessages"></div>
-            <input type="text" id="chatInput" placeholder="Write a message...">
-            <button class="btn" style="background:var(--s)" onclick="sendMsg()">Send Message</button>
+            <!-- Specific Chat Room Content (Initially Hidden) -->
+            <div id="roomChatContent" style="display:none;"> 
+                <button class="btn" style="width:30%; background:#e74c3c; margin-bottom: 10px;" onclick="backToRooms()">Back to Rooms</button>
+                <h4 id="currentRoomName">Select a Room</h4>
+                <div id="chatMessages"></div>
+                <div class="card">
+                    <input type="text" id="chatInput" placeholder="Message...">
+                    <button class="btn" style="background:var(--s)" onclick="sendMsg()">Send</button>
+                </div>
+            </div>
         </div>
 
         <!-- Referral -->
@@ -75,46 +98,78 @@
             <div class="card">
                 <p>Your Code: <strong id="myCode" style="color:var(--a)">--</strong></p>
                 <div id="refInputSection">
-                    <input type="text" id="refInput" placeholder="Enter Invite Code">
-                    <button class="btn" style="width:50%" onclick="setInviter()">Save</button>
+                    <input type="text" id="refInput" placeholder="Enter Referral Code">
+                    <button class="btn" style="padding:10px" onclick="setInviter()">Save</button>
                 </div>
             </div>
             <div class="card">
-                <h3>Invites: <span id="refCount">0</span></h3>
-                <h3>Bonus: ₱<span id="refBonus">0.00</span></h3>
-                <button class="btn" style="background:var(--s)" onclick="claimBonus()">Claim to Main Balance</button>
+                <h3>Commission: ₱<span id="refBonus">0.00</span></h3>
+                <button class="btn" style="background:var(--s)" onclick="claimBonus()">Claim Bonus</button>
+            </div>
+            <div class="card">
+                <h3>My Stats</h3>
+                <table>
+                    <thead><tr><th>Invites</th><th>Earnings</th></tr></thead>
+                    <tbody><tr><td id="refCount">0</td><td id="refTotal">₱ 0.00</td></tr></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Withdrawal -->
+        <!-- Ads/Sign In/Gift Areas -->
+        <div id="adsArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="adsList"></div> </div>
+        <div id="signInArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="signInList"></div> </div>
+        <div id="giftArea" class="page"> <button class="btn" onclick="nav('homePage')">Back</button><div id="giftList"></div> </div>
+
+        <!-- Withdraw -->
         <div id="withdrawPage" class="page">
             <button class="btn" onclick="nav('homePage')">Back</button>
             <div class="card">
-                <input type="number" id="wAmt" placeholder="Min 1 PHP">
-                <input type="text" id="wTarget" placeholder="GCash Number">
-                <button class="btn" onclick="requestW()">Withdraw</button>
+                <input type="number" id="wAmt" placeholder="Amount (Min 1 PHP)">
+                <input type="text" id="wTarget" placeholder="GCash No / FaucetPay Email">
+                <button class="btn" style="background:var(--s)" onclick="requestW()">Withdraw</button>
             </div>
-            <h4>History</h4>
-            <table>
-                <thead><tr><th>Date</th><th>Amt</th><th>Status</th></tr></thead>
+            <h3>My History</h3>
+            <table id="wHistory">
+                <thead><tr><th>Date</th><th>Method</th><th>Status</th></tr></thead>
                 <tbody id="wHistoryBody"></tbody>
             </table>
         </div>
 
-        <!-- Ads Areas (Simplified for brevity) -->
-        <div id="adsArea" class="page"><button class="btn" onclick="nav('homePage')">Back</button><div id="adsList"></div></div>
-        <div id="signInArea" class="page"><button class="btn" onclick="nav('homePage')">Back</button><div id="signInList"></div></div>
+        <!-- Leaderboard -->
+        <div id="leadPage" class="page">
+            <button class="btn" onclick="nav('homePage')">Back</button>
+            <h3>🏆 Top 20</h3>
+            <table>
+                <thead><tr><th>#</th><th>User</th><th>Balance</th></tr></thead>
+                <tbody id="leadBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Help -->
+        <div id="helpPage" class="page">
+            <button class="btn" onclick="nav('homePage')">Back</button>
+            <div class="card"><h3>Help</h3><p>Email us at: <b>otico.isai2@gmail.com</b></p></div>
+        </div>
 
         <!-- Admin -->
         <div id="adminPage" class="page">
             <button class="btn" onclick="nav('homePage')">Exit</button>
-            <h3>Admin Panel</h3>
+            <h3>Owner Control</h3>
+            <p>Total Paid: ₱<span id="adminTotal">0.00</span></p>
+            <h3>Pending Requests</h3>
             <div id="adminReqs"></div>
+            <h3>Payment History</h3>
+            <table style="font-size: 0.6rem">
+                <thead><tr><th>User</th><th>Amt</th><th>Target</th><th>Status</th></tr></thead>
+                <tbody id="adminHistory"></tbody>
+            </table>
         </div>
 
-        <div class="footer">© PAPERHOUSE INC</div>
+        <div class="footer">
+            © PAPERHOUSE INC<br>
+            <span id="realTime"></span>
+        </div>
     </div>
-
     <script type="module" src="app.js"></script>
 </body>
 </html>
