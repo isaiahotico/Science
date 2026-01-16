@@ -1,106 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Telegram Aide YouTube Player</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      color: #000;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-    }
-    #userBar {
-      font-weight: bold;
-      margin-bottom: 16px;
-      font-size: 16px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    button {
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: none;
-      background: #1b74e4;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .video-card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 20px;
-      background: #fff;
-    }
-    .video-info {
-      margin-top: 10px;
-    }
-    .video-info p {
-      margin: 4px 0;
-    }
-    .buttons {
-      margin-top: 12px;
-    }
-    .buttons button {
-      margin-right: 10px;
-    }
-    iframe {
-      width: 100%;
-      height: 315px;
-      border-radius: 8px;
-      margin-top: 12px;
-    }
-    .suggestions {
-      margin-top: 16px;
-    }
-    .suggestion-card {
-      display: flex;
-      align-items: center;
-      border: 1px solid #eee;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      padding: 8px;
-      cursor: pointer;
-      background: #fafafa;
-      transition: background 0.2s;
-    }
-    .suggestion-card:hover {
-      background: #f0f0f0;
-    }
-    .suggestion-card img {
-      width: 80px;
-      height: 45px;
-      border-radius: 6px;
-      margin-right: 10px;
-    }
-    .suggestion-card p {
-      margin: 0;
-      font-size: 14px;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPERHOUSE INC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Monetag SDKs -->
+    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
+
+    <style>
+        :root { --p: #f1c40f; --s: #27ae60; --a: #e67e22; --bg: #fffdf2; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+        .header { background: var(--p); padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; border-bottom: 3px solid #d4ac0d; }
+        #userBar { font-weight: bold; margin-bottom: 5px; }
+        .balance-box { font-size: 1.5rem; font-weight: 800; color: #1e8449; }
+        
+        .container { padding: 20px; text-align: center; }
+        .page { display: none; }
+        .active { display: block; }
+
+        .nav-btn { background: var(--a); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 1.1rem; font-weight: bold; margin: 10px 0; cursor: pointer; box-shadow: 0 4px #a04000; }
+        .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px #a04000; }
+
+        .card { background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--p); margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .task-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+        .claim-btn { background: #9b59b6; color: white; border: none; padding: 10px 20px; border-radius: 8px; margin-top: 10px; display: none; width: 100%; cursor: pointer; }
+        
+        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.8rem; }
+        th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
+        .status-paid { color: green; font-weight: bold; }        .status-pending { color: orange; font-weight: bold; }
+        .status-denied { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div id="userBar">👤 User: Guest</div>
-    <h2>Telegram Aide YouTube Player</h2>
-    <input type="text" id="youtubeUrl" placeholder="Paste YouTube URL here">
-    <button onclick="loadVideo()">Load Video</button>
-    <div id="videoContainer"></div>
-  </div>
 
-  <script src="app.js"></script>
+    <div class="header">
+        <div id="userBar">👤 User: Guest</div>
+        <div class="balance-box">₱ <span id="userBalance">0.000</span></div>
+    </div>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div id="homePage" class="page active">
+            <h1>🍍 PAPERHOUSE INC </h1>
+            <button class="nav-btn" onclick="showPage('adsArea')">🍍 ADS AREA 🍍</button>
+            <button class="nav-btn" onclick="showPage('signInArea')">🍍 Paper house Sign In 🍍</button>
+            <button class="nav-btn" onclick="showPage('giftArea')">🍍 Paper house Gift 🍍</button>
+            <button class="nav-btn" style="background:#2980b9" onclick="showPage('withdrawPage')">💸 Withdraw Money 💸</button>
+            <p onclick="adminLogin()" style="color:gray; font-size:0.7rem; margin-top:20px;">Owner Dashboard</p>
+        </div>
+
+        <!-- Ads Area -->
+        <div id="adsArea" class="page">
+            <button onclick="showPage('homePage')">Back</button>
+            <h2>🍍 ADS AREA</h2>
+            <div id="adsList"></div>
+        </div>
+
+        <!-- Sign In -->
+        <div id="signInArea" class="page">
+            <button onclick="showPage('homePage')">Back</button>
+            <h2>🍍 SIGN IN</h2>
+            <div id="signInList"></div>
+        </div>
+
+        <!-- Gift Area -->
+        <div id="giftArea" class="page">
+            <button onclick="showPage('homePage')">Back</button>
+            <h2>🍍 GIFT AREA</h2>
+            <div id="giftList"></div>
+        </div>
+
+        <!-- Withdrawal Page -->
+        <div id="withdrawPage" class="page">
+            <button onclick="showPage('homePage')">Back</button>
+            <h2>Withdraw your Money here</h2>
+            
+            <div class="card">
+                <h3>GCash</h3>
+                <input type="number" id="gcashAmt" placeholder="Amount (PHP)">
+                <input type="text" id="gcashNum" placeholder="GCash Number">
+                <button class="task-btn" onclick="requestWithdraw('GCash')">Submit GCash</button>
+            </div>
+
+            <div class="card">
+                <h3>FaucetPay</h3>
+                <input type="number" id="fpAmt" placeholder="Amount (PHP)">
+                <input type="email" id="fpEmail" placeholder="FaucetPay Email">
+                <button class="task-btn" style="background:#8e44ad" onclick="requestWithdraw('FaucetPay')">Submit USDT</button>
+            </div>
+
+            <h3>Withdrawal History</h3>
+            <table id="historyTable">
+                <thead><tr><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminPage" class="page">
+            <button onclick="showPage('homePage')">Logout</button>
+            <h2>Owner Dashboard</h2>
+            <p>Total Withdrawn: ₱ <span id="adminTotalWithdrawn">0.00</span></p>
+            <table id="adminTable">
+                <thead><tr><th>User</th><th>Details</th><th>Amt</th><th>Action</th></tr></thead>
+                <tbody id="adminBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
