@@ -16,7 +16,7 @@
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
     
     <style>
-        :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; --success: #4caf50; --danger: #f44336; }
+        :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; --success: #4caf50; --danger: #f44336; --accent: #03a9f4; --profile-btn: #9c27b0; --leaderboard: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 140px; text-align: center; color: var(--secondary); }
         #header { background: var(--secondary); color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--primary); }
         .page { display: none; padding: 15px; animation: fadeIn 0.2s ease-in; }
@@ -29,9 +29,8 @@
         
         .back-btn { background: #616161 !important; color: white !important; box-shadow: 0 4px #424242 !important; margin-top: 20px; }
         .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        input, select { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-        
-        .cooldown { font-size: 12px; color: #e65100; font-weight: bold; margin-bottom: 5px; }        .claim-btn { background: var(--success) !important; color: white !important; display: none; }
+        input, select { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }        .cooldown { font-size: 12px; color: #e65100; font-weight: bold; margin-bottom: 5px; }
+        .claim-btn { background: var(--success) !important; color: white !important; display: none; }
         
         .table-container { overflow-x: auto; margin-top: 15px; background: #fff; border-radius: 8px; border: 1px solid #ddd; }
         table { width: 100%; font-size: 10px; border-collapse: collapse; }
@@ -50,7 +49,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -59,6 +58,7 @@
             font-size: 18px;
             font-weight: bold;
             color: var(--secondary);
+            transition: opacity 0.3s ease-in-out;
         }
         .spinner {
             border: 4px solid #f3f3f3;
@@ -73,14 +73,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Profile Edit Button */
+        .edit-profile-btn { background: var(--accent) !important; color: white !important; margin-top: 10px; font-size: 14px; padding: 10px 20px; }
+        .leaderboard-btn { background: var(--leaderboard) !important; color: white !important; }
+        .daily-bonus-btn { background: #ff9800 !important; color: white !important; }
     </style>
 </head>
 <body>
 
 <!-- Loading Overlay -->
-<div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p id="loadingMessage">Connecting to server...</p>
+<div id="loadingOverlay">    <div class="spinner"></div>
+    <p id="loadingMessage">Initializing...</p>
 </div>
 
 <div id="header">
@@ -92,12 +96,15 @@
 
 <!-- MAIN MENU -->
 <div id="homePage" class="page active">
-    <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>    <button class="btn" onclick="showPage('signInPage')">🍍 Sign In Area 🍍</button>
+    <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>
+    <button class="btn" onclick="showPage('signInPage')">🍍 Sign In Area 🍍</button>
     <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>
-    <button class="btn" onclick="showPage('referralPage')" style="background:#03a9f4;color:white">👥 Referral System</button>
-    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;color:white">💰 Withdrawal Section</button>
-    <button class="btn" onclick="showPage('helpPage')" style="background:#9c27b0;color:white">❓ Help & Links</button>
-    <button class="btn" onclick="checkAdmin()" style="background:#607d8b;color:white">🛠 Owner Dashboard</button>
+    <button class="btn daily-bonus-btn" onclick="showPage('dailyBonusPage')">🎁 Daily Bonus (24h)</button>
+    <button class="btn" onclick="showPage('referralPage')" style="background:var(--accent)">👥 Referral System</button>
+    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;">💰 Withdrawal Section</button>
+    <button class="btn" onclick="showPage('leaderboardPage')" style="background:var(--leaderboard)">🏆 Leaderboard</button>
+    <button class="btn" onclick="showPage('helpPage')" style="background:var(--profile-btn)">❓ Help & Links</button>
+    <button class="btn" onclick="checkAdmin()" style="background:#607d8b;">🛠 Owner Dashboard</button>
 </div>
 
 <!-- ADS AREA (5m cooldown) -->
@@ -129,6 +136,16 @@
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- DAILY BONUS (24hr cooldown) -->
+<div id="dailyBonusPage" class="page">
+    <h2>🎁 DAILY BONUS (24h) 🎁</h2>
+    <div class="card">
+        <div class="cooldown" id="timer_D1"></div>
+        <button class="btn" id="btn_D1" onclick="runTask('D1', 10337853)">Watch Ad for Bonus</button>
+        <button class="btn claim-btn" id="claim_D1" onclick="claimReward('D1')">CLAIM 0.10</button></div>
+    <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
 <!-- WITHDRAWAL SECTION -->
 <div id="withdrawPage" class="page">
     <div class="card">
@@ -146,6 +163,13 @@
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- LEADERBOARD -->
+<div id="leaderboardPage" class="page">
+    <h2>🏆 TOP EARNERS 🏆</h2>
+    <div id="leaderboardContent" class="table-container">Loading leaderboard...</div>
+    <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
+</div>
+
 <!-- OWNER DASHBOARD -->
 <div id="adminPage" class="page">
     <div class="card" style="background:#222; color:white;">Total Paid: PHP <span id="statPHP">0.00</span></div>
@@ -156,7 +180,7 @@
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Close</button>
 </div>
 
-<!-- HELP & REFERRAL -->
+<!-- HELP & PROFILE EDIT -->
 <div id="helpPage" class="page">
     <div class="card">
         <h3>Community Links</h3>
@@ -164,18 +188,26 @@
         <a href="https://facebook.com/groups/1193693469083843/" target="_blank" class="btn" style="background:#1877f2; color:white;">Facebook Group</a>
         <a href="https://www.facebook.com/profile.php?id=61586281245735" target="_blank" class="btn" style="background:#4267B2; color:white;">Facebook Page</a>
     </div>
+    <div class="card">
+        <h3>Edit Profile</h3>
+        <input type="text" id="editUsername" placeholder="New Username">
+        <button class="btn edit-profile-btn" onclick="updateUsername()">Update Username</button>
+        <p style="font-size: 11px; margin-top: 10px;">Note: Username can only be set once.</p>
+    </div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- REFERRAL SYSTEM -->
 <div id="referralPage" class="page">
     <div class="card">
         <p>Your Username: <b id="myUser">...</b></p>
-        <input type="text" id="refInput" placeholder="Enter Inviter Username">
+        <p>Your Telegram ID: <b id="myTelegramId">...</b></p>
+        <input type="text" id="refInput" placeholder="Enter Inviter's Telegram ID">
         <button class="btn" onclick="setReferrer()">Link Inviter</button>
     </div>
     <div class="card">
-        <p>Invites: <span id="invCount">0</span> | Bonus: <span id="invEarned">0.00</span> PHP</p>
-        <p style="font-size:11px;">You get 10% of every ad your friend watches!</p>
+        <p>Total Invites: <span id="invCount">0</span> | Bonus Earned: <span id="invEarned">0.000</span> PHP</p>
+        <p style="font-size:11px;">You earn 10% of every ad your invited friends watch!</p>
     </div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
