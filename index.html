@@ -41,51 +41,9 @@
         .status-denied { color: red; font-weight: bold; }
 
         #footer { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 12px 0; font-size: 11px; border-top: 3px solid var(--primary); z-index: 1000; }
-
-        /* Loading Spinner/Overlay */
-        #loadingOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--secondary);
-            transition: opacity 0.3s ease-in-out;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Profile Edit Button */
-        .edit-profile-btn { background: var(--accent) !important; color: white !important; margin-top: 10px; font-size: 14px; padding: 10px 20px; }
-        .leaderboard-btn { background: var(--leaderboard) !important; color: white !important; }
-        .daily-bonus-btn { background: #ff9800 !important; color: white !important; }
     </style>
 </head>
 <body>
-
-<!-- Loading Overlay -->
-<div id="loadingOverlay">    <div class="spinner"></div>
-    <p id="loadingMessage">Connecting...</p>
-</div>
 
 <div id="header">
     <div id="userBar">👤 Connecting...</div>
@@ -108,8 +66,7 @@
 </div>
 
 <!-- ADS AREA (5m cooldown) -->
-<div id="adsAreaPage" class="page">
-    <h2>🍍 ADS AREA🍍</h2>
+<div id="adsAreaPage" class="page">    <h2>🍍 ADS AREA 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_1"></div><button class="btn" id="btn_1" onclick="runTask(1, 10276123)">Watch Ad #1</button><button class="btn claim-btn" id="claim_1" onclick="claimReward(1)">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_2"></div><button class="btn" id="btn_2" onclick="runTask(2, 10337795)">Watch Ad #2</button><button class="btn claim-btn" id="claim_2" onclick="claimReward(2)">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_3"></div><button class="btn" id="btn_3" onclick="runTask(3, 10337853)">Watch Ad #3</button><button class="btn claim-btn" id="claim_3" onclick="claimReward(3)">CLAIM 0.02</button></div>
@@ -142,7 +99,8 @@
     <div class="card">
         <div class="cooldown" id="timer_D1"></div>
         <button class="btn" id="btn_D1" onclick="runTask('D1', 10337853)">Watch Ad for Bonus</button>
-        <button class="btn claim-btn" id="claim_D1" onclick="claimReward('D1')">CLAIM 0.10</button></div>
+        <button class="btn claim-btn" id="claim_D1" onclick="claimReward('D1')">CLAIM 0.10</button>
+    </div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
