@@ -150,7 +150,12 @@
 
 <!-- OWNER DASHBOARD -->
 <div id="adminPage" class="page">
-    <div class="card" style="background:#222; color:white;">Total Paid: PHP <span id="statPHP">0.00</span></div>
+    <div class="card" style="background:#222; color:white;">Total Paid (All-time): PHP <span id="statPHP">0.00</span></div>
+    <!-- New stats for approved withdrawals -->
+    <div class="card" style="background:#222; color:white; margin-top: 15px;">
+        Approved Withdrawals: <span id="statApprovedCount">0</span> | Approved Amount: PHP <span id="statApprovedAmount">0.00</span>
+    </div>
+
     <h3>Pending Requests (Page <span id="adminPendingCurrentPage">1</span>)</h3>
     <div id="adminPending" class="table-container"></div>
     <div class="pagination-controls">
