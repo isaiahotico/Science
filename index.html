@@ -46,7 +46,7 @@
 <body>
 
 <div id="header">
-    <div id="userBar">👤 Connecting...</div>
+    <div id="userBar">👤 Guest User</div> <!-- Initial display for user bar -->
     <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">💰 PHP <span id="mainBalance">0.000</span></div>
 </div>
 
@@ -65,8 +65,8 @@
     <button class="btn" onclick="checkAdmin()" style="background:#607d8b;">🛠 Owner Dashboard</button>
 </div>
 
-<!-- ADS AREA (5m cooldown) -->
-<div id="adsAreaPage" class="page">    <h2>🍍 ADS AREA 🍍</h2>
+<!-- ADS AREA (5m cooldown) --><div id="adsAreaPage" class="page">
+    <h2>🍍 ADS AREA 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_1"></div><button class="btn" id="btn_1" onclick="runTask(1, 10276123)">Watch Ad #1</button><button class="btn claim-btn" id="claim_1" onclick="claimReward(1)">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_2"></div><button class="btn" id="btn_2" onclick="runTask(2, 10337795)">Watch Ad #2</button><button class="btn claim-btn" id="claim_2" onclick="claimReward(2)">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_3"></div><button class="btn" id="btn_3" onclick="runTask(3, 10337853)">Watch Ad #3</button><button class="btn claim-btn" id="claim_3" onclick="claimReward(3)">CLAIM 0.02</button></div>
@@ -134,7 +134,8 @@
     <h3>Pending Requests</h3>
     <div id="adminPending" class="table-container"></div>
     <h3>Approved History</h3>
-    <div id="adminHistory" class="table-container"></div>
+    <div id\ 
+="adminHistory" class="table-container"></div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Close</button>
 </div>
 
