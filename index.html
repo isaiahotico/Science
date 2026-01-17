@@ -15,18 +15,18 @@
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
     
     <style>
-        :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; --success: #4caf50; }
+        :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; --success: #4caf50; --danger: #f44336; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 140px; text-align: center; color: var(--secondary); }
         #header { background: var(--secondary); color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--primary); }
         .page { display: none; padding: 15px; animation: fadeIn 0.2s ease-in; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; color: #333; transition: 0.2s; }
+        .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; color: #333; transition: 0.2s; text-decoration: none;}
         .btn:active { transform: translateY(2px); box-shadow: 0 2px #f57f17; }
         .btn:disabled { background: #ccc !important; box-shadow: 0 4px #999 !important; cursor: not-allowed; }
-        
-        .back-btn { background: #616161 !important; color: white !important; box-shadow: 0 4px #424242 !important; margin-top: 20px; }
+        .back-btn { background: #616161 !important; color: white !important; box-shadow: 0 4px #424242 !important; }
+
         .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         input, select { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
         
@@ -34,9 +34,10 @@
         .claim-btn { background: var(--success) !important; color: white !important; display: none; }        .table-container { overflow-x: auto; margin-top: 15px; background: #fff; border-radius: 8px; border: 1px solid #ddd; }
         table { width: 100%; font-size: 10px; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f2f2f2; }
+        th { background: #333; color: white; }
         .status-paid { color: green; font-weight: bold; }
         .status-pending { color: orange; font-weight: bold; }
+        .status-denied { color: red; font-weight: bold; }
 
         #footer { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 12px 0; font-size: 11px; border-top: 3px solid var(--primary); z-index: 1000; }
     </style>
@@ -44,66 +45,82 @@
 <body>
 
 <div id="header">
-    <div id="userBar">👤 Loading Account...</div>
-    <div id="balanceBox" style="font-size: 20px; font-weight: bold; margin-top: 5px;">💰 PHP <span id="mainBalance">0.000</span></div>
+    <div id="userBar">👤 Loading...</div>
+    <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">💰 PHP <span id="mainBalance">0.000</span></div>
 </div>
 
 <h1 style="color:#5d4037; margin: 20px 0;">PAPERHOUSE INC</h1>
 
-<!-- PAGES -->
+<!-- MAIN MENU -->
 <div id="homePage" class="page active">
     <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>
     <button class="btn" onclick="showPage('signInPage')">🍍 Sign In Area 🍍</button>
     <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>
     <button class="btn" onclick="showPage('referralPage')" style="background:#03a9f4;color:white">👥 Referral System</button>
-    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;color:white">💰 Withdraw PHP</button>
-    <button class="btn" onclick="showPage('helpPage')" style="background:#9c27b0;color:white">❓ Help & Community</button>
+    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;color:white">💰 Withdraw Money</button>
+    <button class="btn" onclick="showPage('helpPage')" style="background:#9c27b0;color:white">❓ Help & Links</button>
     <button class="btn" onclick="checkAdmin()" style="background:#607d8b;color:white">🛠 Owner Dashboard</button>
 </div>
 
+<!-- ADS AREA (5m cooldown) -->
 <div id="adsAreaPage" class="page">
     <h2>🍍 ADS AREA 🍍</h2>
-    <div class="card"><div class="cooldown" id="timer_1"></div><button class="btn" id="btn_1" onclick="runTask(1, 10276123)">Watch Ad #1</button><button class="btn claim-btn" id="claim_1" onclick="claimReward(1)">CLAIM 0.02</button></div>
-    <div class="card"><div class="cooldown" id="timer_2"></div><button class="btn" id="btn_2" onclick="runTask(2, 10337795)">Watch Ad #2</button><button class="btn claim-btn" id="claim_2" onclick="claimReward(2)">CLAIM 0.02</button></div>    <div class="card"><div class="cooldown" id="timer_3"></div><button class="btn" id="btn_3" onclick="runTask(3, 10337853)">Watch Ad #3</button><button class="btn claim-btn" id="claim_3" onclick="claimReward(3)">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_1"></div><button class="btn" id="btn_1" onclick="runTask(1, 10276123)">Watch Ad #1</button><button class="btn claim-btn" id="claim_1" onclick="claimReward(1)">CLAIM 0.02</button></div>    <div class="card"><div class="cooldown" id="timer_2"></div><button class="btn" id="btn_2" onclick="runTask(2, 10337795)">Watch Ad #2</button><button class="btn claim-btn" id="claim_2" onclick="claimReward(2)">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_3"></div><button class="btn" id="btn_3" onclick="runTask(3, 10337853)">Watch Ad #3</button><button class="btn claim-btn" id="claim_3" onclick="claimReward(3)">CLAIM 0.02</button></div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- SIGN IN AREA (20m cooldown) -->
 <div id="signInPage" class="page">
-    <h2>🍍 SIGN IN 🍍</h2>
-    <div class="card"><div class="cooldown" id="timer_S1"></div><button class="btn" id="btn_S1" onclick="runTask('S1', 10276123)">Sign In Ad #1</button><button class="btn claim-btn" id="claim_S1" onclick="claimReward('S1')">CLAIM 0.02</button></div>
-    <div class="card"><div class="cooldown" id="timer_S2"></div><button class="btn" id="btn_S2" onclick="runTask('S2', 10337795)">Sign In Ad #2</button><button class="btn claim-btn" id="claim_S2" onclick="claimReward('S2')">CLAIM 0.02</button></div>
-    <div class="card"><div class="cooldown" id="timer_S3"></div><button class="btn" id="btn_S3" onclick="runTask('S3', 10337853)">Sign In Ad #3</button><button class="btn claim-btn" id="claim_S3" onclick="claimReward('S3')">CLAIM 0.02</button></div>
-    <div class="card"><div class="cooldown" id="timer_S4"></div><button class="btn" id="btn_S4" onclick="runTask('S4', 10276123)">Sign In Ad #4</button><button class="btn claim-btn" id="claim_S4" onclick="claimReward('S4')">CLAIM 0.02</button></div><button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
+    <h2>🍍 SIGN IN (20m) 🍍</h2>
+    <div class="card"><div class="cooldown" id="timer_S1"></div><button class="btn" id="btn_S1" onclick="runTask('S1', 10276123)">Sign In #1</button><button class="btn claim-btn" id="claim_S1" onclick="claimReward('S1')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_S2"></div><button class="btn" id="btn_S2" onclick="runTask('S2', 10337795)">Sign In #2</button><button class="btn claim-btn" id="claim_S2" onclick="claimReward('S2')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_S3"></div><button class="btn" id="btn_S3" onclick="runTask('S3', 10337853)">Sign In #3</button><button class="btn claim-btn" id="claim_S3" onclick="claimReward('S3')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_S4"></div><button class="btn" id="btn_S4" onclick="runTask('S4', 10276123)">Sign In #4</button><button class="btn claim-btn" id="claim_S4" onclick="claimReward('S4')">CLAIM 0.02</button></div>
+    <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- GIFT AREA (1hr cooldown) -->
 <div id="giftPage" class="page">
-    <h2>🍍 GIFT AREA 🍍</h2>
+    <h2>🍍 GIFT AREA (1hr) 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_G1"></div><button class="btn" id="btn_G1" onclick="runTask('G1', 10337795, 'pop')">Gift Ad #1</button><button class="btn claim-btn" id="claim_G1" onclick="claimReward('G1')">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_G2"></div><button class="btn" id="btn_G2" onclick="runTask('G2', 10337853, 'pop')">Gift Ad #2</button><button class="btn claim-btn" id="claim_G2" onclick="claimReward('G2')">CLAIM 0.02</button></div>
-    <div class="card"><div class="cooldown" id="timer_G3"></div><button class="btn" id="btn_G3" onclick="runTask('G3', 10276123, 'pop')">Gift Ad #3</button><button class="btn claim-btn" id="claim_G3" onclick="claimReward('G3')">CLAIM 0.02</button></div>
+    <div class="card"><div class="cooldown" id="timer_G3"></div><button class="btn" id="btn_G3" onclick="runTask(10276123, 'pop')">Gift Ad #3</button><button class="btn claim-btn" id="claim_G3" onclick="claimReward('G3')">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_G4"></div><button class="btn" id="btn_G4" onclick="runTask('G4', 10337795, 'pop')">Gift Ad #4</button><button class="btn claim-btn" id="claim_G4" onclick="claimReward('G4')">CLAIM 0.02</button></div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- WITHDRAWAL -->
 <div id="withdrawPage" class="page">
     <div class="card">
-        <h3>Withdraw PHP</h3>
+        <h3>Withdrawal (Min 1 PHP)</h3>
         <select id="wMethod">
             <option value="GCash">GCash</option>
-            <option value="FaucetPay">FaucetPay (USDT)</option>
+            <option value="FaucetPay">FaucetPay</option>
         </select>
-        <input type="number" id="wAmount" placeholder="Min 1 PHP">
-        <input type="text" id="wInfo" placeholder="Number / Email">
-        <button class="btn" onclick="submitWithdraw()">Submit Withdrawal</button>
+        <input type="number" id="wAmount" placeholder="Amount (PHP)">
+        <input type="text" id="wInfo" placeholder="Number or Email">
+        <button class="btn" onclick="submitWithdraw()">Request Withdrawal</button>
     </div>
-    <h4>Withdrawal Logs</h4>
+    <h4>Your Logs</h4>
     <div id="userHistory" class="table-container"></div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
+<!-- OWNER DASHBOARD -->
+<div id="adminPage" class="page">
+    <div class="card" style="background:#222; color:white;">Total Paid: PHP <span id="statPHP">0.00</span></div>
+    <h3>Pending Requests</h3>
+    <div id="adminPending" class="table-container"></div>
+    <h3>Global History (Sync)</h3>
+    <div id="adminHistory" class="table-container"></div>
+    <button class="btn back-btn" onclick="showPage('homePage')">⬅ Close</button>
+</div>
+
+<!-- HELP & REFERRAL -->
 <div id="helpPage" class="page">
     <div class="card">
-        <h3>Follow Us for Updates</h3>
+        <h3>Community Links</h3>
         <a href="https://t.me/paperhouseinc" target="_blank" class="btn" style="background:#0088cc; color:white;">Telegram Group</a>
         <a href="https://facebook.com/groups/1193693469083843/" target="_blank" class="btn" style="background:#1877f2; color:white;">Facebook Group</a>
         <a href="https://www.facebook.com/profile.php?id=61586281245735" target="_blank" class="btn" style="background:#4267B2; color:white;">Facebook Page</a>
@@ -113,21 +130,15 @@
 
 <div id="referralPage" class="page">
     <div class="card">
-        <p>Username: <b id="myUser">...</b></p>
-        <input type="text" id="refInput" placeholder="Inviter Username">
+        <p>Your Username: <b id="myUser">...</b></p>
+        <input type="text" id="refInput" placeholder="Enter Inviter Username">
         <button class="btn" onclick="setReferrer()">Link Inviter</button>
     </div>
     <div class="card">
         <p>Invites: <span id="invCount">0</span> | Bonus: <span id="invEarned">0.00</span> PHP</p>
+        <p style="font-size:11px;">You get 10% of every adyour friend watches!</p>
     </div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
-</div>
-
-<div id="adminPage" class="page">
-    <div class="card" style="background:#333; color:white;">Global Paid: PHP <span id="statPHP">0.00</span></div>
-    <h3>Pending Payments</h3>
-    <div id="adminPending" class="table-container"></div>
-    <button class="btn back-btn" onclick="showPage('homePage')">⬅ Close</button>
 </div>
 
 <div id="footer">
