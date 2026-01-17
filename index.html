@@ -40,6 +40,22 @@
         .status-pending { color: orange; font-weight: bold; }
         .status-denied { color: red; font-weight: bold; }
 
+        .pagination-controls { display: flex; justify-content: center; margin-top: 10px; gap: 10px; }
+        .pagination-controls button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px #0288d1;
+            transition: 0.2s;
+        }
+        .pagination-controls button:active { transform: translateY(1px); box-shadow: 0 1px #0288d1; }
+        .pagination-controls button:disabled { background: #ccc; box-shadow: 0 2px #999; cursor: not-allowed; }
+
         #footer { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 12px 0; font-size: 11px; border-top: 3px solid var(--primary); z-index: 1000; }
     </style>
 </head>
@@ -56,8 +72,7 @@
 <div id="homePage" class="page active">
     <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>
     <button class="btn" onclick="showPage('signInPage')">🍍 Sign In Area 🍍</button>
-    <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>
-    <button class="btn daily-bonus-btn" onclick="showPage('dailyBonusPage')">🎁 Daily Bonus (24h)</button>
+    <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>    <button class="btn daily-bonus-btn" onclick="showPage('dailyBonusPage')">🎁 Daily Bonus (24h)</button>
     <button class="btn" onclick="showPage('referralPage')" style="background:var(--accent)">👥 Referral System</button>
     <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;">💰 Withdrawal Section</button>
     <button class="btn" onclick="showPage('leaderboardPage')" style="background:var(--leaderboard)">🏆 Leaderboard</button>
@@ -65,7 +80,8 @@
     <button class="btn" onclick="checkAdmin()" style="background:#607d8b;">🛠 Owner Dashboard</button>
 </div>
 
-<!-- ADS AREA (5m cooldown) --><div id="adsAreaPage" class="page">
+<!-- ADS AREA (5m cooldown) -->
+<div id="adsAreaPage" class="page">
     <h2>🍍 ADS AREA 🍍</h2>
     <div class="card"><div class="cooldown" id="timer_1"></div><button class="btn" id="btn_1" onclick="runTask(1, 10276123)">Watch Ad #1</button><button class="btn claim-btn" id="claim_1" onclick="claimReward(1)">CLAIM 0.02</button></div>
     <div class="card"><div class="cooldown" id="timer_2"></div><button class="btn" id="btn_2" onclick="runTask(2, 10337795)">Watch Ad #2</button><button class="btn claim-btn" id="claim_2" onclick="claimReward(2)">CLAIM 0.02</button></div>
@@ -116,8 +132,12 @@
         <input type="text" id="wInfo" placeholder="Number or Email">
         <button class="btn" onclick="submitWithdraw()">Request Withdrawal</button>
     </div>
-    <h4>Your Withdrawal History</h4>
+    <h4>Your Withdrawal History (Page <span id="userHistoryCurrentPage">1</span>)</h4>
     <div id="userHistory" class="table-container"></div>
+    <div class="pagination-controls">
+        <button id="userHistoryPrev" onclick="navigatePagination('userHistory', -1)">Previous</button>
+        <button id="userHistoryNext" onclick="navigatePagination('userHistory', 1)">Next</button>
+    </div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
@@ -131,11 +151,19 @@
 <!-- OWNER DASHBOARD -->
 <div id="adminPage" class="page">
     <div class="card" style="background:#222; color:white;">Total Paid: PHP <span id="statPHP">0.00</span></div>
-    <h3>Pending Requests</h3>
+    <h3>Pending Requests (Page <span id="adminPendingCurrentPage">1</span>)</h3>
     <div id="adminPending" class="table-container"></div>
-    <h3>Approved History</h3>
-    <div id\ 
-="adminHistory" class="table-container"></div>
+    <div class="pagination-controls">
+        <button id="adminPendingPrev" onclick="navigatePagination('adminPending', -1)">Previous</button>
+        <button id="adminPendingNext" onclick="navigatePagination('adminPending', 1)">Next</button>
+    </div>
+
+    <h3>Approved History (Page <span id="adminHistoryCurrentPage">1</span>)</h3>
+    <div id="adminHistory" class="table-container"></div>
+    <div class="pagination-controls">
+        <button id="adminHistoryPrev" onclick="navigatePagination('adminHistory', -1)">Previous</button>
+        <button id="adminHistoryNext" onclick="navigatePagination('adminHistory', 1)">Next</button>
+    </div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Close</button>
 </div>
 
