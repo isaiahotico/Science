@@ -1,134 +1,152 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-getFirestore, doc, setDoc, updateDoc, onSnapshot,
-collection, addDoc, query, where, limit, getDocs, increment
+import { 
+    getFirestore, doc, setDoc, updateDoc, onSnapshot, 
+    collection, addDoc, query, where, getDoc, increment, serverTimestamp, orderBy 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* 🔥 TELEGRAM FAST INIT */
+// --- CONFIGURATION ---
+const firebaseConfig = {
+    apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
+    authDomain: "paper-house-inc.firebaseapp.com",
+    projectId: "paper-house-inc",
+    storageBucket: "paper-house-inc.appspot.com",
+    messagingSenderId: "1056588265588",
+    appId: "1:1056588265588:web:8662660a09e07289"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// --- TELEGRAM INIT ---
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
 const tgUser = tg.initDataUnsafe?.user;
-const username = tgUser ? `@${tgUser.username || tgUser.first_name}` : "@Guest";
-const uid = tgUser?.id?.toString() || "dev";
+const uid = tgUser?.id?.toString() || "dev_user";
+const username = tgUser?.username || tgUser?.first_name || "Guest";
 
-userBar.innerText = `👤 ${username}`;
+// --- UI ELEMENTS ---
+document.getElementById('userNameDisplay').innerText = `👤 ${username}`;
+document.getElementById('my-ref-id').innerText = uid;
 
-/* 🔥 FIREBASE */
-const app = initializeApp({
-apiKey:"AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
-authDomain:"paper-house-inc.firebaseapp.com",
-projectId:"paper-house-inc"
-});
-
-const db = getFirestore(app);
-const uRef = doc(db,"users",uid);
-
-let uData = { balance:0, cooldowns:{}, refBy:null };
-
-onSnapshot(uRef,s=>{
-if(!s.exists()){
-setDoc(uRef,{username,balance:0,cooldowns:{},refBy:null});
-return;
-}
-uData=s.data();
-balanceDisplay.innerText=`₱${uData.balance.toFixed(3)}`;
-my-ref-id.innerText=username;
-current-ref.innerText=uData.refBy||"None";
-});
-
-/* NAV */
-window.go=p=>{
-["ads","signin","gifts","referral","withdraw","admin"].forEach(x=>{
-document.getElementById(x)?.classList.add("hidden");
-});
-if(p==="main") return;
-document.getElementById(p).classList.remove("hidden");
-renderTasks(p);
-if(p==="withdraw") loadHistory();
+// --- NAVIGATION ---
+window.showPage = (pageId) => {
+    document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden'));
+    document.getElementById(`page-${pageId}`).classList.remove('hidden');
 };
 
-/* ADMIN AUTH */
-window.adminAuth=()=>prompt("Admin Password")==="Propetas12"
-?go("admin"):alert("Denied");
+// --- DATA LOGIC ---
+let userData = {};
 
-/* ADS SAFE */
-function showAd(zone){
-try{ window[zone]?.({type:"inApp"}); }catch{}
-}
+// 1. Sync User Data
+const userRef = doc(db, "users", uid);
+onSnapshot(userRef, (snapshot) => {
+    if (snapshot.exists()) {
+        userData = snapshot.data();
+        document.getElementById('balanceDisplay').innerText = `₱${userData.balance.toFixed(3)}`;
+        document.getElementById('current-ref').innerText = userData.referredBy || "None";
+    } else {
+        // Create new user profile
+        setDoc(userRef, {
+            username: username,
+            balance: 0.00,
+            referredBy: null,
+            lastSignIn: 0,
+            createdAt: serverTimestamp()
+        });
+    }
+});
 
-/* TASK RENDER */
-const TASKS={
-ads:{reward:.02,zone:"show_10276123"},
-signin:{reward:.025,zone:"show_10337795"},
-gifts:{reward:.02,zone:"show_10337853"}
+// 2. Ad Rewards
+window.watchAd = async (zoneId) => {
+    if (typeof show_8662660 !== 'undefined') { // Generic check for Monetag
+        // Logic to trigger Monetag show
+        // Note: Monetag usually handles display via the script tags.
+        // This is a simulation of the reward logic.
+        alert("Ad starting... Complete it to earn rewards.");
+        
+        // After ad (ideally use Monetag callbacks)
+        await updateDoc(userRef, { balance: increment(0.05) });        tg.showAlert("You earned ₱0.05!");
+    } else {
+        // Fallback for testing
+        await updateDoc(userRef, { balance: increment(0.05) });
+        tg.showScanQrPopup({text: "Ad Simulation"}); // Just visual feedback
+        setTimeout(() => {
+            tg.closeScanQrPopup();
+            tg.showAlert("Reward added (Demo Mode)");
+        }, 2000);
+    }
 };
 
-function renderTasks(p){
-const box=document.getElementById(p);
-box.innerHTML="";
-if(!TASKS[p]) return;
-for(let i=1;i<=3;i++){
-box.innerHTML+=`
-<div class="card">
-<button class="btn btn-task"
-onclick="play('${TASKS[p].zone}',${TASKS[p].reward})">
-🤑 Task ${i}
-</button>
-</div>`;
-}
-}
+// 3. Daily Sign-In
+window.dailySignIn = async () => {
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
 
-window.play=async(zone,amt)=>{
-showAd(zone);
-await updateDoc(uRef,{ balance:increment(amt) });
-alert("🎉 Reward added!");
+    if (now - (userData.lastSignIn || 0) > oneDay) {
+        await updateDoc(userRef, {
+            balance: increment(1.00),
+            lastSignIn: now
+        });
+        tg.showAlert("Success! You claimed ₱1.00");
+    } else {
+        tg.showAlert("Already claimed! Come back tomorrow.");
+    }
 };
 
-/* REFERRAL */
-window.setReferrer=async()=>{
-const v=ref-input.value.trim();
-if(v===username) return alert("Invalid");
-await updateDoc(uRef,{refBy:v});
+// 4. Referrals
+window.setReferrer = async () => {
+    const refInput = document.getElementById('ref-input').value.trim();
+    if (!refInput || refInput === uid) return tg.showAlert("Invalid ID");
+    if (userData.referredBy) return tg.showAlert("Referrer already set");
+
+    const targetRef = doc(db, "users", refInput);
+    const targetSnap = await getDoc(targetRef);
+
+    if (targetSnap.exists()) {
+        await updateDoc(userRef, { referredBy: refInput });
+        await updateDoc(targetRef, { balance: increment(2.00) }); // Bonus for referrer
+        tg.showAlert("Referrer linked! They earned ₱2.00");
+    } else {
+        tg.showAlert("User not found");
+    }
 };
 
-/* WITHDRAW */
-window.handleWD=async()=>{
-const amt=+wd-amt.value;
-if(amt<=0||amt>uData.balance) return alert("Invalid");
-await updateDoc(uRef,{balance:increment(-amt)});
-await addDoc(collection(db,"withdrawals"),{
-uid,name:username,amount:amt,address:wd-addr.value,
-method:wd-method.value,status:"Pending",date:new Date().toISOString()
-});
+// 5. Withdrawals
+window.handleWithdraw = async () => {
+    const amt = parseFloat(document.getElementById('wd-amt').value);
+    const addr = document.getElementById('wd-addr').value;
+    const method = document.getElementById('wd-method').value;
+
+    if (amt >= 10 && userData.balance >= amt) {
+        await updateDoc(userRef, { balance: increment(-amt) });
+        await addDoc(collection(db, "withdrawals"), {
+            uid, username, amt, addr, method,
+            status: "Pending",
+            timestamp: serverTimestamp()
+        });
+        tg.showAlert("Withdrawal Request Sent!");
+        fetchWithdrawals();
+    } else {
+        tg.showAlert("Insufficient balance (Min: ₱10)");
+    }
 };
 
-/* HISTORY */
-function loadHistory(){
-const q=query(collection(db,"withdrawals"),where("uid","==",uid),limit(10));
-onSnapshot(q,s=>{
-let h="<table><tr><th>Date</th><th>₱</th><th>Status</th></tr>";
-s.forEach(d=>{
-const w=d.data();
-h+=`<tr><td>${w.date}</td><td>${w.amount}</td><td>${w.status}</td></tr>`;
-});
-wd-history.innerHTML=h+"</table>";
-});
+// 6. Fetch History
+async function fetchWithdrawals() {
+    const q = query(collection(db, "withdrawals"), where("uid", "==", uid), orderBy("timestamp", "desc"));
+    const snap = await getDocs(q);
+    const tbody = document.querySelector("#historyTable tbody");
+    tbody.innerHTML = "";
+    snap.forEach(doc => {
+        const d = doc.data();
+        tbody.innerHTML += `<tr>
+            <td>₱${d.amt}</td>
+            <td>${d.method}</td>
+            <td class="status-${d.status}">${d.status}</td>
+        </tr>`;
+    });
 }
-
-/* ADMIN */
-onSnapshot(collection(db,"withdrawals"),s=>{
-let h="<table><tr><th>User</th><th>Amount</th><th>Action</th></tr>";
-s.forEach(d=>{
-const w=d.data();
-h+=`<tr><td>${w.name}</td><td>${w.amount}</td>
-<td>${w.status==="Pending"
-?`<button onclick="upd('${d.id}','Paid')">✔</button>
-<button onclick="upd('${d.id}','Denied')">❌</button>`
-:w.status}</td></tr>`;
-});
-admin-table.innerHTML=h+"</table>";
-});
-
-window.upd=(id,st)=>updateDoc(doc(db,"withdrawals",id),{status:st});
+// Run on load
+fetchWithdrawals();
