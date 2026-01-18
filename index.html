@@ -12,100 +12,96 @@
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
 
     <style>
-        :root { --primary: #2c3e50; --accent: #f1c40f; --success: #27ae60; --danger: #e74c3c; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 15px; text-align: center; }
-        .card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        #userBar { background: var(--primary); color: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-weight: bold; }
-        #balanceDisplay { font-size: 1.5em; color: var(--success); font-weight: bold; }
-        
-        .btn { border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; margin: 5px 0; transition: 0.2s; display: block; }
-        .btn-main { background: var(--accent); color: var(--primary); }
-        .btn-withdraw { background: var(--success); color: white; }
-        .btn-admin { background: #8e44ad; color: white; }
+        :root { --p: #2c3e50; --a: #f1c40f; --s: #27ae60; --d: #e74c3c; }
+        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 15px; text-align: center; }
+        .card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 12px; }
+        #userBar { background: var(--p); color: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-weight: bold; }
+        #balanceDisplay { font-size: 1.6em; color: var(--s); font-weight: bold; }
+        .btn { border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; margin: 5px 0; display: block; }
+        .btn-main { background: var(--a); color: var(--p); }
+        .btn-task { background: #3498db; color: white; }
         .btn-claim { background: #e67e22; color: white; display: none; }
-        
-        input { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
         .hidden { display: none; }
-        .cooldown { color: var(--danger); font-size: 0.8em; margin-top: 5px; }
-        
-        table { width: 100%; font-size: 0.8em; border-collapse: collapse; margin-top: 10px; background: white; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        .status-Pending { color: orange; } .status-Paid { color: green; font-weight: bold; } .status-Denied { color: red; }
-        
-        .admin-controls { display: flex; gap: 5px; justify-content: center; }
-        .btn-sm { padding: 5px 10px; font-size: 0.8em; border-radius: 5px; border: none; cursor: pointer; color: white; }
+        .cooldown { color: var(--d); font-size: 0.8em; }
+        input, select { width: 90%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
+        table { width: 100%; font-size: 0.8em; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        .status-Paid { color: green; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="userBar">👤 <span id="usernameDisplay">Loading...</span></div>
-    <div class="card">        <div>Total Balance</div>
+    <div class="card">
         <div id="balanceDisplay">₱0.000</div>
+        <div style="font-size: 0.7em; color: gray;">Ref: <span id="refCodeDisplay">...</span></div>
     </div>
 
-    <!-- NAVIGATION MENU -->
-    <div id="nav-menu">
+    <!-- MAIN MENU -->
+    <div id="page-nav">
+        <button class="btn btn-main" onclick="showPage('page-ads')">🍍ADS AREA🍍</button>
         <button class="btn btn-main" onclick="showPage('page-signin')">🍍Paper house Sign In🍍</button>
-        <button class="btn btn-main" onclick="showPage('page-gifts')">🍍Paper house Gift🍍</button>
-        <button class="btn btn-withdraw" onclick="showPage('page-withdraw')">💸 Withdraw Money</button>
-        <button class="btn btn-admin" onclick="showPage('page-admin')">⚙️ Owner Dashboard</button>
-        <button class="btn" style="background:#bdc3c7" onclick="showPage('page-help')">❓ Help & Rules</button>
+        <button class="btn btn-main" onclick="showPage('page-gifts')">🍍Paper house Gift🍍</button>        <button class="btn btn-task" style="background:#8e44ad" onclick="showPage('page-referral')">👥 Referral System</button>
+        <button class="btn" style="background:var(--s); color:white" onclick="showPage('page-withdraw')">💸 Withdraw</button>
+        <button class="btn" style="background:#7f8c8d; color:white" onclick="showPage('page-admin')">⚙️ Admin</button>
     </div>
 
-    <!-- PAGES -->
+    <!-- ADS AREA (5m Cooldown) -->
+    <div id="page-ads" class="hidden">
+        <button onclick="showPage('page-nav')">⬅️ Back</button>
+        <h3>Ads Area (₱0.02)</h3>
+        <div id="area-ads"></div>
+    </div>
+
+    <!-- SIGN IN (3h Cooldown) -->
     <div id="page-signin" class="hidden">
-        <button onclick="showPage('nav-menu')">⬅️ Back</button>
-        <h3>Sign In (3H Cooldown)</h3>
-        <div id="signin-tasks"></div>
+        <button onclick="showPage('page-nav')">⬅️ Back</button>
+        <h3>Sign In (₱0.025)</h3>
+        <div id="area-signin"></div>
     </div>
 
+    <!-- GIFTS (20m Cooldown) -->
     <div id="page-gifts" class="hidden">
-        <button onclick="showPage('nav-menu')">⬅️ Back</button>
-        <h3>Gifts (20M Cooldown)</h3>
-        <div id="gift-tasks"></div>
+        <button onclick="showPage('page-nav')">⬅️ Back</button>
+        <h3>Gifts (₱0.02)</h3>
+        <div id="area-gifts"></div>
     </div>
 
-    <div id="page-withdraw" class="hidden">
-        <button onclick="showPage('nav-menu')">⬅️ Back</button>
-        <h3>Withdraw Your Money</h3>
+    <!-- REFERRAL PAGE -->
+    <div id="page-referral" class="hidden">
+        <button onclick="showPage('page-nav')">⬅️ Back</button>
         <div class="card">
-            <input type="number" id="wd-amount" placeholder="Amount in Peso">
-            <input type="text" id="wd-address" placeholder="GCash Number or Faucet Email">
-            <select id="wd-method" class="btn">
+            <h4>Your Referral Code:</h4>
+            <h2 id="myRefCode" style="color:var(--p)"></h2>
+            <p style="font-size: 0.8em;">Share your username! Earn 10% from every task your friends complete.</p>
+            <input type="text" id="input-referrer" placeholder="Enter Friend's Username">
+            <button class="btn btn-task" onclick="setReferrer()">Set Referrer</button>
+        </div>
+    </div>
+
+    <!-- WITHDRAW PAGE -->
+    <div id="page-withdraw" class="hidden">
+        <button onclick="showPage('page-nav')">⬅️ Back</button>
+        <div class="card">
+            <input type="number" id="wd-amt" placeholder="Amount (₱)">
+            <input type="text" id="wd-addr" placeholder="GCash/FaucetPay Details">
+            <select id="wd-method">
                 <option value="GCash">GCash</option>
                 <option value="FaucetPay">FaucetPay (USDT)</option>
             </select>
-            <button class="btn btn-withdraw" onclick="handleWithdraw()">Submit Request</button>
+            <button class="btn btn-main" onclick="requestWithdraw()">Withdraw</button>
         </div>
-        <h4>Your History</h4>
-        <div id="user-history"></div>
+        <h4>History</h4>
+        <div id="history-list"></div>
     </div>
 
+    <!-- ADMIN PAGE -->
     <div id="page-admin" class="hidden">
-        <button onclick="showPage('nav-menu')">⬅️ Back</button>
-        <h3>Admin Dashboard</h3>
-        <div class="card">Total Paid: ₱<span id="admin-total-paid">0.00</span></div>
-        <div id="admin-list" style="overflow-x: auto;"></div>
+        <button onclick="showPage('page-nav')">⬅️ Back</button>
+        <h3>Owner Dashboard</h3>
+        <div id="admin-list"></div>
     </div>
 
-    <div id="page-help" class="hidden">
-        <button onclick="showPage('nav-menu')">⬅️ Back</button>
-        <div class="card" style="text-align: left; font-size: 0.9em;">
-            <h3>Help Section</h3>
-            <p>1. Sign-In rewards ₱0.025 every 3 hours.</p>
-            <p>2. Gift rewards ₱0.02 every 20 minutes.</p>
-            <p>3. GCash withdrawals are direct Peso.</p>
-            <p>4. FaucetPay auto-converts Peso to USDT.</p>
-            <hr>
-            <strong>Firebase Security Rules:</strong>
-            <pre style="background:#eee; padding:5px; font-size:0.7em;">
-match /users/{id} { allow read, write: if true; }
-match /withdrawals/{id} { allow read, write: if true; }
-            </pre>
-        </div>
-    </div>
-
-    <!-- Firebase SDKs -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
