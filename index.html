@@ -5,29 +5,33 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>PAPERHOUSE INC</title>
 
+<!-- Telegram -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<!-- Monetag SDK -->
-<script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123"></script>
-<script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795"></script>
-<script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853"></script>
+<!-- Monetag SDKs (async = no freeze) -->
+<script async src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123"></script>
+<script async src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795"></script>
+<script async src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853"></script>
 
 <style>
-:root{--p:#2c3e50;--a:#f1c40f;--s:#27ae60;--d:#e74c3c;--bg:#f4f7f6}
-body{margin:0;font-family:Segoe UI;background:var(--bg);padding:10px}
+*{-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:Segoe UI;background:#f4f7f6;padding:10px}
 .card{background:#fff;padding:15px;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-#userBar{background:var(--p);color:#fff;padding:12px;border-radius:10px;font-weight:700;margin-bottom:10px}
-#balanceDisplay{font-size:2.2em;color:var(--s);font-weight:900}
-.btn{border:none;padding:15px;border-radius:10px;font-weight:700;width:100%;margin:6px 0}
-.btn-main{background:var(--a)}
+#userBar{background:#2c3e50;color:#fff;padding:12px;border-radius:10px;font-weight:700;margin-bottom:10px}
+#balanceDisplay{font-size:2.2em;color:#27ae60;font-weight:900}
+.btn{width:100%;padding:15px;border-radius:10px;border:none;font-weight:700;margin:6px 0;cursor:pointer}
+.btn-main{background:#f1c40f}
 .btn-task{background:#3498db;color:#fff}
 .btn-claim{background:#e67e22;color:#fff;display:none}
 .hidden{display:none}
-.cooldown{color:var(--d);font-size:.8em;font-weight:700}
-input,select{width:94%;padding:12px;border-radius:8px;border:1px solid #ddd;margin:8px 0}
+.cooldown{color:#e74c3c;font-size:.8em;font-weight:700}
+input,select{width:95%;padding:12px;border-radius:8px;border:1px solid #ddd;margin:8px 0}
 table{width:100%;border-collapse:collapse;font-size:.8em}
 th,td{border:1px solid #eee;padding:8px}
-.status-Paid{color:var(--s);font-weight:700}
+.status-Paid{color:#27ae60;font-weight:700}
+
+/* 🔥 CRITICAL FIX */
+iframe,.sdk-overlay{pointer-events:none!important}
 </style>
 </head>
 
@@ -40,31 +44,31 @@ th,td{border:1px solid #eee;padding:8px}
 <div id="balanceDisplay">₱0.000</div>
 </div>
 
+<!-- MAIN -->
 <div id="page-main">
-<button class="btn btn-main" onclick="go('page-ads')">🍍 ADS AREA</button>
-<button class="btn btn-main" onclick="go('page-signin')">🍍 SIGN IN</button>
-<button class="btn btn-main" onclick="go('page-gifts')">🍍 GIFTS</button>
-<button class="btn btn-main" onclick="go('page-referral')">👥 REFERRAL</button>
-<button class="btn btn-main" onclick="go('page-withdraw')">💸 WITHDRAW</button>
+<button class="btn btn-main" onclick="go('ads')">🍍 ADS AREA</button>
+<button class="btn btn-main" onclick="go('signin')">🍍 SIGN IN</button>
+<button class="btn btn-main" onclick="go('gifts')">🍍 GIFTS</button>
+<button class="btn btn-main" onclick="go('referral')">👥 REFERRAL</button>
+<button class="btn btn-main" onclick="go('withdraw')">💸 WITHDRAW</button>
 <button class="btn btn-main" onclick="adminAuth()">⚙️ ADMIN</button>
 </div>
 
-<div id="page-ads" class="hidden"><button onclick="go('page-main')">⬅ Back</button><div id="list-ads"></div></div>
-<div id="page-signin" class="hidden"><button onclick="go('page-main')">⬅ Back</button><div id="list-signin"></div></div>
-<div id="page-gifts" class="hidden"><button onclick="go('page-main')">⬅ Back</button><div id="list-gifts"></div></div>
+<div id="ads" class="hidden"></div>
+<div id="signin" class="hidden"></div>
+<div id="gifts" class="hidden"></div>
 
-<div id="page-referral" class="hidden">
-<button onclick="go('page-main')">⬅ Back</button>
+<div id="referral" class="hidden">
+<button onclick="go('main')">⬅ Back</button>
 <div class="card">
 <p>Your Username: <b id="my-ref-id"></b></p>
 <p>Referrer: <b id="current-ref">None</b></p>
 <input id="ref-input" placeholder="@username">
-<button class="btn btn-main" onclick="setReferrer()">Bind</button>
+<button class="btn btn-main" onclick="setReferrer()">Bind Referrer</button>
 </div>
 </div>
 
-<div id="page-withdraw" class="hidden">
-<button onclick="go('page-main')">⬅ Back</button>
+<div id="withdraw" class="hidden">
 <div class="card">
 <input id="wd-amt" type="number" placeholder="Amount ₱">
 <input id="wd-addr" placeholder="GCash / FaucetPay">
@@ -74,8 +78,7 @@ th,td{border:1px solid #eee;padding:8px}
 <div id="wd-history"></div>
 </div>
 
-<div id="page-admin" class="hidden">
-<button onclick="go('page-main')">⬅ Back</button>
+<div id="admin" class="hidden">
 <div id="admin-table"></div>
 </div>
 
