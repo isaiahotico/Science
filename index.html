@@ -1,110 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PAPERHOUSE INC</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Monetag SDKs -->
-    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PAPERHOUSE INC</title>
 
-    <style>
-        :root { --p: #2c3e50; --a: #f1c40f; --s: #27ae60; --d: #e74c3c; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; text-align: center; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 10px; }
-        #userBar { background: var(--p); color: white; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 10px; font-size: 0.9em; display: flex; justify-content: space-between; }
-        #balanceDisplay { font-size: 2.2em; color: var(--s); font-weight: 900; }
-        .btn { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; margin: 5px 0; transition: 0.1s; font-size: 1em; }
-        .btn:active { transform: scale(0.98); }
-        .btn-main { background: var(--a); color: var(--p); }
-        .btn-task { background: #3498db; color: white; }
-        .btn-claim { background: #e67e22; color: white; display: none; }
-        .hidden { display: none; }
-        .cooldown { color: var(--d); font-size: 0.85em; font-weight: bold; margin-bottom: 5px; }
-        input, select { width: 92%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
-        table { width: 100%; font-size: 0.75em; border-collapse: collapse; background: white; margin-top: 10px;}
-        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
-        .status-Paid { color: var(--s); font-weight: bold; }
-    </style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Monetag SDK -->
+<script src="//libtl.com/sdk.js" data-zone="10276123" data-sdk="show_10276123"></script>
+<script src="//libtl.com/sdk.js" data-zone="10337795" data-sdk="show_10337795"></script>
+<script src="//libtl.com/sdk.js" data-zone="10337853" data-sdk="show_10337853"></script>
+
+<style>
+:root{--p:#2c3e50;--a:#f1c40f;--s:#27ae60;--d:#e74c3c;--bg:#f4f7f6}
+body{margin:0;font-family:Segoe UI;background:var(--bg);padding:10px}
+.card{background:#fff;padding:15px;border-radius:12px;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+#userBar{background:var(--p);color:#fff;padding:12px;border-radius:10px;font-weight:700;margin-bottom:10px}
+#balanceDisplay{font-size:2.2em;color:var(--s);font-weight:900}
+.btn{border:none;padding:15px;border-radius:10px;font-weight:700;width:100%;margin:6px 0}
+.btn-main{background:var(--a)}
+.btn-task{background:#3498db;color:#fff}
+.btn-claim{background:#e67e22;color:#fff;display:none}
+.hidden{display:none}
+.cooldown{color:var(--d);font-size:.8em;font-weight:700}
+input,select{width:94%;padding:12px;border-radius:8px;border:1px solid #ddd;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:.8em}
+th,td{border:1px solid #eee;padding:8px}
+.status-Paid{color:var(--s);font-weight:700}
+</style>
 </head>
+
 <body>
 
-    <div id="userBar">
-        <span id="u-name">👤 Loading...</span>
-    </div>
+<div id="userBar">👤 Loading...</div>
 
-    <div class="card">
-        <div style="font-size: 0.8em; color: gray;">TOTAL BALANCE</div>
-        <div id="balanceDisplay">₱0.000</div>
-    </div>
+<div class="card">
+<div style="font-size:.8em;color:#777">TOTAL BALANCE</div>
+<div id="balanceDisplay">₱0.000</div>
+</div>
 
-    <!-- MAIN MENU -->
-    <div id="page-main">        <button class="btn btn-main" onclick="go('page-ads')">🍍 ADS AREA 🍍</button>
-        <button class="btn btn-main" onclick="go('page-signin')">🍍 Paper house Sign In 🍍</button>
-        <button class="btn btn-main" onclick="go('page-gifts')">🍍 Paper house Gift 🍍</button>
-        <button class="btn" style="background:#3498db; color:white;" onclick="go('page-referral')">👥 REFERRAL SYSTEM</button>
-        <button class="btn" style="background:var(--s); color:white;" onclick="go('page-withdraw')">💸 WITHDRAW</button>
-        <button class="btn" style="background:#7f8c8d; color:white;" onclick="adminAuth()">⚙️ ADMIN DASHBOARD</button>
-    </div>
+<div id="page-main">
+<button class="btn btn-main" onclick="go('page-ads')">🍍 ADS AREA</button>
+<button class="btn btn-main" onclick="go('page-signin')">🍍 SIGN IN</button>
+<button class="btn btn-main" onclick="go('page-gifts')">🍍 GIFTS</button>
+<button class="btn btn-main" onclick="go('page-referral')">👥 REFERRAL</button>
+<button class="btn btn-main" onclick="go('page-withdraw')">💸 WITHDRAW</button>
+<button class="btn btn-main" onclick="adminAuth()">⚙️ ADMIN</button>
+</div>
 
-    <!-- ADS AREA -->
-    <div id="page-ads" class="hidden">
-        <button onclick="go('page-main')">⬅️ Back</button>
-        <h3 style="color:var(--p)">ADS AREA</h3>
-        <div id="list-ads"></div>
-    </div>
+<div id="page-ads" class="hidden"><button onclick="go('page-main')">⬅ Back</button><div id="list-ads"></div></div>
+<div id="page-signin" class="hidden"><button onclick="go('page-main')">⬅ Back</button><div id="list-signin"></div></div>
+<div id="page-gifts" class="hidden"><button onclick="go('page-main')">⬅ Back</button><div id="list-gifts"></div></div>
 
-    <!-- SIGN IN -->
-    <div id="page-signin" class="hidden">
-        <button onclick="go('page-main')">⬅️ Back</button>
-        <h3 style="color:var(--p)">SIGN IN AREA</h3>
-        <div id="list-signin"></div>
-    </div>
+<div id="page-referral" class="hidden">
+<button onclick="go('page-main')">⬅ Back</button>
+<div class="card">
+<p>Your Username: <b id="my-ref-id"></b></p>
+<p>Referrer: <b id="current-ref">None</b></p>
+<input id="ref-input" placeholder="@username">
+<button class="btn btn-main" onclick="setReferrer()">Bind</button>
+</div>
+</div>
 
-    <!-- GIFTS -->
-    <div id="page-gifts" class="hidden">
-        <button onclick="go('page-main')">⬅️ Back</button>
-        <h3 style="color:var(--p)">GIFT AREA</h3>
-        <div id="list-gifts"></div>
-    </div>
+<div id="page-withdraw" class="hidden">
+<button onclick="go('page-main')">⬅ Back</button>
+<div class="card">
+<input id="wd-amt" type="number" placeholder="Amount ₱">
+<input id="wd-addr" placeholder="GCash / FaucetPay">
+<select id="wd-method"><option>GCash</option><option>FaucetPay</option></select>
+<button class="btn btn-main" onclick="handleWD()">Submit</button>
+</div>
+<div id="wd-history"></div>
+</div>
 
-    <!-- REFERRAL -->
-    <div id="page-referral" class="hidden">
-        <button onclick="go('page-main')">⬅️ Back</button>
-        <div class="card">
-            <h4>Invite & Earn 10%</h4>
-            <p style="font-size: 0.8em;">Your Referral Username: <b id="my-ref-id"></b></p>
-            <p style="font-size: 0.8em;">Referrer: <span id="current-ref" style="color:var(--s)">None</span></p>
-            <input type="text" id="ref-input" placeholder="Enter Friend's Username (e.g. @name)">
-            <button class="btn btn-main" onclick="setReferrer()">Bind Referrer</button>
-        </div>
-    </div>
+<div id="page-admin" class="hidden">
+<button onclick="go('page-main')">⬅ Back</button>
+<div id="admin-table"></div>
+</div>
 
-    <!-- WITHDRAW -->
-    <div id="page-withdraw" class="hidden">
-        <button onclick="go('page-main')">⬅️ Back</button>
-        <div class="card">
-            <input type="number" id="wd-amt" placeholder="Amount (₱)">
-            <input type="text" id="wd-addr" placeholder="GCash No / Faucet Email">
-            <select id="wd-method">
-                <option value="GCash">GCash</option>
-                <option value="FaucetPay">FaucetPay (USDT)</option>
-            </select>
-            <button class="btn btn-main" onclick="handleWD()">Submit Withdrawal</button>
-        </div>
-        <div id="wd-history" style="overflow-x:auto"></div>
-    </div>
-
-    <!-- ADMIN -->
-    <div id="page-admin" class="hidden">
-        <button onclick="go('page-main')">⬅️ Back</button>
-        <h3>Admin Controls</h3>
-        <div id="admin-table" style="overflow-x:auto"></div>
-    </div>
-
-    <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
