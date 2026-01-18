@@ -11,78 +11,95 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        :root { --gold: #ffd700; --green: #2ecc71; --bg: #121212; --card: #1e1e1e; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; }
-        .header { background: var(--card); padding: 15px; border-radius: 15px; border-bottom: 3px solid var(--gold); text-align: center; margin-bottom: 15px; }
-        h1 { color: var(--gold); margin: 0; font-size: 1.4rem; letter-spacing: 2px; }
-        .balance { font-size: 2.5rem; color: var(--green); font-weight: bold; margin: 5px 0; }
-        .global-stat { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-
-        button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        :root { --gold: #ffd700; --green: #2ecc71; --dark: #121212; --card: #1e1e1e; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; margin: 0; padding: 15px; text-align: center; }
+        .header { background: var(--card); padding: 15px; border-radius: 15px; border-bottom: 3px solid var(--gold); margin-bottom: 15px; }
+        h1 { color: var(--gold); margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+        .balance-main { font-size: 2.5rem; color: var(--green); font-weight: bold; margin: 5px 0; }
+        
+        button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; }
         .btn-main { background: var(--gold); color: black; }
         .btn-task { background: var(--green); color: white; }
-        .btn-bonus { background: #9b59b6; color: white; }
         .btn-withdraw { background: #e74c3c; color: white; }
         
         .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333; }
         .hidden { display: none; }
-        .cooldown { font-size: 0.8rem; color: #ff7675; text-align: center; }
+        .cooldown { font-size: 11px; color: #ff7675; margin-top: -5px; margin-bottom: 5px; }
         
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
-        table { width: 100%; font-size: 11px; margin-top: 10px; border-collapse: collapse; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
-        .status-Paid { color: var(--green); font-weight: bold; }
+        input { width: 95%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; }
+        table { width: 100%; font-size: 10px; margin-top: 10px; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+        
+        .status-Paid { color: var(--green); }
         .status-Pending { color: var(--gold); }
-        .status-Denied { color: #ff7675; }
+        .status-Denied { color: #e74c3c; }
+
+        .pagination-bar { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 10px; font-size: 12px; }
+        .page-btn { width: auto; padding: 5px 15px; background: #333; color: white; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>PAPERHOUSE INC</h1>    <div id="userLabel" style="color: #0088cc; font-size: 0.8rem; margin-top: 5px;">👤 User: ...</div>
-    <div class="balance">₱<span id="mainBalance">0.000</span></div>
-    <div class="global-stat">Total Withdrawn by Users: ₱<span id="globalWithdrawn">0.00</span></div>
+<div class="header">    <h1>PAPERHOUSE INC</h1>
+    <div id="userDisplay" style="color:#0088cc; font-size:12px; margin-top:5px;">👤 User: Loading...</div>
+    <div class="balance-main">₱<span id="topBalance">0.000</span></div>
+    <div style="font-size:10px; color:#777">GLOBAL WITHDRAWN: ₱<span id="globalTotal">0.00</span></div>
 </div>
 
+<!-- PAGES -->
 <div id="page-main">
     <button class="btn-main" onclick="navTo('page-ads')">🍍ADS AREA🍍</button>
     <button class="btn-main" onclick="navTo('page-signin')">🍍Paper house Sign In🍍</button>
     <button class="btn-main" onclick="navTo('page-gift')">🍍Paper house Gift🍍</button>
-    <button class="btn-bonus" onclick="navTo('page-bonus')">🍍RANDOM BONUS (5 TASKS)🍍</button>
+    <button class="btn-main" style="background:#9b59b6; color:white;" onclick="navTo('page-bonus')">🍍RANDOM BONUS (5 TASKS)🍍</button>
     <button class="btn-withdraw" onclick="navTo('page-withdraw')">Withdraw your Money here</button>
-    <button style="background:#333; color:#777; font-size: 10px;" onclick="openAdmin()">Owner Dashboard</button>
+    <button style="background:#333; color:#555; font-size:10px" onclick="openAdmin()">Owner Dashboard</button>
 </div>
 
-<!-- Task Pages -->
-<div id="page-ads" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-ads"></div></div>
-<div id="page-signin" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-signin"></div></div>
-<div id="page-gift" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-gift"></div></div>
-<div id="page-bonus" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><h3>Surprise Bonus Ads</h3><div id="cont-bonus"></div></div>
+<!-- TASK TEMPLATES -->
+<div id="page-ads" class="hidden section"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-ads"></div></div>
+<div id="page-signin" class="hidden section"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-signin"></div></div>
+<div id="page-gift" class="hidden section"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-gift"></div></div>
+<div id="page-bonus" class="hidden section"><button onclick="navTo('page-main')">⬅ Back</button><h3>Random Bonus</h3><div id="cont-bonus"></div></div>
 
-<!-- Withdrawal Page -->
+<!-- WITHDRAW PAGE -->
 <div id="page-withdraw" class="hidden">
     <button onclick="navTo('page-main')">⬅ Back</button>
     <div class="card">
-        <h3>Request Payout</h3>
-        <input type="text" id="payMethod" placeholder="Method (GCash / FaucetPay)">
-        <input type="text" id="payInfo" placeholder="Number or Email">
-        <button class="btn-task" onclick="handleWithdrawal()">Submit Request</button>
+        <div style="font-size:12px; color:#aaa">Total Earned</div>
+        <div style="font-size:24px; color:var(--green); font-weight:bold; margin-bottom:10px">₱<span id="earnBox">0.000</span></div>
+        <input type="text" id="payoutInfo" placeholder="GCash Number or FaucetPay Email">
+        <div style="display:flex; gap:10px">
+            <button class="btn-task" onclick="submitWithdraw('GCash')">GCash</button>
+            <button class="btn-task" onclick="submitWithdraw('FaucetPay')">FaucetPay</button>
+        </div>
     </div>
-    <h4>Live History</h4>
+    
+    <h4>Withdrawal History</h4>
     <table id="userHistTable">
-        <thead><tr><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
+        <thead><tr><th>Date</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
         <tbody id="userHistBody"></tbody>
     </table>
+    <div class="pagination-bar">
+        <button class="page-btn" onclick="changePage('user', -1)">Prev</button>
+        <span id="userPageNum">1</span>
+        <button class="page-btn" onclick="changePage('user', 1)">Next</button>
+    </div>
 </div>
 
-<!-- Owner Dashboard -->
+<!-- OWNER DASHBOARD -->
 <div id="page-admin" class="hidden">
     <button onclick="navTo('page-main')">Logout Admin</button>
-    <h3>Pending Approvals (Live Sync)</h3>
-    <table style="font-size: 10px;">
+    <h3>Users Withdrawal (Real-time)</h3>
+    <table>
         <thead><tr><th>User</th><th>Amount</th><th>Details</th><th>Action</th></tr></thead>
         <tbody id="adminBody"></tbody>
     </table>
+    <div class="pagination-bar">
+        <button class="page-btn" onclick="changePage('admin', -1)">Prev</button>
+        <span id="adminPageNum">1</span>
+        <button class="page-btn" onclick="changePage('admin', 1)">Next</button>
+    </div>
 </div>
 
 <script type="module" src="app.js"></script>
