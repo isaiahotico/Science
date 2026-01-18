@@ -11,95 +11,78 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        :root { --gold: #ffd700; --green: #2ecc71; --dark: #121212; --card: #1e1e1e; }
-        body { font-family: sans-serif; background: var(--dark); color: white; margin: 0; padding: 15px; text-align: center; }
-        .header { background: var(--card); padding: 15px; border-radius: 12px; border-bottom: 2px solid var(--gold); margin-bottom: 15px; }
+        :root { --gold: #ffd700; --green: #2ecc71; --bg: #121212; --card: #1e1e1e; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; }
+        .header { background: var(--card); padding: 15px; border-radius: 15px; border-bottom: 3px solid var(--gold); text-align: center; margin-bottom: 15px; }
         h1 { color: var(--gold); margin: 0; font-size: 1.4rem; letter-spacing: 2px; }
-        .user-bar { color: #0088cc; font-size: 0.9rem; margin: 5px 0; }
-        .stat-line { font-size: 0.7rem; color: #aaa; }
-        .balance-display { font-size: 2.2rem; color: var(--green); font-weight: bold; margin: 5px 0; }
-        
-        button { width: 100%; padding: 14px; margin: 8px 0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .balance { font-size: 2.5rem; color: var(--green); font-weight: bold; margin: 5px 0; }
+        .global-stat { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+
+        button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
         .btn-main { background: var(--gold); color: black; }
         .btn-task { background: var(--green); color: white; }
-        .btn-claim { background: #3498db; color: white; }
+        .btn-bonus { background: #9b59b6; color: white; }
         .btn-withdraw { background: #e74c3c; color: white; }
         
         .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #333; }
         .hidden { display: none; }
-        .cooldown { font-size: 0.8rem; color: #ff7675; }
+        .cooldown { font-size: 0.8rem; color: #ff7675; text-align: center; }
         
-        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: white; }
-        table { width: 100%; font-size: 10px; margin-top: 10px; border-collapse: collapse; }
-        th, td { border: 1px solid #333; padding: 8px; text-align: left; }
-        .status-Paid { color: var(--green); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
+        table { width: 100%; font-size: 11px; margin-top: 10px; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        .status-Paid { color: var(--green); font-weight: bold; }
         .status-Pending { color: var(--gold); }
         .status-Denied { color: #ff7675; }
-        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-        .page-btn { width: auto; padding: 5px 10px; font-size: 10px; }
-    </style></head>
+    </style>
+</head>
 <body>
 
 <div class="header">
-    <h1>PAPERHOUSE INC</h1>
-    <div id="userDisplay" class="user-bar">👤 Loading...</div>
-    <div class="stat-line">GLOBAL WITHDRAWN: ₱<span id="globalWithdrawn">0.00</span></div>
-    <div class="balance-display">₱<span id="balance">0.000</span></div>
+    <h1>PAPERHOUSE INC</h1>    <div id="userLabel" style="color: #0088cc; font-size: 0.8rem; margin-top: 5px;">👤 User: ...</div>
+    <div class="balance">₱<span id="mainBalance">0.000</span></div>
+    <div class="global-stat">Total Withdrawn by Users: ₱<span id="globalWithdrawn">0.00</span></div>
 </div>
 
-<!-- MAIN PAGE -->
 <div id="page-main">
     <button class="btn-main" onclick="navTo('page-ads')">🍍ADS AREA🍍</button>
     <button class="btn-main" onclick="navTo('page-signin')">🍍Paper house Sign In🍍</button>
     <button class="btn-main" onclick="navTo('page-gift')">🍍Paper house Gift🍍</button>
+    <button class="btn-bonus" onclick="navTo('page-bonus')">🍍RANDOM BONUS (5 TASKS)🍍</button>
     <button class="btn-withdraw" onclick="navTo('page-withdraw')">Withdraw your Money here</button>
-    <button style="background:#444; color:#ccc; font-size:10px" onclick="openAdmin()">Owner Dashboard</button>
+    <button style="background:#333; color:#777; font-size: 10px;" onclick="openAdmin()">Owner Dashboard</button>
 </div>
 
-<!-- SECTION TEMPLATE (Ads, Signin, Gift) -->
-<div id="page-ads" class="hidden section-page">
-    <button onclick="navTo('page-main')">⬅ Back</button>
-    <div id="container-ads"></div>
-</div>
+<!-- Task Pages -->
+<div id="page-ads" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-ads"></div></div>
+<div id="page-signin" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-signin"></div></div>
+<div id="page-gift" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-gift"></div></div>
+<div id="page-bonus" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><h3>Surprise Bonus Ads</h3><div id="cont-bonus"></div></div>
 
-<div id="page-signin" class="hidden section-page">
-    <button onclick="navTo('page-main')">⬅ Back</button>
-    <div id="container-signin"></div>
-</div>
-
-<div id="page-gift" class="hidden section-page">
-    <button onclick="navTo('page-main')">⬅ Back</button>
-    <div id="container-gift"></div>
-</div>
-
-<!-- WITHDRAW PAGE -->
+<!-- Withdrawal Page -->
 <div id="page-withdraw" class="hidden">
     <button onclick="navTo('page-main')">⬅ Back</button>
     <div class="card">
-        <h3>Withdrawal Request</h3>
-        <input type="number" id="gcashNum" placeholder="GCash Number">
-        <button class="btn-task" onclick="requestWithdraw('GCash')">Withdraw via GCash</button>
-        <hr style="border:0.5px solid #333">
-        <input type="email" id="fpayEmail" placeholder="FaucetPay Email">
-        <button class="btn-task" onclick="requestWithdraw('FaucetPay')">Withdraw via FaucetPay</button>
+        <h3>Request Payout</h3>
+        <input type="text" id="payMethod" placeholder="Method (GCash / FaucetPay)">
+        <input type="text" id="payInfo" placeholder="Number or Email">
+        <button class="btn-task" onclick="handleWithdrawal()">Submit Request</button>
     </div>
-    <h4>Your History</h4>
-    <table id="userHist">
-        <thead><tr><th>Date</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
+    <h4>Live History</h4>
+    <table id="userHistTable">
+        <thead><tr><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
         <tbody id="userHistBody"></tbody>
     </table>
-    <div class="pagination" id="userPager"></div>
 </div>
 
-<!-- ADMIN DASHBOARD -->
+<!-- Owner Dashboard -->
 <div id="page-admin" class="hidden">
     <button onclick="navTo('page-main')">Logout Admin</button>
-    <h3>Owner Management</h3>
-    <table>
-        <thead><tr><th>User</th><th>Amount</th><th>Method/Info</th><th>Action</th></tr></thead>
+    <h3>Pending Approvals (Live Sync)</h3>
+    <table style="font-size: 10px;">
+        <thead><tr><th>User</th><th>Amount</th><th>Details</th><th>Action</th></tr></thead>
         <tbody id="adminBody"></tbody>
     </table>
-    <div class="pagination" id="adminPager"></div>
 </div>
 
 <script type="module" src="app.js"></script>
