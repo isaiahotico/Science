@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
-    
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -14,7 +14,7 @@
     <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
     <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
-    
+
     <style>
         :root { --primary: #fbc02d; --secondary: #333; --bg: #fffde7; --success: #4caf50; --danger: #f44336; --accent: #03a9f4; --profile-btn: #9c27b0; --leaderboard: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 140px; text-align: center; color: var(--secondary); }
@@ -22,16 +22,16 @@
         .page { display: none; padding: 15px; animation: fadeIn 0.2s ease-in; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
+
         .btn { background: var(--primary); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 10px auto; width: 90%; box-shadow: 0 4px #f57f17; display: block; font-size: 16px; color: #333; transition: 0.2s; text-decoration: none;}
         .btn:active { transform: translateY(2px); box-shadow: 0 2px #f57f17; }
         .btn:disabled { background: #ccc !important; box-shadow: 0 4px #999 !important; cursor: not-allowed; }
-        
+
         .back-btn { background: #616161 !important; color: white !important; box-shadow: 0 4px #424242 !important; margin-top: 20px; }
         .card { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         input, select { width: 85%; padding: 12px; margin: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }        .cooldown { font-size: 12px; color: #e65100; font-weight: bold; margin-bottom: 5px; }
         .claim-btn { background: var(--success) !important; color: white !important; display: none; }
-        
+
         .table-container { overflow-x: auto; margin-top: 15px; background: #fff; border-radius: 8px; border: 1px solid #ddd; }
         table { width: 100%; font-size: 10px; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: top;}
@@ -57,6 +57,17 @@
         .pagination-controls button:disabled { background: #ccc; box-shadow: 0 2px #999; cursor: not-allowed; }
 
         #footer { position: fixed; bottom: 0; width: 100%; background: var(--secondary); color: white; padding: 12px 0; font-size: 11px; border-top: 3px solid var(--primary); z-index: 1000; }
+
+        /* Admin view specific styles for unified page */
+        .admin-view-only { display: none; } /* Hidden by default */
+        .admin-active #adminWithdrawalTools,
+        .admin-active #adminPendingRequests,
+        .admin-active #adminHistoryRequests {
+            display: block; /* Visible when admin-active class is on body */
+        }
+        .admin-active #userWithdrawalForm {
+            display: none; /* User form hidden in admin mode */
+        }
     </style>
 </head>
 <body>
@@ -65,19 +76,18 @@
     <div id="userBar">👤 Guest User</div> <!-- Initial display for user bar -->
     <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">💰 PHP <span id="mainBalance">0.000</span></div>
 </div>
-
 <h1 style="color:#5d4037; margin: 20px 0;">PAPERHOUSE INC</h1>
 
 <!-- MAIN MENU -->
 <div id="homePage" class="page active">
     <button class="btn" onclick="showPage('adsAreaPage')">🍍 ADS AREA 🍍</button>
     <button class="btn" onclick="showPage('signInPage')">🍍 Sign In Area 🍍</button>
-    <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>    <button class="btn daily-bonus-btn" onclick="showPage('dailyBonusPage')">🎁 Daily Bonus (24h)</button>
+    <button class="btn" onclick="showPage('giftPage')">🍍 Gift Area 🍍</button>
+    <button class="btn daily-bonus-btn" onclick="showPage('dailyBonusPage')">🎁 Daily Bonus (24h)</button>
     <button class="btn" onclick="showPage('referralPage')" style="background:var(--accent)">👥 Referral System</button>
-    <button class="btn" onclick="showPage('withdrawPage')" style="background:#4caf50;">💰 Withdrawal Section</button>
+    <button class="btn" onclick="showUnifiedWithdrawalPage()" style="background:#4caf50;">💰 Withdrawal</button> <!-- Calls new unified function -->
     <button class="btn" onclick="showPage('leaderboardPage')" style="background:var(--leaderboard)">🏆 Leaderboard</button>
     <button class="btn" onclick="showPage('helpPage')" style="background:var(--profile-btn)">❓ Help & Links</button>
-    <button class="btn" onclick="checkAdmin()" style="background:#607d8b;">🛠 Owner Dashboard</button>
 </div>
 
 <!-- ADS AREA (5m cooldown) -->
@@ -120,56 +130,69 @@
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
 
-<!-- WITHDRAWAL SECTION -->
-<div id="withdrawPage" class="page">
-    <div class="card">
+<!-- UNIFIED WITHDRAWAL PAGE (User & Admin) -->
+<div id="unifiedWithdrawalPage" class="page">
+    <h2 id="withdrawalPageTitle">💰 Withdrawal Section</h2>
+
+    <!-- Admin Tools Section - Only visible in admin mode -->
+    <div id="adminWithdrawalTools" class="admin-view-only">
+        <div class="card" style="background:#222; color:white;">Total Paid (All-time): PHP <span id="statPHP">0.00</span></div>
+        <div class="card" style="background:#222; color:white; margin-top: 15px;">
+            Approved Withdrawals: <span id="statApprovedCount">0</span> | Approved Amount: PHP <span id="statApprovedAmount">0.00</span>
+        </div>
+        <hr style="border-color: var(--primary); margin: 20px 0;">
+    </div>
+
+    <!-- User Withdrawal Form - Only visible in user mode -->
+    <div id="userWithdrawalForm" class="card">
         <h3>Withdrawal (Min 0.05 PHP)</h3>
         <select id="wMethod">
             <option value="GCash">GCash</option>
             <option value="FaucetPay">FaucetPay</option>
         </select>
-        <input type="number" id="wAmount" placeholder="Amount (PHP)">
+        <input type="number" id="wAmount" placeholder="Amount (PHP)" oninput="calculateUsdt()">
         <input type="text" id="wInfo" placeholder="Number or Email">
+        <p style="font-size: 12px;">You will withdraw: <span id="usdtEquivalent">0.0000 USDT</span></p>
         <button class="btn" onclick="submitWithdraw()">Request Withdrawal</button>
     </div>
-    <h4>Your Withdrawal History (Page <span id="userHistoryCurrentPage">1</span>)</h4>
+
+    <!-- User's Personal Withdrawal History - Visible for users -->
+    <h4 id="userHistoryTitle">Your Withdrawal History (Page <span id="userHistoryCurrentPage">1</span>)</h4>
     <div id="userHistory" class="table-container"></div>
     <div class="pagination-controls">
         <button id="userHistoryPrev" onclick="navigatePagination('userHistory', -1)">Previous</button>
         <button id="userHistoryNext" onclick="navigatePagination('userHistory', 1)">Next</button>
     </div>
+
+    <!-- Admin Pending Requests Table - Only visible in admin mode -->
+    <div id="adminPendingRequests" class="admin-view-only">
+        <h3 style="margin-top: 30px;">Pending Requests (Page <span id="adminPendingCurrentPage">1</span>)</h3>
+        <div id="adminPending" class="table-container"></div>
+        <div class="pagination-controls">
+            <button id="adminPendingPrev" onclick="navigatePagination('adminPending', -1)">Previous</button>
+            <button id="adminPendingNext" onclick="navigatePagination('adminPending', 1)">Next</button>
+        </div>
+    </div>
+
+    <!-- Admin History Requests Table - Only visible in admin mode -->
+    <div id="adminHistoryRequests" class="admin-view-only">
+        <h3 style="margin-top: 30px;">Approved/Denied History (Page <span id="adminHistoryCurrentPage">1</span>)</h3>
+        <div id="adminHistory" class="table-container"></div>
+        <div class="pagination-controls">
+            <button id="adminHistoryPrev" onclick="navigatePagination('adminHistory', -1)">Previous</button>
+            <button id="adminHistoryNext" onclick="navigatePagination('adminHistory', 1)">Next</button>
+        </div>
+    </div>
+
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
 </div>
+
 
 <!-- LEADERBOARD -->
 <div id="leaderboardPage" class="page">
     <h2>🏆 TOP EARNERS 🏆</h2>
     <div id="leaderboardContent" class="table-container">Loading leaderboard...</div>
     <button class="btn back-btn" onclick="showPage('homePage')">⬅ Back</button>
-</div>
-
-<!-- OWNER DASHBOARD -->
-<div id="adminPage" class="page">
-    <div class="card" style="background:#222; color:white;">Total Paid (All-time): PHP <span id="statPHP">0.00</span></div>
-    <!-- New stats for approved withdrawals -->
-    <div class="card" style="background:#222; color:white; margin-top: 15px;">
-        Approved Withdrawals: <span id="statApprovedCount">0</span> | Approved Amount: PHP <span id="statApprovedAmount">0.00</span>
-    </div>
-
-    <h3>Pending Requests (Page <span id="adminPendingCurrentPage">1</span>)</h3>
-    <div id="adminPending" class="table-container"></div>
-    <div class="pagination-controls">
-        <button id="adminPendingPrev" onclick="navigatePagination('adminPending', -1)">Previous</button>
-        <button id="adminPendingNext" onclick="navigatePagination('adminPending', 1)">Next</button>
-    </div>
-
-    <h3>Approved History (Page <span id="adminHistoryCurrentPage">1</span>)</h3>
-    <div id="adminHistory" class="table-container"></div>
-    <div class="pagination-controls">
-        <button id="adminHistoryPrev" onclick="navigatePagination('adminHistory', -1)">Previous</button>
-        <button id="adminHistoryNext" onclick="navigatePagination('adminHistory', 1)">Next</button>
-    </div>
-    <button class="btn back-btn" onclick="showPage('homePage')">⬅ Close</button>
 </div>
 
 <!-- HELP & PROFILE EDIT -->
