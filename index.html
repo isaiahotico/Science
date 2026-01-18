@@ -17,28 +17,23 @@
         #userBar { color: var(--blue); font-size: 13px; font-weight: bold; }
         .balance-main { font-size: 2.2rem; color: var(--green); font-weight: bold; margin: 5px 0; }
         
-        button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; }
         .btn-main { background: var(--gold); color: black; }
         .btn-blue { background: var(--blue); color: white; }
         .btn-withdraw { background: var(--red); color: white; }
         .btn-task { background: var(--green); color: white; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .card { background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #333; }
         .hidden { display: none; }
         .cooldown { font-size: 10px; color: #ff7675; margin-top: -5px; margin-bottom: 10px; }
         
-        /* Chat & Tables */
-        #chat-box { height: 200px; overflow-y: auto; background: #000; padding: 10px; border-radius: 8px; text-align: left; font-size: 12px; border: 1px solid #444; margin-bottom: 5px; }
-        .msg { margin-bottom: 5px; border-bottom: 1px solid #222; padding-bottom: 2px; }
         table { width: 100%; font-size: 10px; border-collapse: collapse; margin-top: 10px; background: #111; }
         th, td { border: 1px solid #333; padding: 6px; text-align: center; }
-        .status-Paid { color: var(--green); }
-        .status-Pending { color: var(--gold); }
-        .status-Denied { color: var(--red); }        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: white; text-align: center; }
-        .pagination { display: flex; justify-content: center; gap: 10px; align-items: center; margin-top: 10px; font-size: 12px; }
-        .page-btn { width: auto; padding: 4px 12px; background: #333; }
+        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: white; text-align: center; }
         
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; padding: 10px 0; font-size: 10px; border-top: 1px solid #333; color: #777; z-index: 1000; }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; padding: 10px 0; font-size: 10px; border-top: 1px solid #333; color: #777; z-index: 1000; }        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .stat-item { background: #222; padding: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -49,96 +44,61 @@
     <div style="font-size:10px; color:#555">TOTAL PAID OUT: ₱<span id="globalTotal">0.00</span></div>
 </div>
 
-<!-- NAVIGATION -->
 <div id="page-main">
-    <button class="btn-main" onclick="navTo('page-signin')">🍍PAPER HOUSE SIGN IN (3 TASKS)🍍</button>
+    <button class="btn-main" onclick="navTo('page-signin')">🍍SIGN IN (3 TASKS)🍍</button>
     <button class="btn-main" onclick="navTo('page-ads')">🍍ADS AREA (3 TASKS)🍍</button>
     <button class="btn-main" onclick="navTo('page-gift')">🍍GIFT AREA (3 TASKS)🍍</button>
     <button class="btn-main" onclick="navTo('page-bonus')">🍍BONUS AREA (5 TASKS)🍍</button>
-    <button class="btn-blue" onclick="navTo('page-chat')">💬 CHAT WITH FRIENDS 💬</button>
-    <button class="btn-main" style="background:#9b59b6; color:white;" onclick="navTo('page-ref')">👥 REFERRALS (10% BONUS) 👥</button>
+    <button class="btn-blue" onclick="navTo('page-chat')">💬 LIVE CHAT 💬</button>
+    <button class="btn-main" style="background:#9b59b6; color:white;" onclick="navTo('page-ref')">👥 REFERRALS & BONUS 👥</button>
     <button class="btn-main" style="background:#555; color:white;" onclick="navTo('page-leader')">🏆 LEADERBOARD 🏆</button>
-    <button class="btn-main" style="background:#444; color:white;" onclick="navTo('page-help')">❓ HELP SECTION ❓</button>
-    <button class="btn-withdraw" onclick="navTo('page-withdraw')">💰 WITHDRAWAL AREA 💰</button>
-    <button style="background:transparent; color:#222; font-size:9px" onclick="openAdmin()">OWNER PANEL</button>
+    <button class="btn-main" style="background:#444; color:white;" onclick="navTo('page-help')">❓ HELP & SOCIALS ❓</button>
+    <button class="btn-withdraw" onclick="navTo('page-withdraw')">💰 WITHDRAWAL 💰</button>
+    <button style="background:transparent; color:#222; font-size:8px" onclick="openAdmin()">ADMIN</button>
 </div>
 
-<!-- PAGES -->
-<div id="page-signin" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-signin"></div></div>
-<div id="page-ads" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-ads"></div></div><div id="page-gift" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-gift"></div></div>
-<div id="page-bonus" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-bonus"></div></div>
-
-<div id="page-chat" class="hidden">
-    <button onclick="navTo('page-main')">⬅ Back</button>
-    <div class="card">
-        <div id="chat-box"></div>
-        <input type="text" id="chatInput" placeholder="Message...">
-        <button class="btn-blue" onclick="sendMessage()">Send</button>
-    </div>
-</div>
-
+<!-- REFERRAL PAGE -->
 <div id="page-ref" class="hidden">
     <button onclick="navTo('page-main')">⬅ Back</button>
     <div class="card">
-        <h3>Referral Center</h3>
+        <h3>Referral Program</h3>
+        <p style="font-size:11px; color:var(--gold)">Earn 10% commission from your friends' work!</p>
+        <small>Your Share Link:</small>
         <input type="text" id="refLink" readonly onclick="this.select()">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:15px;">
-            <div class="card"><small>Invites</small><h2 id="refInvites">0</h2></div>
-            <div class="card"><small>Commission</small><h2 id="refEarned">₱0.00</h2></div>
+        
+        <div class="card" style="background:#000; margin-top:10px">
+            <small>Have an Invite Code?</small>
+            <input type="text" id="inputCode" placeholder="@username">
+            <button class="btn-main" onclick="submitInviteCode()" style="padding:8px">Apply Code</button>
         </div>
-        <button class="btn-task" onclick="claimReferral()">Claim Referral Balance</button>
+
+        <div class="stat-grid">            <div class="stat-item"><small>Total Invites</small><h3 id="refCount">0</h3></div>
+            <div class="stat-item"><small>Claimable Bonus</small><h3 id="refClaimable" style="color:var(--green)">₱0.000</h3></div>
+        </div>
+        <button class="btn-task" id="btnClaimRef" onclick="claimReferralBalance()">Claim to Main Balance</button>
     </div>
 </div>
 
-<div id="page-leader" class="hidden">
-    <button onclick="navTo('page-main')">⬅ Back</button>
-    <div class="card">
-        <h3>Weekly Top Earners</h3>
-        <table><thead><tr><th>Rank</th><th>User</th><th>Earned</th></tr></thead><tbody id="leaderBody"></tbody></table><div class="pagination">
-            <button class="page-btn" onclick="changePage('leader', -1)">Prev</button>
-            <span id="leaderPage">1</span>
-            <button class="page-btn" onclick="changePage('leader', 1)">Next</button>
-        </div>
-    </div>
-</div>
-
+<!-- HELP PAGE -->
 <div id="page-help" class="hidden">
     <button onclick="navTo('page-main')">⬅ Back</button>
     <div class="card">
-        <h3>Follow Us</h3>
-        <a href="https://t.me/paperhouseinc" class="btn-blue">Telegram Group</a>
-        <a href="https://facebook.com/groups/1193693469083843/" class="btn-blue">Facebook Group</a>
-        <a href="https://www.facebook.com/profile.php?id=61586281245735" class="btn-blue">Facebook Page</a>
+        <h3>Follow Us for Updates</h3>
+        <a href="https://t.me/paperhouseinc" class="btn-blue" style="text-decoration:none; display:block; margin:10px 0">Telegram Group</a>
+        <a href="https://facebook.com/groups/1193693469083843/" class="btn-blue" style="text-decoration:none; display:block; margin:10px 0">Facebook Group</a>
+        <a href="https://www.facebook.com/profile.php?id=61586281245735" class="btn-blue" style="text-decoration:none; display:block; margin:10px 0">Facebook Page</a>
     </div>
 </div>
 
-<div id="page-withdraw" class="hidden">
-    <button onclick="navTo('page-main')">⬅ Back</button>
-    <div class="card">
-        <div style="font-size:24px; color:var(--green)">₱<span id="earnBox">0.000</span></div>
-        <input type="text" id="payoutInfo" placeholder="Number or Email">
-        <button class="btn-task" onclick="withdraw('GCash')">Withdraw GCash (PHP)</button>
-        <button class="btn-blue" onclick="withdraw('FaucetPay')">Withdraw FaucetPay (USDT)</button>
-    </div>
-    <h4>History</h4>
-    <table id="userHistTable"><thead><tr><th>Details</th><th>Amount</th><th>Status</th></tr></thead><tbody id="userHistBody"></tbody></table>
-    <div class="pagination">
-        <button class="page-btn" onclick="changePage('userHist', -1)">Prev</button>
-        <span id="userHistPage">1</span>
-        <button class="page-btn" onclick="changePage('userHist', 1)">Next</button>
-    </div>
-</div>
-
-<div id="page-admin" class="hidden">
-    <button onclick="navTo('page-main')">Close</button>
-    <h3>All Withdrawal Requests</h3>
-    <table style="font-size:8px"><thead><tr><th>User</th><th>Details</th><th>Amount</th><th>Action</th></tr></thead><tbody id="adminBody"></tbody></table>
-    <div class="pagination">
-        <button class="page-btn" onclick="changePage('admin', -1)">Prev</button>
-        <span id="adminPage">1</span>
-        <button class="page-btn" onclick="changePage('admin', 1)">Next</button>
-    </div>
-</div>
+<!-- OTHER PAGES (Dynamic Content) -->
+<div id="page-signin" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-signin"></div></div>
+<div id="page-ads" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-ads"></div></div>
+<div id="page-gift" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-gift"></div></div>
+<div id="page-bonus" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div id="cont-bonus"></div></div>
+<div id="page-chat" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div class="card"><div id="chat-box" style="height:250px; overflow-y:auto; text-align:left; background:#000; padding:10px; font-size:12px; margin-bottom:10px"></div><input type="text" id="chatInput" placeholder="Message..."><button class="btn-blue" onclick="sendMessage()">Send</button></div></div>
+<div id="page-leader" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div class="card"><h3>Weekly Top 10</h3><table><thead><tr><th>Rank</th><th>User</th><th>Earned</th></tr></thead><tbody id="leaderBody"></tbody></table></div></div>
+<div id="page-withdraw" class="hidden"><button onclick="navTo('page-main')">⬅ Back</button><div class="card"><div style="font-size:24px; color:var(--green)">₱<span id="earnBox">0.000</span></div><input type="text" id="payoutInfo" placeholder="Details..."><button class="btn-task" onclick="handleWithdraw('GCash')">GCash (PHP)</button><button class="btn-blue" onclick="handleWithdraw('FaucetPay')">FaucetPay (USDT)</button></div><h4>History</h4><table id="userHistTable"><thead><tr><th>Amt</th><th>Info</th><th>Status</th></tr></thead><tbody id="userHistBody"></tbody></table></div>
+<div id="page-admin" class="hidden"><button onclick="navTo('page-main')">Exit</button><h3>Withdrawal Requests</h3><div id="adminBody"></div></div>
 
 <div class="footer">
     <div id="footerClock">00:00:00</div>
