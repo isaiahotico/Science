@@ -4,401 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
-
-    <!-- Monetag SDKs - These must be in the head -->
-    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10337795' data-sdk='show_10337795'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10337853' data-sdk='show_10337853'></script>
-    
-    <!-- Firebase & Telegram -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Monetag Tags - Add your script tags here -->
+    <script src="https://alwingulla.com/88/p.js" async></script>
 
     <style>
-        :root { --p: #2ecc71; --s: #f1c40f; --d: #2c3e50; --w: #ffffff; }
-        body { font-family: 'Arial', sans-serif; background: #f4f7f6; margin: 0; padding: 15px; text-align: center; color: var(--d); }
-        .card { background: var(--w); border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .user-bar { background: var(--d); color: white; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
-        .btn { border: none; border-radius: 10px; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 8px 0; font-size: 16px; }
-        .btn-main { background: var(--s); color: #000; }
-        .btn-gift { background: #e67e22; color: #fff; }
-        .btn-withdraw { background: #3498db; color: #fff; }
-        .btn-claim { background: var(--p); color: white; display: none; }
-        .cooldown { font-size: 12px; color: #e74c3c; display: block; margin-top: -5px; margin-bottom: 5px; }
-        .view { display: none; }
-        .active { display: block; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; }
-        table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
+        :root { --gold: #ffd700; --green: #2ecc71; --bg: #1a1a1a; }
+        body { font-family: 'Arial', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: center; }
+        .card { background: #2a2a2a; border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #444; }
+        .user-bar { display: flex; justify-content: space-between; font-size: 14px; color: var(--gold); margin-bottom: 20px; }
+        .balance { font-size: 32px; color: var(--green); font-weight: bold; margin: 10px 0; }
+        .title { font-size: 28px; font-weight: 900; color: var(--gold); letter-spacing: 2px; margin-bottom: 5px; }
+        button { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin: 10px 0; transition: 0.3s; }
+        .btn-ads { background: linear-gradient(45deg, #f39c12, #e67e22); color: white; }
+        .btn-task { background: #2ecc71; color: white; }
+        .btn-claim { background: #3498db; color: white; }
         .hidden { display: none; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; box-sizing: border-box; }
+        table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: center; }
+        .status-paid { color: #2ecc71; }
+        .status-pending { color: #f1c40f; }
     </style>
 </head>
 <body>
 
     <div class="user-bar">
-        <span id="userDisplay">👤 Loading...</span>        <span id="balanceDisplay">PHP 0.000</span>
+        <span id="userBar">👤 User: Guest</span>
+        <span>Balance: ₱<span id="topBalance">0.00</span></span>
     </div>
 
-    <!-- HOME VIEW -->
-    <div id="view-home" class="view active">
-        <h1>🍍 PAPERHOUSE INC </h1>
-        <button class="btn btn-main" onclick="navTo('view-tasks')">🤑 🍍ADS AREA🍍 🤑</button>
-        <button class="btn btn-gift" onclick="navTo('view-gifts')">🍍Paper house Gift🍍</button>
-        <button class="btn" style="background:#9b59b6; color:white;" onclick="navTo('view-signin')">🍍Paper house Sign In🍍</button>
-        <button class="btn" style="background:#1abc9c; color:white;" onclick="navTo('view-referral')">🍍Referral System🍍</button>
-        <button class="btn btn-withdraw" onclick="navTo('view-withdraw')">Withdraw Money</button>
-        <button class="btn" style="font-size:10px; background:none; color:grey;" onclick="openAdmin()">Owner Dashboard</button>
-    </div>
+    <div class="title">PAPERHOUSE INC</div>
+    <div style="font-size: 10px; color: grey; margin-bottom: 20px;">TOTAL WITHDRAWN: ₱<span id="globalWithdrawn">0.00</span></div>
 
-    <!-- ADS AREA (TASKS) -->
-    <div id="view-tasks" class="view">
+    <!-- MAIN PAGE -->
+    <div id="page-main">
         <div class="card">
-            <h2>Task Area</h2>
-            <div id="t1-box">
-                <button class="btn btn-main" id="btn-t1" onclick="showAd(10276123, 't1')">🤑🍍Task #1🍍🤑</button>
-                <button class="btn btn-claim" id="claim-t1" onclick="claim('task', 1, 0.025, 5)">Claim 0.025 PHP</button>
-                <span class="cooldown" id="cd-t1"></span>
-            </div>
-            <div id="t2-box">
-                <button class="btn btn-main" id="btn-t2" onclick="showAd(10337795, 't2')">🤑🍍Task #2🍍🤑</button>
-                <button class="btn btn-claim" id="claim-t2" onclick="claim('task', 2, 0.025, 5)">Claim 0.025 PHP</button>
-                <span class="cooldown" id="cd-t2"></span>
-            </div>
-            <div id="t3-box">
-                <button class="btn btn-main" id="btn-t3" onclick="showAd(10337853, 't3')">🤑🍍Task #3🍍🤑</button>
-                <button class="btn btn-claim" id="claim-t3" onclick="claim('task', 3, 0.025, 5)">Claim 0.025 PHP</button>
-                <span class="cooldown" id="cd-t3"></span>
-            </div>
-            <button class="btn" onclick="navTo('view-home')">Back Home</button>
+            <div style="font-size: 14px;">YOUR WALLET</div>
+            <div class="balance">₱ <span id="mainBalance">0.00</span></div>
+        </div>        <button class="btn-ads" onclick="showPage('page-ads')">🍍ADS AREA🍍</button>
+        <button style="background: #e74c3c; color: white;" onclick="showPage('page-withdraw')">Withdraw your Money here</button>
+        <button style="background: #555; color: white; font-size: 10px;" onclick="checkAdmin()">Owner Dashboard</button>
+        
+        <div class="card" style="font-size: 12px;">
+            Referral Link (10% Bonus):<br>
+            <input type="text" id="refLink" readonly onclick="this.select()">
         </div>
     </div>
 
-    <!-- GIFTS AREA -->
-    <div id="view-gifts" class="view">
+    <!-- ADS PAGE -->
+    <div id="page-ads" class="hidden">
+        <button onclick="showPage('page-main')">⬅ Back</button>
         <div class="card">
-            <h2>Gift House</h2>            <div id="g1-box">
-                <button class="btn btn-gift" id="btn-g1" onclick="showAd(10276123, 'g1', 'pop')">🍍Gift #1🍍</button>
-                <button class="btn btn-claim" id="claim-g1" onclick="claim('gift', 1, 0.02, 20)">Claim 0.02 PHP</button>
-                <span class="cooldown" id="cd-g1"></span>
-            </div>
-            <div id="g2-box">
-                <button class="btn btn-gift" id="btn-g2" onclick="showAd(10337795, 'g2', 'pop')">🍍Gift #2🍍</button>
-                <button class="btn btn-claim" id="claim-g2" onclick="claim('gift', 2, 0.02, 20)">Claim 0.02 PHP</button>
-                <span class="cooldown" id="cd-g2"></span>
-            </div>
-            <div id="g3-box">
-                <button class="btn btn-gift" id="btn-g3" onclick="showAd(10337853, 'g3', 'pop')">🍍Gift #3🍍</button>
-                <button class="btn btn-claim" id="claim-g3" onclick="claim('gift', 3, 0.02, 20)">Claim 0.02 PHP</button>
-                <span class="cooldown" id="cd-g3"></span>
-            </div>
-            <button class="btn" onclick="navTo('view-home')">Back Home</button>
+            <button class="btn-task" id="t1-btn" onclick="runTask(1)">🤑🍍Task #1🍍🤑</button>
+            <div id="t1-claim" class="hidden"><button class="btn-claim" onclick="claim(1)">Claim ₱0.02</button></div>
+            <div id="t1-timer" style="font-size: 12px; color: #888;"></div>
+        </div>
+        <div class="card">
+            <button class="btn-task" id="t2-btn" onclick="runTask(2)">🤑🍍Task #2🍍🤑</button>
+            <div id="t2-claim" class="hidden"><button class="btn-claim" onclick="claim(2)">Claim ₱0.02</button></div>
+            <div id="t2-timer" style="font-size: 12px; color: #888;"></div>
+        </div>
+        <div class="card">
+            <button class="btn-task" id="t3-btn" onclick="runTask(3)">🤑🍍Task #3🍍🤑</button>
+            <div id="t3-claim" class="hidden"><button class="btn-claim" onclick="claim(3)">Claim ₱0.02</button></div>
+            <div id="t3-timer" style="font-size: 12px; color: #888;"></div>
         </div>
     </div>
 
-    <!-- SIGN IN AREA -->
-    <div id="view-signin" class="view card">
-        <h2>Paper House Sign In</h2>
-        <p>Watch 3 ads to complete sign-in</p>
-        <button class="btn btn-main" onclick="showAd(10276123)">Sign-in Ad 1</button>
-        <button class="btn btn-main" onclick="showAd        <span id="balanceDisplay">PHP 0.000</span>
-    </div>
-
-    <!-- HOME VIEW -->
-    <div id="view-home" class="view active">
-        <h1>🍍 PAPERHOUSE INC </h1>
-        <button class="btn btn-main" onclick="navTo('view-tasks')">🤑 🍍ADS AREA🍍 🤑</button>
-        <button class="btn btn-gift" onclick="navTo('view-gifts')">🍍Paper house Gift🍍</button>
-        <button class="btn" style="background:#9b59b6; color:white;" onclick="navTo('view-signin')">🍍Paper house Sign In🍍</button>
-        <button class="btn" style="background:#1abc9c; color:white;" onclick="navTo('view-referral')">🍍Referral System🍍</button>
-        <button class="btn btn-withdraw" onclick="navTo('view-withdraw')">Withdraw Money</button>
-        <button class="btn" style="font-size:10px; background:none; color:grey;" onclick="openAdmin()">Owner Dashboard</button>
-    </div>
-
-    <!-- ADS AREA (TASKS) -->
-    <div id="view-tasks" class="view">
+    <!-- WITHDRAW PAGE -->
+    <div id="page-withdraw" class="hidden">
+        <button onclick="showPage('page-main')">⬅ Back</button>
         <div class="card">
-            <h2>Task Area</h2>
-            <div id="t1-box">
-                <button class="btn btn-main" id="btn-t1" onclick="showAd(10276123, 't1')">🤑🍍Task #1🍍🤑</button>
-                <button class="btn btn-claim" id="claim-t1" onclick="claim('task', 1, 0.025, 5)">Claim 0.025 PHP</button>
-                <span class="cooldown" id="cd-t1"></span>
-            </div>
-            <div id="t2-box">
-                <button class="btn btn-main" id="btn-t2" onclick="showAd(10337795, 't2')">🤑🍍Task #2🍍🤑</button>
-                <button class="btn btn-claim" id="claim-t2" onclick="claim('task', 2, 0.025, 5)">Claim 0.025 PHP</button>
-                <span class="cooldown" id="cd-t2"></span>
-            </div>
-            <div id="t3-box">
-                <button class="btn btn-main" id="btn-t3" onclick="showAd(10337853, 't3')">🤑🍍Task #3🍍🤑</button>
-                <button class="btn btn-claim" id="claim-t3" onclick="claim('task', 3, 0.025, 5)">Claim 0.025 PHP</button>
-                <span class="cooldown" id="cd-t3"></span>
-            </div>
-            <button class="btn" onclick="navTo('view-home')">Back Home</button>
+            <h3>GCash</h3>
+            <input type="number" id="gcashNum" placeholder="GCash Number">
+            <button class="btn-task" onclick="handleWithdraw('GCash')">Withdraw via GCash</button>
+        </div>
+        <div class="card">
+            <h3>FaucetPay</h3>
+            <input type="email" id="fpayEmail" placeholder="FaucetPay Email">
+            <button class="btn-task" onclick="handleWithdraw('FaucetPay')">Withdraw via FaucetPay</button>
+        </div>
+        <div class="card">
+            <h4>History</h4>
+            <table id="histTable"><thead><tr><th>Amt</th><th>Method</th><th>Status</th></tr></thead><tbody id="histBody"></tbody></table>
+            <div id="histPagination"></div>
         </div>
     </div>
 
-    <!-- GIFTS AREA -->
-    <div id="view-gifts" class="view">
+    <!-- ADMIN PAGE -->
+    <div id="page-admin" class="hidden">
+        <button onclick="showPage('page-main')">Exit Admin</button>
         <div class="card">
-            <h2>Gift House</h2>
-            <div id="g1-box">
-                <button class="btn btn-gift" id="btn-g1" onclick="showAd(10276123, 'g1', 'pop')">🍍Gift #1🍍</button>
-                <button class="btn btn-claim" id="claim-g1" onclick="claim('gift', 1, 0.02, 20)">Claim 0.02 PHP</button>
-                <span class="cooldown" id="cd-g1"></span>
-            </div>
-            <div id="g2-box">
-                <button class="btn btn-gift" id="btn-g2" onclick="showAd(10337795, 'g2', 'pop')">🍍Gift #2🍍</button>
-                <button class="btn btn-claim" id="claim-g2" onclick="claim('gift', 2, 0.02, 20)">Claim 0.02 PHP</button>
-                <span class="cooldown" id="cd-g2"></span>
-            </div>
-            <div id="g3-box">
-                <button class="btn btn-gift" id="btn-g3" onclick="showAd(10337853, 'g3', 'pop')">🍍Gift #3🍍</button>
-                <button class="btn btn-claim" id="claim-g3" onclick="claim('gift', 3, 0.02, 20)">Claim 0.02 PHP</button>
-                <span class="cooldown" id="cd-g3"></span>
-            </div>
-            <button class="btn" onclick="navTo('view-home')">Back Home</button>
+            <h3>Owner Dashboard</h3>
+            <table id="adminTable"><thead><tr><th>User</th><th>Amt</th><th>Info</th><th>Action</th></tr></thead><tbody id="adminBody"></tbody></table>
+            <div id="adminPagination"></div>
         </div>
     </div>
 
-    <!-- SIGN IN AREA -->
-    <div id="view-signin" class="view card">
-        <h2>Paper House Sign In</h2>
-        <p>Watch 3 ads to complete sign-in</p>
-        <button class="btn btn-main" onclick="showAd(10276123)">Sign-in Ad 1</button>
-        <button class="btn btn-main" onclick="showAd(10337795)">Sign-in Ad 2</button>
-        <button class="btn btn-main" onclick="showAd(10337853)">Sign-in Ad 3</button>
-        <button class="btn btn-withdraw" onclick="alert('Sign-In Verification Complete!')">Verify & Proceed</button>
-        <button class="btn" onclick="navTo('view-home')">Back</button>
-    </div>
-
-    <!-- REFERRAL VIEW -->
-    <div id="view-referral" class="view card">
-        <h2>Referral System</h2>
-        <p>Earn 10% commission when your friends claim rewards!</p>
-        <div style="background:#eee; padding:10px; border-radius:5px; word-break: break-all;" id="ref-link">Generating...</div>
-        <p id="ref-count">Total Referrals: 0</p>
-        <button class="btn" onclick="navTo('view-home')">Back</button>
-    </div>
-
-    <!-- WITHDRAW VIEW -->
-    <div id="view-withdraw" class="view">
-        <div class="card">
-            <h3>Withdraw Your Money</h3>
-            <input type="number" id="wd-amount" placeholder="Amount (PHP)">
-            <input type="text" id="wd-wallet" placeholder="GCash Number or FaucetPay Email">
-            <button class="btn btn-withdraw" onclick="submitWithdraw('GCash')">Withdraw to GCash</button>
-            <button class="btn" style="background:#1abc9c; color:white;" onclick="submitWithdraw('FaucetPay')">Withdraw to FaucetPay (USDT)</button>
-        </div>
-        <div class="card">
-            <h3>Withdrawal History</h3>
-            <table id="history-table">
-                <thead><tr><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
-                <tbody id="history-body"></tbody>
-            </table>
-        </div>
-        <button class="btn" onclick="navTo('view-home')">Back</button>
-    </div>
-
-    <!-- ADMIN VIEW -->
-    <div id="view-admin" class="view card">
-        <h2>Owner Dashboard</h2>
-        <div class="user-bar">Total Paid: PHP <span id="admin-total">0</span></div>
-        <table id="admin-table">
-            <thead><tr><th>User</th><th>Amt</th><th>Details</th><th>Action</th></tr></thead>
-            <tbody id="admin-body"></tbody>
-        </table>
-        <button class="btn" onclick="navTo('view-home')">Close Dashboard</button>
-    </div>
-
-    <script>
-        // --- FIREBASE INIT ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
-            authDomain: "paper-house-inc.firebaseapp.com",
-            projectId: "paper-house-inc",
-            storageBucket: "paper-house-inc.firebasestorage.app",
-            messagingSenderId: "658389836376",
-            appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // --- TELEGRAM & USER ---
-        const tg = window.Telegram?.WebApp;
-        tg?.ready();
-        const username = tg?.initDataUnsafe?.user?.username || "Guest_" + Math.floor(Math.random() * 9999);
-        document.getElementById('userDisplay').innerText = "👤 " + username;
-
-        let userData = { balance: 0 };
-
-        async function initUser() {
-            const userRef = db.collection("users").doc(username);
-            userRef.onSnapshot(doc => {
-                if (!doc.exists()) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    userRef.set({
-                        username: username,
-                        balance: 0,
-                        refBy: urlParams.get('ref') || null,
-                        withdrawals: []
-                    });
-                } else {
-                    userData = doc.data();
-                    document.getElementById('balanceDisplay').innerText = "PHP " + userData.balance.toFixed(3);
-                    document.getElementById('ref-link').innerText = "https://t.me/PaperHouse_Bot?start=" + username;
-                    updateCooldowns();
-                    loadHistory();
-                }
-            });
-        }
-
-        // --- NAVIGATION & AUTO ADS ---
-        function navTo(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            
-            // Auto Ad Logic
-            if(viewId === 'view-tasks') {
-                show_10276123({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }});
-            }
-            if(viewId === 'view-gifts') {
-                show_10337795({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }});
-            }
-        }
-
-        // --- ADS LOGIC ---
-        function showAd(zone, btnId, type = null) {
-            const adTrigger = window['show_' + zone];
-            if (!adTrigger) return alert("Ad SDK Loading...");
-
-            adTrigger(type).then(() => {
-                if(btnId) {
-                    document.getElementById('btn-' + btnId).classList.add('hidden');
-                    document.getElementById('claim-' + btnId).classList.remove('hidden');
-                } else {
-                    alert("🎉Congratulations🎉 Ad Watched!");
-                }
-            }).catch(e => alert("Ad error or no fill. Try again later."));
-        }
-
-        // --- REWARD LOGIC ---
-        async function claim(type, id, amount, cooldownMin) {
-            const claimBtn = document.getElementById(`claim-${type === 'task' ? 't' : 'g'}${id}`);
-            const mainBtn = document.getElementById(`btn-${type === 'task' ? 't' : 'g'}${id}`);
-            
-            const batch = db.batch();
-            const userRef = db.collection("users").doc(username);
-            
-            // Add Balance
-            batch.update(userRef, {
-                balance: firebase.firestore.FieldValue.increment(amount),
-                [`last_${type}_${id}`]: Date.now()
-            });
-
-            // Referral 10%
-            if(userData.refBy) {
-                const refRef = db.collection("users").doc(userData.refBy);
-                batch.update(refRef, { balance: firebase.firestore.FieldValue.increment(amount * 0.10) });
-            }
-
-            await batch.commit();
-            alert("🎉Congratulations🎉 you earned " + amount + " PHP!!😍🍍🎉");
-            
-            claimBtn.classList.add('hidden');
-            mainBtn.classList.remove('hidden');
-        }
-
-        // --- WITHDRAWALS ---
-        async function submitWithdraw(method) {
-            const amount = parseFloat(document.getElementById('wd-amount').value);
-            const wallet = document.getElementById('wd-wallet').value;
-
-            if(amount > userData.balance || amount < 1) return alert("Insufficient balance or invalid amount");
-
-            await db.collection("requests").add({
-                username: username,
-                amount: amount,
-                method: method,
-                wallet: wallet,
-                status: "Pending",
-                date: new Date().toLocaleString()
-            });
-
-            await db.collection("users").doc(username).update({
-                balance: firebase.firestore.FieldValue.increment(-amount)
-            });
-
-            alert("Withdrawal submitted for approval!");
-        }
-
-        function loadHistory() {
-            db.collection("requests").where("username", "==", username).limit(10).onSnapshot(snap => {
-                const body = document.getElementById('history-body');
-                body.innerHTML = "";snap.forEach(doc => {
-                    const d = doc.data();
-                    body.innerHTML += `<tr><td>${d.method}</td><td>${d.amount}</td><td>${d.status}</td></tr>`;
-                });
-            });
-        }
-
-        // --- ADMIN DASHBOARD ---
-        function openAdmin() {
-            if(prompt("Password:") === "Propetas6") {
-                navTo('view-admin');
-                loadAdmin();
-            }
-        }
-
-        function loadAdmin() {
-            db.collection("requests").orderBy("status", "desc").onSnapshot(snap => {
-                const body = document.getElementById('admin-body');
-                let total = 0;
-                body.innerHTML = "";
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    if(d.status === "Paid") total += d.amount;
-                    body.innerHTML += `<tr>
-                        <td>${d.username}</td><td>${d.amount}</td><td>${d.wallet}</td>
-                        <td>
-                            ${d.status === 'Pending' ? 
-                            `<button onclick="updateStatus('${doc.id}', 'Paid')">✅</button>
-                             <button onclick="updateStatus('${doc.id}', 'Denied')">❌</button>` : d.status}
-                        </td>
-                    </tr>`;
-                });
-                document.getElementById('admin-total').innerText = total;
-            });
-        }
-
-        async function updateStatus(id, status) {
-            await db.collection("requests").doc(id).update({ status: status });
-        }
-
-        // --- COOLDOWN TICKER ---
-        function updateCooldowns() {
-            const check = (type, id, min) => {
-                const last = userData[`last_${type}_${id}`] || 0;
-                const diff = Date.now() - last;
-                const btn = document.getElementById(`btn-${type === 'task' ? 't' : 'g'}${id}`);
-                const text = document.getElementById(`cd-${type === 'task' ? 't' : 'g'}${id}`);
-                
-                if(diff < min * 60000) {
-                    btn.disabled = true;
-                    const rem = Math.ceil((min * 60000 - diff) / 1000);
-                    text.innerText = "Wait: " + Math.floor(rem/60) + "m " + (rem%60) + "s";
-                } else {
-                    btn.disabled = false;
-                    text.innerText = "";
-                }
-            };
-            check('task', 1, 5); check('task', 2, 5); check('task', 3, 5);
-            check('gift', 1, 20); check('gift', 2, 20); check('gift', 3, 20);
-        }
-
-        setInterval(updateCooldowns, 1000);
-        initUser();
-    </script>
+    <!-- Firebase SDKs -->
+    <script type="module" src="app.js"></script>
 </body>
 </html>
