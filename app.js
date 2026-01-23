@@ -105,7 +105,7 @@ const app = {
         
         // Referral link generation for Telegram bot
         const botUsername = "Key_52_bot"; // Replace with your bot's actual username
-        document.getElementById('ref-link').value = `https://t.me/${botUsername}/start?start=${userId}`;
+        document.getElementById('ref-link').value = `https://t.me/${botUsername}?startapp=${userId}`;
         
         app.syncData();
         app.loadHistory();
@@ -189,7 +189,7 @@ const app = {
     },
 
     startCooldown: () => {
-        cooldownTime = 30;
+        cooldownTime = 45;
         document.getElementById('ad-container').classList.add('cooldown-active');
         document.getElementById('cooldown-box').classList.remove('hidden');
         document.getElementById('ad-timer').innerText = cooldownTime;
