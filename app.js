@@ -144,7 +144,7 @@ const app = {
         adPromise.then(() => {
             app.rewardLogic();
             app.startCooldown();
-            alert("Reward Added: ₱0.01");
+            alert("Reward Added: ₱0.0102");
         }).catch((e) => {
             console.error("Ad failed:", e);
             alert("Ad failed to load or was interrupted. Please try again.");
@@ -152,7 +152,7 @@ const app = {
     },
 
     rewardLogic: async () => {
-        const reward = 0.01;
+        const reward = 0.0102;
         const refBonusRate = 0.08; // 8% Referral Commission
         const refBonus = reward * refBonusRate; 
 
