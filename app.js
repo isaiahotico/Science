@@ -1,188 +1,236 @@
 
-// --- CONFIGURATION ---
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyDMGU5X7BBp-C6tIl34Uuu5N9MXAVFTn7c",
+    authDomain: "paper-house-inc.firebaseapp.com",
+    projectId: "paper-house-inc",
+    databaseURL: "https://paper-house-inc-default-rtdb.firebaseio.com",
+    storageBucket: "paper-house-inc.firebasestorage.app",
+    messagingSenderId: "658389836376",
+    appId: "1:658389836376:web:2ab1e2743c593f4ca8e02d"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Get or Create User ID (In Telegram, you'd use Telegram.WebApp.initDataUnsafe.user.id)
-let userId = localStorage.getItem('paperhouse_uid') || 'USER_' + Math.floor(Math.random() * 1000000);
-localStorage.setItem('paperhouse_uid', userId);
+// --- TELEGRAM INIT ---
+const tg = window.Telegram.WebApp;
+tg.ready();
+const user = tg.initDataUnsafe?.user;
+const username = user?.username || user?.first_name || "Guest_" + Math.floor(Math.random()*1000);
+const userId = user?.id || "anon";
 
-let userData = { balance: 0, cooldowns: {} };
+document.getElementById("userBar").innerText = "👤 User: " + username;
 
-// --- INITIALIZE ---
-function initApp() {
-    db.ref('users/' + userId).on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            userData = snapshot.val();
-        } else {
-            db.ref('users/' + userId).set(userData);
+// --- INITIAL STATE ---
+let userData = {
+    balance: 0,
+    referrals: 0,
+    refBonus: 0,
+    referredBy: "",
+    lastAd: {}
+};
+
+// --- DATA SYNC ---
+const userRef = db.ref('users/' + username);
+userRef.on('value', (snap) => {
+    if(snap.exists()){
+        userData = snap.val();
+        document.getElementById("balance-display").innerText = "₱ " + userData.balance.toFixed(3);
+        document.getElementById("ref-code-display").innerText = username;
+        document.getElementById("ref-count").innerText = userData.referrals || 0;
+        document.getElementById("ref-bonus").innerText = "₱ " + (userData.refBonus || 0).toFixed(3);
+    } else {
+        userRef.set({ balance: 0, referrals: 0, refBonus: 0, username: username });
+    }
+});
+
+// --- AUTOMATIC ADS (NO REWARD) ---
+function showAutoAd() {
+    const ads = [show_10337853, show_10276123, show_10337795];
+    const randomAd = ads[Math.floor(Math.random() * ads.length)];
+    
+    randomAd({
+        type: 'inApp',
+        inAppSettings: {
+            frequency: 2,
+            capping: 0.1,
+            interval: 30,
+            timeout: 5,
+            everyPage: false
         }
-        document.getElementById('user-balance').innerText = `₱${userData.balance.toFixed(4)}`;
     });
-    loadWithdrawalHistory();
 }
 
-// --- NAVIGATION ---
-function showSection(id) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(id === 'withdraw') loadWithdrawalHistory();
-}
+// Show ad on open and every 3 minutes
+setTimeout(showAutoAd, 5000);
+setInterval(showAutoAd, 180000);
 
-// --- ADS LOGIC ---
-function checkCooldown(adKey, seconds) {
-    const last = userData.cooldowns ? userData.cooldowns[adKey] || 0 : 0;
+// --- REWARDED ADS ---
+function handleAd(type) {
     const now = Date.now();
-    if (now - last < seconds * 1000) {
-        const remaining = Math.ceil((seconds * 1000 - (now - last)) / 1000);
-        alert(`Cooldown active! Wait ${remaining}s`);
-        return false;
-    }
-    return true;
-}
+    const cooldown15 = 15 * 60 * 1000;
+    const cooldown5 = 5 * 60 * 1000;
 
-function rewardUser(amount, adKey) {
-    const now = Date.now();
-    db.ref('users/' + userId).update({
-        balance: userData.balance + amount,
-        [`cooldowns/${adKey}`]: now
-    });
-    alert(`Success! ₱${amount} added to balance.`);
-}
+    if(type.startsWith('gift')){
+        if(now - (userData.lastAd[type] || 0) < cooldown15) return alert("Cooldown! 15m");
+        
+        let adId = (type === 'gift1') ? show_10276123 : (type === 'gift2' ? show_10337795 : show_10337853);
+        
+        adId('pop').then(() => {
+            processReward(0.075, type);
+        }).catch(() => alert("Ad Error"));
 
-// Monetag Login Ads (Standard)
-function handleAd(adKey, reward, cooldown, zone) {
-    if (!checkCooldown(adKey, cooldown)) return;
-    
-    const adFunc = window['show_' + zone];
-    if (adFunc) {
-        adFunc().then(() => rewardUser(reward, adKey)).catch(() => alert("Ad failed to load."));
+    } else if(type === 'vip') {
+        if(now - (userData.lastAd[type] || 0) < cooldown5) return alert("Cooldown! 5m");
+        // Shows 3 combined inline ads (Logic simplified to 1 reward)
+        show_10276123('pop').then(() => processReward(0.022, 'vip'));
+
+    } else if(type === 'premium') {
+        if(now - (userData.lastAd[type] || 0) < cooldown5) return alert("Cooldown! 5m");
+        show_10337853().then(() => processReward(0.022, 'premium'));
     }
 }
 
-// Monetag Gift Ads (Popup/Rewarded)
-function handlePopupAd(adKey, reward, cooldown, zone) {
-    if (!checkCooldown(adKey, cooldown)) return;
+function processReward(amt, type) {
+    let newBal = userData.balance + amt;
+    let updates = { balance: newBal };
+    updates[`lastAd/${type}`] = Date.now();
+    userRef.update(updates);
 
-    const adFunc = window['show_' + zone];
-    if (adFunc) {
-        adFunc('pop').then(() => rewardUser(reward, adKey)).catch(() => alert("Ad failed to load."));
+    // 8% Referral Logic
+    if(userData.referredBy) {
+        db.ref('users/' + userData.referredBy + '/refBonus').transaction(b => (b || 0) + (amt * 0.08));
     }
+    tg.HapticFeedback.notificationOccurred('success');
 }
 
-// VIP Ads (3 Combined)
-function handleVipAds() {
-    if (!checkCooldown('VIP', 300)) return;
-    
-    // Logic to show combined ads. In standard SDK, this triggers them sequentially
-    show_10276123();
-    show_10337795();
-    show_10337853();
-    rewardUser(0.022, 'VIP');
-}
+// --- WITHDRAWAL ---
+function submitWithdraw() {
+    const name = document.getElementById("w-name").value;
+    const num = document.getElementById("w-number").value;
+    const amt = parseFloat(document.getElementById("w-amount").value);
 
-// Premium Ads (3 Rewarded Interstitial)
-function handlePremiumAds() {
-    if (!checkCooldown('PREMIUM', 300)) return;
+    if(amt < 1 || isNaN(amt)) return alert("Min ₱1");
+    if(userData.balance < amt) return alert("Insufficient Balance");
 
-    Promise.all([show_10276123(), show_10337795(), show_10337853()])
-    .then(() => {
-        rewardUser(0.022, 'PREMIUM');
-        alert('All ads watched!');
-    }).catch(e => alert("Ad stream interrupted"));
-}
-
-// --- WITHDRAWAL LOGIC ---
-function requestWithdrawal() {
-    const amount = parseFloat(document.getElementById('withdraw-amount').value);
-    const name = document.getElementById('gcash-name').value;
-    const num = document.getElementById('gcash-number').value;
-
-    if (amount < 1) return alert("Minimum withdrawal is ₱1");
-    if (amount > userData.balance) return alert("Insufficient balance");
-    if (!name || !num) return alert("Fill all fields");
-
-    const request = {
-        uid: userId,
-        amount: amount,
-        gcashName: name,
-        gcashNumber: num,
-        status: 'pending',
-        timestamp: Date.now()
+    const req = {
+        username: username,
+        name: name,
+        number: num,
+        amount: amt,
+        status: "PENDING",
+        date: new Date().toLocaleString()
     };
 
-    db.ref('withdrawals/pending').push(request);
-    db.ref('users/' + userId).update({ balance: userData.balance - amount });
-    alert("Request Sent! Awaiting approval.");
+    db.ref('withdrawals').push(req);
+    userRef.update({ balance: userData.balance - amt });
+    alert("Request Sent!");
 }
 
-function loadWithdrawalHistory() {
-    db.ref('withdrawals/pending').orderByChild('uid').equalTo(userId).once('value', snapshot => {
-        let html = '';
-        snapshot.forEach(child => {
-            const val = child.val();
-            html += `<tr><td>${new Date(val.timestamp).toLocaleDateString()}</td><td>₱${val.amount}</td><td>${val.status}</td></tr>`;
-        });
-        document.getElementById('user-history-table').innerHTML = html;
+// --- REFERRALS ---
+function setReferrer() {
+    const ref = document.getElementById("input-ref").value;
+    if(ref === username) return alert("Can't refer yourself");
+    if(userData.referredBy) return alert("Already referred");
+
+    db.ref('users/' + ref).once('value', snap => {
+        if(snap.exists()) {
+            userRef.update({ referredBy: ref });
+            db.ref('users/' + ref + '/referrals').transaction(r => (r || 0) + 1);
+            alert("Referrer Applied!");
+        } else {
+            alert("User not found");
+        }
     });
 }
 
-// --- OWNER DASHBOARD ---
-function checkAdmin() {
-    const pass = document.getElementById('admin-pass').value;
-    if (pass === "Propetas12") {
-        document.getElementById('admin-login').style.display = 'none';
-        document.getElementById('admin-content').style.display = 'block';
-        loadAdminPanel();
-    } else {
-        alert("Wrong Password");
+function claimReferral() {
+    if(userData.refBonus < 0.01) return alert("Nothing to claim");
+    userRef.update({
+        balance: userData.balance + userData.refBonus,
+        refBonus: 0
+    });
+    alert("Bonus Claimed!");
+}
+
+// --- CHAT ---
+function sendChat() {
+    const msg = document.getElementById("chat-msg").value;
+    if(!msg) return;
+    db.ref('chat').push({ user: username, text: msg, time: Date.now() });
+    document.getElementById("chat-msg").value = "";
+}
+
+db.ref('chat').limitToLast(20).on('value', snap => {
+    const container = document.getElementById("chat-content");
+    container.innerHTML = "";
+    snap.forEach(c => {
+        container.innerHTML += `<div style="margin-bottom:5px;"><b class="gold-text">${c.val().user}:</b> ${c.val().text}</div>`;
+    });
+    container.scrollTop = container.scrollHeight;
+});
+
+// --- ADMIN DASHBOARD ---
+function adminLogin() {
+    if(document.getElementById("admin-pass").value === "Propetas12") {
+        document.getElementById("admin-auth").style.display = "none";
+        document.getElementById("admin-panel").style.display = "block";
+        loadAdminData();
     }
 }
 
-function loadAdminPanel() {
-    // Load Pendings
-    db.ref('withdrawals/pending').on('value', snapshot => {
-        let html = '';
-        snapshot.forEach(child => {
-            const val = child.val();
-            html += `<div class="balance-card">
-                <p>User: ${val.uid}<br>Amount: ₱${val.amount}<br>GCash: ${val.gcashNumber}</p>
-                <button onclick="approveWithdrawal('${child.key}')">APPROVE</button>
-            </div>`;
+function loadAdminData() {
+    db.ref('withdrawals').on('value', snap => {
+        const list = document.getElementById("pending-list");
+        const hist = document.querySelector("#admin-history tbody");
+        list.innerHTML = ""; hist.innerHTML = "";
+        
+        snap.forEach(c => {
+            const w = c.val();
+            const id = c.key;
+            if(w.status === "PENDING") {
+                list.innerHTML += `
+                <div style="background:#222; padding:10px; margin-bottom:5px; border:1px solid gold">
+                    ${w.name} (${w.username}) - ₱${w.amount}<br>GCash: ${w.number}<br>
+                    <button onclick="approve('${id}', 'APPROVED')">APPROVE</button>
+                    <button onclick="approve('${id}', 'DENIED')">DENY</button>
+                </div>`;
+            } else {
+                hist.innerHTML += `<tr><td>${w.name}</td><td>${w.number}</td><td>₱${w.amount}</td><td>${w.status}</td></tr>`;
+            }
         });
-        document.getElementById('pending-list').innerHTML = html;
-    });
-
-    // Load Approved History
-    db.ref('withdrawals/approved').limitToLast(10).on('value', snapshot => {
-        let html = '';
-        snapshot.forEach(child => {
-            const val = child.val();
-            html += `<tr><td>${val.uid}</td><td>₱${val.amount}</td><td>PAID</td></tr>`;
-        });
-        document.getElementById('admin-history-table').innerHTML = html;
     });
 }
 
-function approveWithdrawal(key) {
-    db.ref('withdrawals/pending/' + key).once('value', snapshot => {
-        const data = snapshot.val();
-        data.status = 'approved';
-        db.ref('withdrawals/approved').push(data);
-        db.ref('withdrawals/pending/' + key).remove();
-        alert("Approved successfully!");
+function approve(id, status) {
+    db.ref('withdrawals/' + id).update({ status: status });
+    if(status === "DENIED") {
+        db.ref('withdrawals/' + id).once('value', snap => {
+            db.ref('users/' + snap.val().username + '/balance').transaction(b => b + snap.val().amount);
+        });
+    }
+}
+
+// --- UI UTILS ---
+function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'withdraw') loadMyHistory();
+}
+
+function loadMyHistory() {
+    db.ref('withdrawals').orderByChild('username').equalTo(username).on('value', snap => {
+        const tbody = document.querySelector("#my-history tbody");
+        tbody.innerHTML = "";
+        snap.forEach(c => {
+            const w = c.val();
+            tbody.innerHTML += `<tr><td>${w.date}</td><td>₱${w.amount}</td><td>${w.status}</td></tr>`;
+        });
     });
 }
 
-// Start
-initApp();
+const colors = ["#0f0f0f", "#1a0033", "#330000", "#001a00", "#1a1a00"];
+function changeBg() {
+    document.body.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+}
