@@ -95,32 +95,34 @@
                 </div>
             </section>
 
-            <!-- Referrals Section -->
-            <section
-
-id="sec-referral" class="hidden space-y-4">
-                <div class="gold-gradient p-6 rounded-3xl text-slate-900">
-                    <h3 class="font-black text-xl mb-1">Affiliate Program</h3>
-                    <p class="text-sm font-medium opacity-80">Earn 8% lifetime commission from every ad your friends watch.</p>
-                </div>
-                <div class="glass p-5 rounded-2xl">
-                    <p class="text-xs text-slate-400 mb-2 font-bold uppercase">Your Referral Link</p>
+    <!-- Referrals -->
+            <section id="sec-referral" class="hidden space-y-4">
+                <div class="glass p-6 rounded-2xl">
+                    <h3 class="font-bold text-yellow-500 mb-2">Manual Referral Claim</h3>
+                    <p class="text-[10px] text-slate-400 mb-4">Enter your friend's username to set them as your referrer and earn 8% bonus for them!</p>
                     <div class="flex gap-2">
-                        <input id="ref-link" readonly class="flex-1 bg-slate-900/50 p-3 rounded-lg text-xs border border-white/5 text-slate-300">
-                        <button onclick="app.copyRef()" class="bg-white text-black px-4 rounded-lg font-bold text-xs">COPY</button>
+                        <input id="ref-input" type="text" placeholder="Friend's Username" class="flex-1 bg-slate-900 p-3 rounded-xl outline-none border border-slate-700">
+                        <button onclick="app.claimReferral()" class="bg-white text-black px-4 rounded-xl font-bold text-xs">SET</button>
                     </div>
                 </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div class="glass p-4 rounded-2xl text-center">
-                        <p class="text-[10px] text-slate-400">Total Referrals</p>
-                        <p id="ref-count" class="text-xl font-bold">0</p>
+                        <p class="text-[10px] text-slate-400">TOTAL REFERRALS</p>
+
+<h4 id="ref-count" class="text-xl font-black">0</h4>
                     </div>
                     <div class="glass p-4 rounded-2xl text-center">
-                        <p class="text-[10px] text-slate-400">Total Commissions</p>
-                        <p id="ref-earnings" class="text-xl font-bold text-green-400">₱0.00</p>
+                        <p class="text-[10px] text-slate-400">UNCLAIMED BONUS</p>
+                        <h4 id="ref-unclaimed" class="text-xl font-black text-green-500">₱0.00</h4>
                     </div>
                 </div>
+                <button onclick="app.claimBonus()" class="w-full gold-gradient py-3 rounded-xl text-slate-900 font-bold">CLAIM BONUS TO WALLET</button>
+                
+                <h3 class="font-bold text-sm mt-4">My Referral List</h3>
+                <div id="ref-list" class="space-y-2"></div>
             </section>
+
 
             <!-- History Section -->
             <section id="sec-history" class="hidden space-y-4">
