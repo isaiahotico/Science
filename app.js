@@ -173,20 +173,52 @@ const app = {
             dailyAds: userDailyAds,
             lastAdDate: today
         });
+// --- REFERRAL SYSTEM ---
+    claimReferral: async () => {
+        const code = document.getElementById('ref-input').value.trim();
+        if (code === user.username) return alert("Cannot refer yourself");
+        
+        const q = query(ref(db, 'users'), orderByChild('username'));
+        const snap = await get(q);
+        let foundUid = null;
+        snap.forEach(c => { if(c.val().username === code) foundUid = c.key; });
 
-        // 2. Reward Upliner (Referral System)
-        if (currentUser.referredBy) {
-            const uplinerRef = ref(db, `users/${currentUser.referredBy}`);
-            const uplinerSnap = await get(uplinerRef);
-            if (uplinerSnap.exists()) {
-                const upliner = uplinerSnap.val();
-                await update(uplinerRef, {
-                    balance: parseFloat(((upliner.balance || 0) + refBonus).toFixed(4)),
-                    refEarnings: parseFloat(((upliner.refEarnings || 0) + refBonus).toFixed(4))
-                });
-            }
+        if (foundUid) {
+            await update(ref(db, `users/${uid}`), { referredBy: foundUid });
+            alert("Referrer set successfully!");
+        } else {
+            alert("Username not found");
         }
     },
+
+    loadRefList: async () => {
+        const q = query(ref(db, 'users'), orderByChild('referredBy'));
+        const snap = await get(q);
+        const list = document.getElementById('ref-list');
+        list.innerHTML = "";
+        let count = 0;
+        snap.forEach(c => {
+            if (c.val().referredBy === uid) {
+                count++;
+                list.innerHTML += `<div class="glass p-3 rounded-xl flex justify-between text-xs">
+                    <span>${c.val().username}</span>
+                    <span class="text-yellow-500 font-bold">Active</span>
+                </div>`;
+            }
+        });
+        document.getElementById('ref-count').innerText = count;
+    },
+
+    claimBonus: async () => {
+        if (!user.pendingBonus || user.pendingBonus <= 0) return alert("Nothing to claim");
+        const bonus = user.pendingBonus;
+        await update(ref(db, `users/${uid}`), {
+            balance: (user.balance || 0) + bonus,
+            pendingBonus: 0
+        });
+        alert(`Claimed ₱${bonus.toFixed(4)}`);
+    },
+
 
     startCooldown: () => {
         cooldownTime = 45;
