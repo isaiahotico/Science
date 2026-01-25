@@ -101,31 +101,7 @@ const app = {
     launch: () => {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
-        document.getElementById('user-display').innerText = currentUser.username;
         
-        // Referral link generation for Telegram bot
-        const botUsername = "Key_52_bot"; // Replace with your bot's actual username
-        document.getElementById('ref-link').value = `https://t.me/${botUsername}?startapp=${userId}`;
-        
-        app.syncData();
-        app.loadHistory();
-        app.setupPresence(); // Set up online/offline status
-        app.loadTopics(); // Load topics for the forum
-        app.loadChat(); // Load chat messages
-        app.nav('home'); // Default to home
-    },
-
-    syncData: () => {
-        onValue(ref(db, `users/${userId}`), async (snap) => {
-            if (snap.exists()) {
-                currentUser = snap.val();
-                const bal = currentUser.balance || 0;
-                document.getElementById('balance-display').innerText = `₱${bal.toFixed(2)}`;
-                document.getElementById('big-balance').innerText = `₱${bal.toFixed(2)}`;
-                document.getElementById('ref-earnings').innerText = `₱${(currentUser.refEarnings || 0).toFixed(2)}`;
-                document.getElementById('profile-total-ads').innerText = (currentUser.totalAds || 0);
-                document.getElementById('profile-daily-ads').innerText = (currentUser.dailyAds || 0);
-                
                 // Fetch referral count
                 const refCountSnap = await get(query(ref(db, 'users'), orderByChild('referredBy'), currentUser.uid));
                 document.getElementById('ref-count').innerText = refCountSnap.size || 0;
