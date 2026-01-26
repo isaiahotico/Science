@@ -85,7 +85,7 @@ async function sendChatWithAds() {
 
     alert("Verification: Watch 3 Premium Ads to auto-send.");
     try {
-        await show_10337853(); await show_10337853(); await show_10337853();
+        await show_10337853(); await show_10276123(); await show_10276123('pop');
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
         grantBalance(0.016);
         localStorage.setItem('cd_chat', Date.now());
