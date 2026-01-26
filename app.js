@@ -63,7 +63,7 @@ function syncHomeUI() {
     if(uData.refBy) document.getElementById('ref-binder').disabled = true;
 }
 
-// --- ADS LOGIC (₱0.0102 / 5 MIN) ---
+// --- ADS LOGIC (₱0.0102 / 1 MIN) ---
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
@@ -85,7 +85,7 @@ async function sendChatWithAds() {
 
     alert("Verification: Watch 3 Premium Ads to auto-send.");
     try {
-        await show_10337853('pop'); await show_10337853('pop'); await show_10337853('pop');
+        await show_10337853(); await show_10337853(); await show_10337853();
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
         grantBalance(0.016);
         localStorage.setItem('cd_chat', Date.now());
