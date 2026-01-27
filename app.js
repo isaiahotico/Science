@@ -267,11 +267,54 @@ function checkSundayReset() {
     });
 }
 
-// Initial In-App Ad
-window.onload = () => {
-    const last = localStorage.getItem('lastInApp') || 0;
-    if (Date.now() - last > 120000) {
-        show_10276123({ type: 'inApp', inAppSettings: { frequency: 1, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
-        localStorage.setItem('lastInApp', Date.now());
+const ADS = [
+  show_10276123,
+  show_10337795,
+  show_10337853
+];
+
+const COOLDOWN = 180000; // 3 minutes
+let currentAdIndex = Number(localStorage.getItem("adIndex")) || 0;
+
+function canShowAd() {
+  const lastTime = Number(localStorage.getItem("lastAdTime")) || 0;
+  return Date.now() - lastTime >= COOLDOWN;
+}
+
+function showInAppInterstitial() {
+  if (!canShowAd()) {
+    document.getElementById("status").innerText = "⏳ Cooldown active";
+    return;
+  }
+
+  const adFunc = ADS[currentAdIndex];
+
+  adFunc({
+    type: "inApp",
+    inAppSettings: {
+      frequency: 1,
+      capping: 0,
+      interval: 0,
+      timeout: 3,
+      everyPage: false
     }
-};
+  });
+
+// Save cooldown + rotate ad
+  localStorage.setItem("lastAdTime", Date.now());
+  currentAdIndex = (currentAdIndex + 1) % ADS.length;
+  localStorage.setItem("adIndex", currentAdIndex);
+
+  document.getElementById("status").innerText =
+    "✅ In-App Interstitial Shown (Zone " + (currentAdIndex + 1) + ")";
+}
+
+// ===============================
+// Auto show when app opens
+// ===============================
+window.addEventListener("load", () => {
+  showInAppInterstitial();
+
+// Repeat every 3 minutes
+  setInterval(showInAppInterstitial, COOLDOWN);
+});
