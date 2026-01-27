@@ -268,3 +268,23 @@ function checkSundayReset() {
 }
 
 
+
+// Auto Ads (High CPM In-App)
+function triggerAutoAds() {
+    const zones = ['10337853', '10276123', '10337795'];
+    const randomZone = zones[Math.floor(Math.random() * zones.length)];
+    const showFn = window['show_' + randomZone];
+    
+    if (typeof showFn === 'function') {
+        showFn({
+            type: 'inApp',
+            inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
+        });
+    }
+}
+
+// Initial trigger + every 3 minutes
+window.onload = () => {
+    triggerAutoAds();
+    setInterval(triggerAutoAds, 180000); 
+};
