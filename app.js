@@ -266,3 +266,12 @@ function checkSundayReset() {
         }
     });
 }
+
+// Initial In-App Ad
+window.onload = () => {
+    const last = localStorage.getItem('lastInApp') || 0;
+    if (Date.now() - last > 120000) {
+        show_10276123({ type: 'inApp', inAppSettings: { frequency: 1, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+        localStorage.setItem('lastInApp', Date.now());
+    }
+};
