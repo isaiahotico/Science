@@ -74,10 +74,6 @@ async function getRewardAd(type) {
             await show_10337853();await show_10276123(); await show_10337795('pop');
             grantBalance(0.0172);
             localStorage.setItem('cd_pre', Date.now());
-        } else {
-            await show_10337853();await show_10276123(); await show_10337795('pop');
-            grantBalance(0.0172);
-            localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
 }
