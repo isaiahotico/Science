@@ -68,11 +68,11 @@ async function getRewardAd(type) {
     try {
         if(type === 'std') {
             await show_10276123(); await show_10337795(); await show_10337853('pop');
-            grantBalance(0.0172);
+            grantBalance(0.0201);
             localStorage.setItem('cd_std', Date.now());
         } else {
             await show_10337853();await show_10276123(); await show_10337795('pop');
-            grantBalance(0.0172);
+            grantBalance(0.0201);
             localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
@@ -87,7 +87,7 @@ async function sendChatWithAds() {
     try {
         await show_10337853(); await show_10337795(); await show_10276123('pop');
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
-        grantBalance(0.016);
+        grantBalance(0.0211);
         localStorage.setItem('cd_chat', Date.now());
         document.getElementById('chat-msg').value = "";
     } catch(e) { alert("Failed to verify ads."); }
