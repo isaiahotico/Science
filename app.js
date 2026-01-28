@@ -67,11 +67,11 @@ function syncHomeUI() {
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
-            await show_10276123(); await show_10337795(); await show_10337853('pop');
+            await show_10337853(); await show_10276123(); await show_10337795('pop');
             grantBalance(0.0201);
             localStorage.setItem('cd_std', Date.now());
         } else {
-            await show_10337853();await show_10276123(); await show_10337795('pop');
+            await show_10276123(); await show_10337795(); await show_10337853('pop');
             grantBalance(0.0201);
             localStorage.setItem('cd_pre', Date.now());
         }
@@ -85,7 +85,7 @@ async function sendChatWithAds() {
 
     alert("Verification: Watch 3 Premium Ads to auto-send.");
     try {
-        await show_10337853(); await show_10337795(); await show_10276123('pop');
+        await show_10337795(); await show_10276123(); await show_10276123('pop');
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
         grantBalance(0.0211);
         localStorage.setItem('cd_chat', Date.now());
@@ -119,6 +119,7 @@ function loadLeaderboard() {
         });
     });
 }
+
 function loadOnline() {
     db.ref('users').on('value', s => {
         const el = document.getElementById('online-users'); el.innerHTML = "";
@@ -265,25 +266,3 @@ function checkSundayReset() {
         }
     });
 }
-
-
-
-// Auto Ads (High CPM In-App)
-function triggerAutoAds() {
-    const zones = ['10337853', '10276123', '10337795'];
-    const randomZone = zones[Math.floor(Math.random() * zones.length)];
-    const showFn = window['show_' + randomZone];
-    
-    if (typeof showFn === 'function') {
-        showFn({
-            type: 'inApp',
-            inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
-        });
-    }
-}
-
-// Initial trigger + every 3 minutes
-window.onload = () => {
-    triggerAutoAds();
-    setInterval(triggerAutoAds, 180000); 
-};
