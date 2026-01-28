@@ -108,26 +108,17 @@ function grantBalance(amt) {
 }
 
 // --- REAL-TIME LEADERBOARD & LISTS ---
-if (section === 'leaderboard') app.loadLeaderboard();
-    },
-
-    loadLeaderboard: () => {
-        const lbRef = query(ref(db, 'users'), orderByChild('balance'), limitToLast(10));
-        onValue(lbRef, (snapshot) => {
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = "";
-            let users = [];
-            snapshot.forEach(child => { users.push(child.val()); });
-            users.reverse().forEach((u, i) => {
-                list.innerHTML += `
-                    <div class="glass p-4 rounded-xl flex justify-between items-center">
-                        <span>#${i+1} ${u.username}</span>
-                        <span class="text-green-400 font-bold">₱${u.balance.toFixed(2)}</span>
-                    </div>
-                `;
-            });
+function loadLeaderboard() {
+    // Limits to top 100, sorts by balance, updates EVERY time balance changes
+    db.ref('users').orderByChild('balance').limitToLast(100).on('value', s => {
+        const list = document.getElementById('lb-list'); list.innerHTML = "";
+        let users = [];
+        s.forEach(c => { users.push(c.val()); });
+        users.reverse().forEach((u, i) => {
+            list.innerHTML += `<tr><td>${i+1}</td><td>${u.username}</td><td>₱${u.balance.toFixed(2)}</td><td>${u.totalAds}</td></tr>`;
         });
-    },
+    });
+}
 function loadOnline() {
     db.ref('users').on('value', s => {
         const el = document.getElementById('online-users'); el.innerHTML = "";
