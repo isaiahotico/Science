@@ -63,7 +63,7 @@ function syncHomeUI() {
     if(uData.refBy) document.getElementById('ref-binder').disabled = true;
 }
 
-// --- ADS LOGIC (₱0.0172 / 5 MIN) ---
+// --- ADS LOGIC (₱0.0201 / 5 MIN) ---
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
