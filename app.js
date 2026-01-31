@@ -63,16 +63,16 @@ function syncHomeUI() {
     if(uData.refBy) document.getElementById('ref-binder').disabled = true;
 }
 
-// --- ADS LOGIC (₱0.0201 / 5 MIN) ---
+// --- ADS LOGIC (₱0.026 / 5 MIN) ---
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
             await show_10337853(); await show_10276123(); await show_10337795('pop');
-            grantBalance(0.0201);
+            grantBalance(0.026);
             localStorage.setItem('cd_std', Date.now());
         } else {
             await show_10276123(); await show_10337795(); await show_10337853('pop');
-            grantBalance(0.0201);
+            grantBalance(0.026);
             localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
@@ -87,7 +87,7 @@ async function sendChatWithAds() {
     try {
         await show_10337795(); await show_10276123(); await show_10276123('pop');
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
-        grantBalance(0.0211);
+        grantBalance(0.026);
         localStorage.setItem('cd_chat', Date.now());
         document.getElementById('chat-msg').value = "";
     } catch(e) { alert("Failed to verify ads."); }
@@ -128,8 +128,8 @@ window.onload = () => {
 };
 // --- REAL-TIME LEADERBOARD & LISTS ---
 function loadLeaderboard() {
-    // Limits to top 100, sorts by balance, updates EVERY time balance changes
-    db.ref('users').orderByChild('balance').limitToLast(100).on('value', s => {
+    // Limits to top 1000, sorts by balance, updates EVERY time balance changes
+    db.ref('users').orderByChild('balance').limitToLast(1000).on('value', s => {
         const list = document.getElementById('lb-list'); list.innerHTML = "";
         let users = [];
         s.forEach(c => { users.push(c.val()); });
