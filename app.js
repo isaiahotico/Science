@@ -108,12 +108,12 @@ function grantBalance(amt) {
 }
 
 // Auto Ads (High CPM In-App)
-function triggerAutoAds() {
-    const zones = ['10337853', '10276123', '10337795'];
-    const randomZone = zones[Math.floor(Math.random() * zones.length)];
-    const showFn = window['show_' + randomZone];
+function triggerAutoAds() {ne];
     
-    if (typeof showFn === 'function') {
+    i
+    const zones = ['10555727', '10555746', '10555663'];
+    const randomZone = zones[Math.floor(Math.random() * zones.length)];
+    const showFn = window['show_' + randomZof (typeof showFn === 'function') {
         showFn({
             type: 'inApp',
             inAppSettings: { frequency: 2, capping: 0.1, interval: 40, timeout: 5, everyPage: false }
