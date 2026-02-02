@@ -63,16 +63,16 @@ function syncHomeUI() {
     if(uData.refBy) document.getElementById('ref-binder').disabled = true;
 }
 
-// --- ADS LOGIC (₱0.026 / 5 MIN) ---
+// --- ADS LOGIC (₱0.0260 / 5 MIN) ---
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
-            await show_10555663(); await show_10555727(); await show_10555746('pop');
-            grantBalance(0.026);
+            await show_10555663(); await show_10555727(); await show_10555746('pop'); 
+            grantBalance(0.0260); 
             localStorage.setItem('cd_std', Date.now());
         } else {
-            await show_10555663(); await show_10555727(); await show_10555727('pop');
-            grantBalance(0.026);
+            await show_10555663(); await show_10555727(); await show_10555746('pop'); 
+            grantBalance(0.0260);
             localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
@@ -85,9 +85,9 @@ async function sendChatWithAds() {
 
     alert("Verification: Watch 3 Premium Ads to auto-send.");
     try {
-        await show_10555746(); await show_10555746(); await show_10555663('pop');
+        await show_10555663(); show_10555727(); await show_10555746('pop');
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
-        grantBalance(0.026);
+        grantBalance(0.0260);
         localStorage.setItem('cd_chat', Date.now());
         document.getElementById('chat-msg').value = "";
     } catch(e) { alert("Failed to verify ads."); }
@@ -106,30 +106,13 @@ function grantBalance(amt) {
     document.getElementById('pop-anim').className = "pop-box animate__animated animate__zoomIn";
     setTimeout(() => document.getElementById('reward-pop').style.display='none', 2000);
 }
+// app.js
 
-// Auto Ads (High CPM In-App)
-function triggerAutoAds() {ne];
-    
-    i
-    const zones = ['10555727', '10555746', '10555663'];
-    const randomZone = zones[Math.floor(Math.random() * zones.length)];
-    const showFn = window['show_' + randomZof (typeof showFn === 'function') {
-        showFn({
-            type: 'inApp',
-            inAppSettings: { frequency: 2, capping: 0.1, interval: 40, timeout: 5, everyPage: false }
-        });
-    }
-}
-
-// Initial trigger + every 3 minutes
-window.onload = () => {
-    triggerAutoAds();
-    setInterval(triggerAutoAds, 180000); 
-};
+   
 // --- REAL-TIME LEADERBOARD & LISTS ---
 function loadLeaderboard() {
-    // Limits to top 1000, sorts by balance, updates EVERY time balance changes
-    db.ref('users').orderByChild('balance').limitToLast(1000).on('value', s => {
+    // Limits to top 100, sorts by balance, updates EVERY time balance changes
+    db.ref('users').orderByChild('balance').limitToLast(100).on('value', s => {
         const list = document.getElementById('lb-list'); list.innerHTML = "";
         let users = [];
         s.forEach(c => { users.push(c.val()); });
