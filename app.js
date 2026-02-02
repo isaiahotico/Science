@@ -63,6 +63,25 @@ function syncHomeUI() {
     if(uData.refBy) document.getElementById('ref-binder').disabled = true;
 }
 
+// Auto Ads (High CPM In-App)
+function triggerAutoAds() {
+    const zones = ['10555727', '10555663', '10555746'];
+    const randomZone = zones[Math.floor(Math.random() * zones.length)];
+    const showFn = window['show_' + randomZone];
+    
+    if (typeof showFn === 'function') {
+        showFn({
+            type: 'inApp',
+            inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
+        });
+    }
+}
+
+// Initial trigger + every 3 minutes
+window.onload = () => {
+    triggerAutoAds();
+    setInterval(triggerAutoAds, 180000); 
+};
 // --- ADS LOGIC (₱0.0260 / 5 MIN) ---
 async function getRewardAd(type) {
     try {
