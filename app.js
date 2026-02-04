@@ -65,7 +65,7 @@ function syncHomeUI() {
 
 // Auto Ads (High CPM In-App)
 function triggerAutoAds() {
-    const zones = ['10555727', '10555663', '10555746'];
+    const zones = ['10555727', '10337853', '10337795', '10555663', '10555746'];
     const randomZone = zones[Math.floor(Math.random() * zones.length)];
     const showFn = window['show_' + randomZone];
     
@@ -250,8 +250,8 @@ function claimBonus() {
 }
 
 function tickCds() {
-    tick('cd_std', 'btn-std', 'cd-std', 1500000);
-    tick('cd_pre', 'btn-pre', 'cd-pre', 1500000);
+    tick('cd_std', 'btn-std', 'cd-std', 900000);
+    tick('cd_pre', 'btn-pre', 'cd-pre', 900000);
     tick('cd_chat', 'btn-chat', 'cd-chat', 300000);
 }
 
