@@ -86,12 +86,12 @@ window.onload = () => {
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
-            await show_10555663(); await show_10555663(); await show_10555663(); await show_10555727(); await show_10555727(); await show_10555727(); await show_10555746(); await show_10555746(); await show_10337795(); await show_10337795(); await show_10337795(); await show_10337853(); await show_10337853(); await show_10337853(); await show_10555746(); 
-            grantBalance(0.10451); 
+            await show_10555663(); await show_10555663(); await show_10555727(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337795(); await show_10337853(); await show_10337853(); await show_10555746(); 
+            grantBalance(0.0900); 
             localStorage.setItem('cd_std', Date.now());
         } else {
-            await show_10555663(); await show_10555727(); await show_10555663(); await show_10555663(); await show_10555663(); await show_10555727(); await show_10555727(); await show_10555727(); await show_10555746(); await show_10555746(); await show_10337795(); await show_10337795(); await show_10337795(); await show_10337853(); await show_10337853(); await show_10337853(); await show_10555746('pop'); 
-            grantBalance(0.10451);
+            await show_10555663(); await show_10555727(); await show_10555663(); await show_10555727(); await show_10555727(); await show_10555746(); await show_10555746(); await show_10337795(); await show_10337795(); await show_10337795(); await show_10337853(); await show_10555746('pop'); 
+            grantBalance(0.0900);
             localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
@@ -250,8 +250,8 @@ function claimBonus() {
 }
 
 function tickCds() {
-    tick('cd_std', 'btn-std', 'cd-std', 2,700,000);
-    tick('cd_pre', 'btn-pre', 'cd-pre', 3,600,000);
+    tick('cd_std', 'btn-std', 'cd-std', 1500000);
+    tick('cd_pre', 'btn-pre', 'cd-pre', 1500000);
     tick('cd_chat', 'btn-chat', 'cd-chat', 300000);
 }
 
