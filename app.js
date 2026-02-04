@@ -86,7 +86,7 @@ window.onload = () => {
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
-            await show_10555663(); await show_10555663(); await show_10555663(); await show_10555727(); await show_10555727(); await show_10555727(); await show_10555746(); await show_10555746(); await show_10337795(); await show_10337795(); await show_10337795(); await show_10337853(); await show_10337853(); await show_10337853(); await show_10555746('pop'); 
+            await show_10555663(); await show_10555663(); await show_10555663(); await show_10555727(); await show_10555727(); await show_10555727(); await show_10555746(); await show_10555746(); await show_10337795(); await show_10337795(); await show_10337795(); await show_10337853(); await show_10337853(); await show_10337853(); await show_10555746(); 
             grantBalance(0.10451); 
             localStorage.setItem('cd_std', Date.now());
         } else {
