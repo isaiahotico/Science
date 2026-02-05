@@ -87,11 +87,11 @@ async function getRewardAd(type) {
     try {
         if(type === 'std') {
             await show_10555663(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337853(); await show_10555746('pop'); 
-            grantBalance(0.030); 
+            grantBalance(0.052); 
             localStorage.setItem('cd_std', Date.now());
         } else {
             await show_10555663(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337853(); await show_10555746('pop'); 
-            grantBalance(0.030);
+            grantBalance(0.052);
             localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
