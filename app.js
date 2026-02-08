@@ -82,16 +82,16 @@ window.onload = () => {
     triggerAutoAds();
     setInterval(triggerAutoAds, 180000); 
 };
-// --- ADS LOGIC (₱0.10451 / 45 MIN) ---
+// --- ADS LOGIC (₱0.0201 / 45 MIN) ---
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
-            await show_10555663(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337853(); await show_10555746(); 
-            grantBalance(0.052); 
+            await show_10555663(); await show_10555727(); await show_10555746(); 
+            grantBalance(0.0201); 
             localStorage.setItem('cd_std', Date.now());
         } else {
-            await show_10555663(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337853(); await show_10555746(); 
-            grantBalance(0.052);
+            await show_10337795(); await show_10337853(); await show_10555746(); 
+            grantBalance(0.0201);
             localStorage.setItem('cd_pre', Date.now());
         }
     } catch(e) { alert("Ad failed."); }
