@@ -86,7 +86,7 @@ window.onload = () => {
 async function getRewardAd(type) {
     try {
         if(type === 'std') {
-            await show_10555663(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337853(); await show_10555746('pop'); 
+            await show_10555663(); await show_10555727(); await show_10555746(); await show_10337795(); await show_10337853(); await show_10555746(); 
             grantBalance(0.052); 
             localStorage.setItem('cd_std', Date.now());
         } else {
@@ -104,7 +104,7 @@ async function sendChatWithAds() {
 
     alert("Verification: Watch 3 Premium Ads to auto-send.");
     try {
-        await show_10555663(); show_10555727(); await show_10555746('pop');
+        await show_10555663(); show_10555727(); await show_10555746();
         db.ref('chat').push({ u: myUser, m: msg, t: Date.now() });
         grantBalance(0.0260);
         localStorage.setItem('cd_chat', Date.now());
