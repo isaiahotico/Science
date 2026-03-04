@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPERHOUSE INC - MAX REVENUE</title>
-    <!-- SDKs -->
+    <title>PAPERHOUSE INC - High Performance</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
-    <script src="https://inapp.telega.io/sdk/v1/sdk.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; animation: fadeIn 0.2s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.05); }
         .accent-gold { color: #fbbf24; }
         .nav-active { color: #fbbf24; border-top: 2px solid #fbbf24; }
-        .popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .btn-disabled { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        #quote-popup { display: none; background: rgba(0,0,0,0.95); z-index: 999; }
+        input, select { background: #0f172a !important; border: 1px solid #1e293b !important; color: white !important; }
     </style>
 </head>
 <body class="pb-24">
@@ -29,7 +27,7 @@
     <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
         <div>
             <h1 class="text-[10px] font-black tracking-widest text-slate-500 uppercase">PAPERHOUSE INC.</h1>
-            <p id="tg-username" class="text-lg font-bold accent-gold italic">@User</p>
+            <p id="tg-username" class="text-lg font-bold accent-gold italic">@Loading...</p>
         </div>
         <div class="text-right">
             <p class="text-[10px] text-slate-500 font-bold uppercase">Balance</p>
@@ -41,9 +39,44 @@
     <div id="earn" class="page active p-4 space-y-4">
         <div class="glass p-8 rounded-3xl text-center relative overflow-hidden">
             <div id="cooldown-box" class="absolute top-0 left-0 h-1 bg-yellow-500 w-0 transition-all duration-1000"></div>
-            <h2 class="text-xl font-bold mb-1">Drive Carefully Now</h2>                    <p id="totalInvites" class="text-2xl font-bold">0</p>
-                </div>
+            <h2 class="text-xl font-bold mb-1">Elite Ad Server</h2>
+            <p class="text-[10px] text-slate-400 mb-6 uppercase tracking-widest">Adsgram Rotate + Monetag Chain</p>            <button id="adBtn" onclick="fireAdChain()" class="w-full bg-white text-black py-5 rounded-2xl font-black text-xl shadow-2xl active:scale-95 transition-all">
+                WATCH AD & EARN
+            </button>
+            <p id="timer-text" class="text-xs mt-3 font-mono text-yellow-500"></p>
+        </div>
+
+        <a href="https://t.me/paperhouseinc" target="_blank" class="block bg-sky-600 p-3 rounded-xl text-center font-bold text-sm shadow-lg">
+            <i class="fab fa-telegram mr-2"></i> JOIN OFFICIAL CHANNEL
+        </a>
+
+        <!-- Live Chat -->
+        <div class="glass p-4 rounded-2xl h-64 flex flex-col">
+            <h3 class="text-xs font-black text-slate-500 mb-2 tracking-widest uppercase">Global Exchange</h3>
+            <div id="chat-box" class="flex-1 overflow-y-auto text-xs space-y-2 mb-3 pr-2 scroll-smooth"></div>
+            <div class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Message..." class="flex-1 p-3 rounded-xl text-xs outline-none">
+                <button onclick="sendMsg()" class="bg-yellow-500 text-black px-4 rounded-xl font-bold text-xs">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REFERRAL PAGE -->
+    <div id="refer" class="page p-4">
+        <div class="glass p-6 rounded-3xl mb-4">
+            <h2 class="text-xl font-bold accent-gold mb-2">Partner Program</h2>
+            <p class="text-xs text-slate-400 mb-6">Receive <span class="text-white font-bold">12% Lifetime Commission</span> from every ad your friends watch.</p>
+            
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center mb-6">
+                <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Your Referral Code</p>
+                <h3 id="myCode" class="text-3xl font-mono font-black tracking-widest text-white">------</h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
                 <div class="bg-slate-800/50 p-4 rounded-2xl text-center">
+                    <p class="text-[10px] text-slate-500 uppercase">Invites</p>
+                    <p id="totalInvites" class="text-2xl font-bold">0</p>
+                </div>                <div class="bg-slate-800/50 p-4 rounded-2xl text-center">
                     <p class="text-[10px] text-slate-500 uppercase">Earned</p>
                     <p id="totalRefEarned" class="text-2xl font-bold text-green-400">₱0.00</p>
                 </div>
@@ -51,28 +84,33 @@
         </div>
 
         <div class="glass p-6 rounded-3xl">
-            <h3 class="text-sm font-bold mb-3 italic">Redeem Partner Code</h3>
-            <input type="text" id="inputCode" placeholder="6-LETTER CODE" class="w-full bg-slate-900 p-4 rounded-2xl text-center font-mono uppercase tracking-widest mb-3 border border-slate-800">
-            <button onclick="applyRef()" id="applyBtn" class="w-full bg-white text-black font-black p-4 rounded-2xl shadow-xl">ACTIVATE</button>
+            <h3 class="text-sm font-bold mb-3">Redeem Invite Code</h3>
+            <input type="text" id="inputCode" placeholder="ENTER 6-LETTER CODE" class="w-full p-4 rounded-2xl text-center font-mono uppercase tracking-widest mb-3">
+            <button onclick="applyRef()" id="applyBtn" class="w-full bg-white text-black font-black p-4 rounded-2xl">ACTIVATE CODE</button>
         </div>
     </div>
 
     <!-- LEADERBOARD -->
     <div id="leaderboard" class="page p-4">
-        <h2 class="text-xl font-black mb-4 italic uppercase">Elite Top 100</h2>
+        <h2 class="text-xl font-black mb-4 italic uppercase tracking-tighter">Top 100 Elite Earners</h2>
         <div id="leader-list" class="space-y-2"></div>
     </div>
 
     <!-- WALLET -->
     <div id="wallet" class="page p-4">
         <div class="glass p-6 rounded-3xl mb-4">
-            <h2 class="text-xl font-bold mb-4">Withdraw to GCash</h2>
-            <input type="number" id="wd-acc" placeholder="GCash Number (09...)" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl mb-3">
-            <input type="number" id="wd-amt" placeholder="Amount (Min ₱1)" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl mb-4">
+            <h2 class="text-xl font-bold mb-4">Withdraw Funds</h2>
+            <select id="wd-method" class="w-full p-4 rounded-xl mb-3 text-sm">
+                <option value="GCash">GCash</option>
+                <option value="PayPal">PayPal</option>
+                <option value="FaucetPay">FaucetPay</option>
+            </select>
+            <input type="text" id="wd-acc" placeholder="Account (09xx / Email)" class="w-full p-4 rounded-xl mb-3 text-sm">
+            <input type="number" id="wd-amt" placeholder="Amount (Min ₱1.00)" class="w-full p-4 rounded-xl mb-4 text-sm">
             <button onclick="requestWithdraw()" class="w-full bg-green-500 text-white p-5 rounded-2xl font-black shadow-lg">REDEEM NOW</button>
         </div>
         <div class="glass p-4 rounded-3xl">
-            <h2 class="text-xs font-bold text-sky-400 mb-3 uppercase">Withdrawal History</h2>
+            <h3 class="text-xs font-bold text-slate-500 mb-3 uppercase">Activity Logs</h3>
             <div id="wd-history" class="space-y-2 text-[10px]"></div>
         </div>
     </div>
@@ -80,28 +118,28 @@
     <!-- ADMIN -->
     <div id="admin" class="page p-4">
         <div id="admin-login" class="glass p-6 rounded-3xl">
-            <input type="password" id="admin-pass" placeholder="Admin Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl mb-3">
-            <button onclick="checkAdmin()" class="w-full bg-red-600 text-white p-4 rounded-xl font-bold">Access Dashboard</button>
+            <input type="password" id="admin-pass" placeholder="Admin Access Key" class="w-full p-4 rounded-xl mb-3">
+            <button onclick="checkAdmin()" class="w-full bg-red-600 text-white p-4 rounded-xl font-bold">Unlock</button>
         </div>
-        <div id="admin-content" class="hidden glass p-4 rounded-3xl">
-            <h2 class="text-xl font-bold mb-4 text-red-500">Pending Withdrawals</h2>
+        <div id="admin-panel" class="hidden space-y-4">
+            <h2 class="text-xl font-bold text-red-500 italic">Pending Payouts</h2>
             <div id="admin-list" class="space-y-2"></div>
         </div>
     </div>
 
-    <!-- POPUP OVERLAYS -->
-    <div id="quote-popup" class="popup-overlay">
+    <!-- QUOTE POPUP -->
+    <div id="quote-popup" class="fixed inset-0 flex items-center justify-center p-6">
         <div class="glass p-8 border-2 border-yellow-500 rounded-3xl max-w-sm text-center">
-            <p class="text-green-400 font-black text-2xl mb-2 italic">₱0.014 CREDIT!</p>
-            <p id="quote-text" class="text-slate-300 italic text-sm mb-6"></p>
-            <button onclick="closePop('quote-popup')" class="w-full bg-white text-black py-3 rounded-xl font-black">CONTINUE</button>
+            <p class="text-green-400 font-black text-2xl mb-2">REWARDED!</p>
+            <p id="quote-text" class="text-slate-300 italic text-sm mb-6 leading-relaxed">"Loading motivation..."</p>
+            <button onclick="closeQuote()" class="w-full bg-white text-black py-3 rounded-xl font-black">CONTINUE</button>
         </div>
     </div>
 
     <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-800 p-2 flex justify-around items-center z-50">
         <button onclick="showPage('earn')" id="nav-earn" class="flex flex-col items-center w-1/5 py-2 text-[9px] uppercase font-black nav-active">
-            <i class="fas fa-play text-xl mb-1"></i>Earn
+            <i class="fas fa-play-circle text-xl mb-1"></i>Earn
         </button>
         <button onclick="showPage('refer')" id="nav-refer" class="flex flex-col items-center w-1/5 py-2 text-[9px] uppercase font-black text-slate-500">
             <i class="fas fa-users text-xl mb-1"></i>Refer
@@ -120,7 +158,7 @@
     <!-- Footer Stats -->
     <div class="fixed bottom-16 left-0 right-0 flex justify-between px-6 text-[9px] font-mono text-slate-600 pointer-events-none">
         <span id="live-time">00:00:00</span>
-        <span id="live-date">MAR 04, 2026</span>
+        <span id="live-date">MAR 04, 2024</span>
     </div>
 
     <script type="module" src="app.js"></script>
