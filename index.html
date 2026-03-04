@@ -3,46 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PinoyRewards - Earn GCash</title>
+    <title>FreeGcashads - Earn Daily</title>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
-        .gcash-blue { background-color: #007dfe; }
+        .active-tab { border-bottom: 4px solid #fbbf24; color: #fbbf24; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        body { background: #0f172a; color: white; overflow-x: hidden; }
     </style>
 </head>
-<body class="p-4">
-    <div class="max-w-md mx-auto">
-        <!-- Header -->
-        <div class="gcash-blue text-white p-6 rounded-3xl shadow-lg mb-6">
-            <p class="text-sm opacity-80">Available Balance</p>
-            <h1 class="text-4xl font-bold">₱ <span id="balance">0.00</span></h1>
-        </div>
+<body class="pb-20">
 
-        <!-- Earning Section -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm mb-4 border border-blue-100">
-            <h2 class="font-bold text-gray-800 mb-2">Daily Tasks</h2>
-            <p class="text-gray-500 text-sm mb-4">Watch a short video to earn ₱0.50 per ad.</p>
-            
-            <button id="watchAdBtn" class="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2">
-                <span>📺</span> Watch Ads & Earn
-            </button>
+    <!-- Top Bar -->
+    <div class="p-6 bg-blue-600 rounded-b-3xl shadow-2xl flex justify-between items-center">
+        <div>
+            <p class="text-xs opacity-80 uppercase tracking-widest font-bold">My Balance</p>
+            <h1 class="text-3xl font-black">₱ <span id="userBalance">0.0000</span></h1>
         </div>
-
-        <!-- Withdrawal Section -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-blue-100">
-            <h2 class="font-bold text-gray-800 mb-4">GCash Withdrawal</h2>
-            <input type="number" id="gcashNumber" placeholder="GCash Number (09...)" class="w-full p-3 border rounded-lg mb-3 outline-none focus:ring-2 focus:ring-blue-500">
-            <button id="withdrawBtn" class="w-full gcash-blue text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed" disabled>
-                Withdraw to GCash
-            </button>
-            <p id="statusMsg" class="text-xs mt-3 text-center text-gray-500 font-medium"></p>
-        </div>
-
-        <!-- Info -->
-        <p class="text-center text-gray-400 text-xs mt-8">Minimum withdrawal: ₱50.00</p>
+        <button onclick="showAdminPrompt()" class="text-blue-300 text-xs">Admin</button>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Main Content Containers -->
+    <div id="earn-section" class="p-4 space-y-4">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+            <h3 class="text-lg font-bold mb-4"><i class="fas fa-video text-yellow-400 mr-2"></i> High Yield Tasks</h3>
+            <div class="grid grid-cols-1 gap-3">
+                <button onclick="playAdsgram()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl font-bold flex justify-between items-center">
+                    <span>Adsgram Server</span>
+                    <span class="text-xs bg-white text-blue-600 px-2 py-1 rounded">₱0.0099</span>
+                </button>
+                <button onclick="playMonetag()" class="w-full bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-xl font-bold flex justify-between items-center">
+                    <span>Monetag Server</span>
+                    <span class="text-xs bg-white text-purple-600 px-2 py-1 rounded">₱0.0099</span>
+                </button>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-4 text-center">No cooldown. Unlimited clicks.</p>
+        </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div id="leaderboard-section" class="hidden p-4">        <h2 class="text-xl font-bold mb-4 text-yellow-400">Top Earners</h2>
+        <div id="leaderboard-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Chat Section -->
+    <div id="chat-section" class="hidden p-4 h-[70vh] flex flex-col">
+        <div id="chat-box" class="flex-1 overflow-y-auto space-y-2 mb-4 p-2 bg-slate-900 rounded-lg"></div>
+        <div class="flex gap-2">
+            <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 bg-slate-800 p-3 rounded-lg outline-none border border-slate-600 text-sm">
+            <button onclick="sendMessage()" class="bg-yellow-500 text-black px-4 rounded-lg font-bold">Send</button>
+        </div>
+    </div>
+
+    <!-- Withdraw Section -->
+    <div id="withdraw-section" class="hidden p-4">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+            <h2 class="text-xl font-bold mb-4">Redeem Rewards</h2>
+            <select id="withdrawMethod" class="w-full bg-slate-900 p-3 rounded-lg mb-3 border border-slate-600">
+                <option value="GCash">GCash (Number)</option>
+                <option value="PayPal">PayPal (Gmail)</option>
+                <option value="FaucetPay">FaucetPay (Gmail)</option>
+            </select>
+            <input type="text" id="withdrawAccount" placeholder="Account Details (09... or Email)" class="w-full bg-slate-900 p-3 rounded-lg mb-4 border border-slate-600">
+            <button onclick="requestWithdrawal()" id="withdrawBtn" class="w-full bg-green-600 p-4 rounded-xl font-bold">Request Withdrawal (Min ₱1.00)</button>
+        </div>
+        <div class="mt-6">
+            <h3 class="text-sm font-bold text-gray-400 mb-2">My Requests</h3>
+            <div id="my-withdrawals" class="text-xs space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-panel" class="hidden fixed inset-0 bg-black z-50 p-4 overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-red-500">Admin Dashboard</h1>
+            <button onclick="closeAdmin()" class="text-white">✕ Close</button>
+        </div>
+        <div id="pending-withdrawals" class="space-y-4"></div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex justify-around p-2 text-xs">
+        <button onclick="switchTab('earn')" class="flex flex-col items-center p-2 tab-link active-tab" id="tab-earn">
+            <i class="fas fa-hand-holding-usd text-lg"></i><span>Earn</span>
+        </button>
+        <button onclick="switchTab('leaderboard')" class="flex flex-col items-center p-2 tab-link" id="tab-leader">
+            <i class="fas fa-trophy text-lg"></i><span>Top</span>
+        </button>
+        <button onclick="switchTab('chat')" class="flex flex-col items-center p-2 tab-link" id="tab-chat">
+            <i class="fas fa-comments text-lg"></i><span>Chat</span>
+        </button>
+        <button onclick="switchTab('withdraw')" class="flex flex-col items-center p-2 tab-link" id="tab-withdraw">
+            <i class="fas fa-wallet text-lg"></i><span>Wallet</span>
+        </button>
+    </nav>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="app.js"></script>
 </body>
 </html>
