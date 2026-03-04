@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPERHOUSE INC - High Performance</title>
+    <title>PAPERHOUSE INC - MAX REVENUE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
+    <script src="https://inapp.telega.io/sdk/v1/sdk.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.2s ease-in; }
+        .page { display: none; animation: fadeIn 0.2s ease-in; }
+        .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .glass { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.05); }
         .accent-gold { color: #fbbf24; }
         .nav-active { color: #fbbf24; border-top: 2px solid #fbbf24; }
-        #quote-popup { display: none; background: rgba(0,0,0,0.95); z-index: 999; }
+        #quote-popup, #invite-popup, #drive-popup { display: none; background: rgba(0,0,0,0.95); z-index: 999; }
         input, select { background: #0f172a !important; border: 1px solid #1e293b !important; color: white !important; }
+        .btn-disabled { filter: grayscale(1); cursor: not-allowed; opacity: 0.5; }
     </style>
 </head>
 <body class="pb-24">
@@ -39,9 +41,10 @@
     <div id="earn" class="page active p-4 space-y-4">
         <div class="glass p-8 rounded-3xl text-center relative overflow-hidden">
             <div id="cooldown-box" class="absolute top-0 left-0 h-1 bg-yellow-500 w-0 transition-all duration-1000"></div>
-            <h2 class="text-xl font-bold mb-1">Elite Ad Server</h2>
-            <p class="text-[10px] text-slate-400 mb-6 uppercase tracking-widest">Adsgram Rotate + Monetag Chain</p>            <button id="adBtn" onclick="fireAdChain()" class="w-full bg-white text-black py-5 rounded-2xl font-black text-xl shadow-2xl active:scale-95 transition-all">
-                WATCH AD & EARN
+            <h2 class="text-xl font-bold mb-1">Drive Carefully Now</h2>            <p class="text-xs text-slate-400 mb-6 uppercase tracking-widest">High CPM Ad Combination</p>
+            
+            <button id="adBtn" onclick="fireAdChain()" class="w-full bg-white text-black py-5 rounded-2xl font-black text-xl shadow-2xl active:scale-95 transition-all">
+                💰 Earn ₱0.014 Per Ad
             </button>
             <p id="timer-text" class="text-xs mt-3 font-mono text-yellow-500"></p>
         </div>
@@ -74,9 +77,9 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-slate-800/50 p-4 rounded-2xl text-center">
-                    <p class="text-[10px] text-slate-500 uppercase">Invites</p>
-                    <p id="totalInvites" class="text-2xl font-bold">0</p>
-                </div>                <div class="bg-slate-800/50 p-4 rounded-2xl text-center">
+                    <p class="text-[10px] text-slate-500 uppercase">Invites</p>                    <p id="totalInvites" class="text-2xl font-bold">0</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-2xl text-center">
                     <p class="text-[10px] text-slate-500 uppercase">Earned</p>
                     <p id="totalRefEarned" class="text-2xl font-bold text-green-400">₱0.00</p>
                 </div>
@@ -127,12 +130,26 @@
         </div>
     </div>
 
-    <!-- QUOTE POPUP -->
-    <div id="quote-popup" class="fixed inset-0 flex items-center justify-center p-6">
+    <!-- POPUPS -->
+    <div id="quote-popup" class="fixed inset-0 flex items-center justify-center p-6"> <!-- Earn Reward Popup -->
         <div class="glass p-8 border-2 border-yellow-500 rounded-3xl max-w-sm text-center">
             <p class="text-green-400 font-black text-2xl mb-2">REWARDED!</p>
             <p id="quote-text" class="text-slate-300 italic text-sm mb-6 leading-relaxed">"Loading motivation..."</p>
-            <button onclick="closeQuote()" class="w-full bg-white text-black py-3 rounded-xl font-black">CONTINUE</button>
+            <button onclick="closePopup('quote-popup')" class="w-full bg-white text-black py-3 rounded-xl font-bold">CONTINUE</button>
+        </div>
+    </div>
+    <div id="invite-popup" class="fixed inset-0 flex items-center justify-center p-6"> <!-- Referral Reward Popup -->
+        <div class="glass p-8 border-2 border-blue-500 rounded-3xl max-w-sm text-center">
+            <p class="text-blue-400 font-black text-2xl mb-2">INVITE SUCCESS!</p>
+            <p id="invite-quote-text" class="text-slate-300 italic text-sm mb-6 leading-relaxed">"Loading motivation..."</p>
+            <button onclick="closePopup('invite-popup')" class="w-full bg-white text-black py-3 rounded-xl font-bold">CONTINUE</button>
+        </div>
+    </div>
+    <div id="drive-popup" class="fixed inset-0 flex items-center justify-center p-6"> <!-- Drive Carefully Popup -->
+        <div class="glass p-8 border-2 border-red-500 rounded-3xl max-w-sm text-center">
+            <p class="text-red-400 font-black text-2xl mb-2">DRIVE SAFE!</p>
+            <p id="drive-quote-text" class="text-slate-300 italic text-sm mb-6 leading-relaxed">"Loading motivation..."</p>
+            <button onclick="closePopup('drive-popup')" class="w-full bg-white text-black py-3 rounded-xl font-bold">GOT IT</button>
         </div>
     </div>
 
