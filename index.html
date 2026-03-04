@@ -3,104 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeGcashads - Earn Daily</title>
+    <title>FreeGcashads - Ultimate</title>
+    <!-- Ad SDKs -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10276123' data-sdk='show_10276123'></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .active-tab { border-bottom: 4px solid #fbbf24; color: #fbbf24; }
-        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        body { background: #0f172a; color: white; overflow-x: hidden; }
+        .page { display: none; padding: 15px; padding-bottom: 80px; }
+        .page.active { display: block; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: white; }
+        .btn-grad { background: linear-gradient(to right, #00c6ff, #0072ff); color: white; font-weight: bold; }
+        body { background: #020617; font-family: 'Inter', sans-serif; color: white; }
+        .tab-active { color: #38bdf8; border-top: 2px solid #38bdf8; }
     </style>
 </head>
-<body class="pb-20">
+<body>
 
-    <!-- Top Bar -->
-    <div class="p-6 bg-blue-600 rounded-b-3xl shadow-2xl flex justify-between items-center">
-        <div>
-            <p class="text-xs opacity-80 uppercase tracking-widest font-bold">My Balance</p>
-            <h1 class="text-3xl font-black">₱ <span id="userBalance">0.0000</span></h1>
-        </div>
-        <button onclick="showAdminPrompt()" class="text-blue-300 text-xs">Admin</button>
+    <!-- Top Balance Header -->
+    <div class="p-6 bg-slate-900 border-b border-slate-800 text-center shadow-2xl">
+        <p class="text-xs text-slate-400 uppercase font-black tracking-widest">Global Balance</p>
+        <h1 class="text-4xl font-black text-sky-400">₱ <span id="userBalance">0.0000</span></h1>
     </div>
 
-    <!-- Main Content Containers -->
-    <div id="earn-section" class="p-4 space-y-4">
-        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
-            <h3 class="text-lg font-bold mb-4"><i class="fas fa-video text-yellow-400 mr-2"></i> High Yield Tasks</h3>
-            <div class="grid grid-cols-1 gap-3">
-                <button onclick="playAdsgram()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-xl font-bold flex justify-between items-center">
-                    <span>Adsgram Server</span>
-                    <span class="text-xs bg-white text-blue-600 px-2 py-1 rounded">₱0.0099</span>
-                </button>
-                <button onclick="playMonetag()" class="w-full bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-xl font-bold flex justify-between items-center">
-                    <span>Monetag Server</span>
-                    <span class="text-xs bg-white text-purple-600 px-2 py-1 rounded">₱0.0099</span>
-                </button>
+    <!-- EARN PAGE -->
+    <div id="earn" class="page active">
+        <div class="glass-card p-8 text-center mb-4">
+            <div class="mb-4 text-5xl">💎</div>
+            <h2 class="text-xl font-bold">Earn ₱0.0099 Per Click</h2>
+            <p class="text-xs text-slate-400 mb-6">Adsgram + Monetag combined server</p>
+            <button onclick="playDoubleAd()" id="adBtn" class="w-full btn-grad py-5 rounded-2xl text-xl shadow-lg active:scale-95 transition-transform">
+                🚀 WATCH ADS & EARN
+            </button>
+            <p class="text-[10px] mt-4 opacity-50">No Cooldown • Unlimited Earnings</p>
+        </div>
+        
+        <!-- Live Chat Widget Mini -->
+        <div class="glass-card p-4 h-48 flex flex-col">
+            <h3 class="text-xs font-bold mb-2 text-sky-400">GLOBAL CHAT</h3>
+            <div id="chatBox" class="flex-1 overflow-y-auto text-xs space-y-1 mb-2"></div>
+            <div class="flex gap-2">                <input type="text" id="chatInput" placeholder="Type..." class="flex-1 bg-slate-800 rounded-lg p-2 text-xs outline-none">
+                <button onclick="sendMessage()" class="bg-sky-500 px-3 rounded-lg text-xs">Send</button>
             </div>
-            <p class="text-[10px] text-gray-400 mt-4 text-center">No cooldown. Unlimited clicks.</p>
         </div>
     </div>
 
-    <!-- Leaderboard Section -->
-    <div id="leaderboard-section" class="hidden p-4">        <h2 class="text-xl font-bold mb-4 text-yellow-400">Top Earners</h2>
+    <!-- REFERRAL PAGE -->
+    <div id="referral" class="page">
+        <div class="glass-card p-6 mb-4">
+            <h2 class="text-xl font-bold text-sky-400 mb-2">Invite Friends</h2>
+            <p class="text-sm mb-4">Earn <span class="text-green-400 font-bold">12% Commission</span> every time your friend watches an ad!</p>
+            
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 mb-4">
+                <p class="text-xs text-slate-500">Your Referral Code</p>
+                <h3 id="myRefCode" class="text-2xl font-mono font-bold tracking-widest text-white">------</h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="bg-slate-800 p-3 rounded-xl">
+                    <p class="text-[10px] uppercase">Total Invites</p>
+                    <p id="totalInvites" class="text-xl font-bold">0</p>
+                </div>
+                <div class="bg-slate-800 p-3 rounded-xl">
+                    <p class="text-[10px] uppercase">Earned</p>
+                    <p id="totalRefEarned" class="text-xl font-bold text-green-400">₱0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card p-6">
+            <h3 class="text-sm font-bold mb-2">Have a code?</h3>
+            <input type="text" id="inputRef" placeholder="Enter 6-letter code" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl mb-2 text-center font-mono uppercase">
+            <button onclick="applyReferral()" id="applyBtn" class="w-full bg-white text-black font-bold p-3 rounded-xl">Submit Code</button>
+        </div>
+    </div>
+
+    <!-- LEADERBOARD PAGE -->
+    <div id="leaderboard" class="page">
+        <h2 class="text-xl font-bold mb-4 px-2">Top 100 Earners</h2>
         <div id="leaderboard-list" class="space-y-2"></div>
     </div>
 
-    <!-- Chat Section -->
-    <div id="chat-section" class="hidden p-4 h-[70vh] flex flex-col">
-        <div id="chat-box" class="flex-1 overflow-y-auto space-y-2 mb-4 p-2 bg-slate-900 rounded-lg"></div>
-        <div class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 bg-slate-800 p-3 rounded-lg outline-none border border-slate-600 text-sm">
-            <button onclick="sendMessage()" class="bg-yellow-500 text-black px-4 rounded-lg font-bold">Send</button>
-        </div>
-    </div>
-
-    <!-- Withdraw Section -->
-    <div id="withdraw-section" class="hidden p-4">
-        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+    <!-- WALLET PAGE -->
+    <div id="wallet" class="page">        <div class="glass-card p-6 mb-4">
             <h2 class="text-xl font-bold mb-4">Redeem Rewards</h2>
-            <select id="withdrawMethod" class="w-full bg-slate-900 p-3 rounded-lg mb-3 border border-slate-600">
-                <option value="GCash">GCash (Number)</option>
-                <option value="PayPal">PayPal (Gmail)</option>
+            <select id="wd-method" class="w-full bg-slate-900 border p-3 rounded-xl mb-3 text-white">
+                <option value="GCash">GCash (Philippines)</option>
+                <option value="PayPal">PayPal (Email)</option>
                 <option value="FaucetPay">FaucetPay (Gmail)</option>
             </select>
-            <input type="text" id="withdrawAccount" placeholder="Account Details (09... or Email)" class="w-full bg-slate-900 p-3 rounded-lg mb-4 border border-slate-600">
-            <button onclick="requestWithdrawal()" id="withdrawBtn" class="w-full bg-green-600 p-4 rounded-xl font-bold">Request Withdrawal (Min ₱1.00)</button>
+            <input type="text" id="gcash-num" placeholder="Account Details (09... or Email)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl mb-3 text-white">
+            <input type="number" id="wd-amount" placeholder="Amount (Min 1)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl mb-4 text-white">
+            <button onclick="requestWithdrawal()" class="w-full bg-green-500 text-white p-4 rounded-xl font-bold shadow-lg">REDEEM NOW</button>
         </div>
-        <div class="mt-6">
-            <h3 class="text-sm font-bold text-gray-400 mb-2">My Requests</h3>
-            <div id="my-withdrawals" class="text-xs space-y-2"></div>
+
+        <div class="glass-card p-4">
+            <h2 class="text-xl font-bold mb-3 text-sky-400">Withdrawal History</h2>
+            <div id="withdrawal-history" class="space-y-2 text-xs">
+                <p class="text-gray-500">No history yet.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Admin Modal -->
-    <div id="admin-panel" class="hidden fixed inset-0 bg-black z-50 p-4 overflow-y-auto">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-red-500">Admin Dashboard</h1>
-            <button onclick="closeAdmin()" class="text-white">✕ Close</button>
+    <!-- ADMIN DASHBOARD -->
+    <div id="admin" class="page">
+        <div id="admin-login" class="glass-card p-6">
+            <h2 class="text-xl font-bold mb-4 text-red-500">Admin Access</h2><input type="password" id="admin-pass" placeholder="Admin Password" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl mb-3 text-white">
+            <button onclick="checkAdmin()" class="w-full btn-grad p-3 rounded-xl">Access Dashboard</button>
         </div>
-        <div id="pending-withdrawals" class="space-y-4"></div>
+        <div id="admin-content" class="hidden space-y-4">
+            <div class="glass-card p-4">
+                <h2 class="text-xl font-bold mb-4 text-green-400">Pending Withdrawals</h2>
+                <div id="withdrawal-list" class="space-y-2"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 flex justify-around p-2 text-xs">
-        <button onclick="switchTab('earn')" class="flex flex-col items-center p-2 tab-link active-tab" id="tab-earn">
-            <i class="fas fa-hand-holding-usd text-lg"></i><span>Earn</span>
+    <!-- Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 flex justify-around text-[10px] py-2">
+        <button onclick="showPage('earn')" class="nav-btn tab-active flex flex-col items-center gap-1 w-1/5" id="nav-earn">
+            <i class="fas fa-play text-lg"></i><span>Earn</span>
         </button>
-        <button onclick="switchTab('leaderboard')" class="flex flex-col items-center p-2 tab-link" id="tab-leader">
-            <i class="fas fa-trophy text-lg"></i><span>Top</span>
+        <button onclick="showPage('referral')" class="nav-btn flex flex-col items-center gap-1 w-1/5" id="nav-referral">
+            <i class="fas fa-users text-lg"></i><span>Refer</span>
         </button>
-        <button onclick="switchTab('chat')" class="flex flex-col items-center p-2 tab-link" id="tab-chat">
-            <i class="fas fa-comments text-lg"></i><span>Chat</span>
+        <button onclick="showPage('leaderboard')" class="nav-btn flex flex-col items-center gap-1 w-1/5" id="nav-leaderboard">
+            <i class="fas fa-trophy text-lg"></i><span>Top 100</span>
         </button>
-        <button onclick="switchTab('withdraw')" class="flex flex-col items-center p-2 tab-link" id="tab-withdraw">
+        <button onclick="showPage('wallet')" class="nav-btn flex flex-col items-center gap-1 w-1/5" id="nav-wallet">
             <i class="fas fa-wallet text-lg"></i><span>Wallet</span>
+        </button>
+        <button onclick="showPage('admin')" class="nav-btn flex flex-col items-center gap-1 w-1/5 text-slate-600" id="nav-admin">
+            <i class="fas fa-lock text-lg"></i><span>Admin</span>
         </button>
     </nav>
 
-    <!-- Firebase SDKs -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
