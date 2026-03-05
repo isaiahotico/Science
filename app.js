@@ -27,7 +27,7 @@ document.getElementById('tg-username').innerText = "@" + username;
 // --- Earning Logic ---
 let currentBalance = 0;
 let adIndex = 0;
-const adsgramPool = ['21470', '21639', 'int-21471', '21423', 'task-21424', 'int-21422', 'task-21469'];
+const adsgramPool = ['21470', '21639', '21423', 'task-21424', 'task-21469'];
 const cooldownTime = 30000; // 30 seconds
 
 // --- 60 Psychological/Motivational Quotes ---
