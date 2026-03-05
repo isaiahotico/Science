@@ -26,7 +26,8 @@ let uData = { balance: 0, refCode: userId, invites: 0, refEarned: 0, referredBy:
 const uRef = ref(db, 'users/' + userId);
 
 // --- Ad Engine ---
-const adsgramPool = ['21470', '21639', '21423'];
+const adsgramPool = ['21423', '21639', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352',
+ '21470'];
 let adPtr = 0;
 const telega = window.TelegaIn.AdsController.create_miniapp({ token: 'd3762408-afb4-40e6-ae29-6e3f2ba0dbaa' });
 
