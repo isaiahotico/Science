@@ -226,7 +226,7 @@ window.requestWithdraw = () => {
     const id = push(ref(db, 'withdrawals')).key;
     set(ref(db, 'withdrawals/' + id), { uid: userId, u: username, amt, acc, status: 'pending', ts: Date.now() });
     update(uRef, { balance: uData.balance - amt });
-    alert("Withdrawal request filed.");
+    alert("Withdrawal request on proccess please wait for admin to approve it,thank you-PAPERHOUSE INC.");
 };
 
 window.checkAdmin = () => {
