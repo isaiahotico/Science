@@ -96,7 +96,7 @@ window.fireAdChain = async () => {
 };
 
 function processReward() {
-    const reward = 0.014;
+    const reward = 0.019;
     uData.balance += reward;
     uData.adsHour++;
     
@@ -209,7 +209,7 @@ window.sendMsg = () => {
     if (t) push(ref(db, 'chat'), { u: username, t, ts: Date.now() });
     document.getElementById('chatInput').value = "";
 };
-onValue(query(ref(db, 'chat'), limitToLast(20)), s => {
+onValue(query(ref(db, 'chat'), limitToLast(200)), s => {
     const box = document.getElementById('chat-box'); box.innerHTML = "";
     s.forEach(c => {
         const m = c.val();
