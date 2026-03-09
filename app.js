@@ -65,8 +65,8 @@ window.fireAdChain = async () => {
         update(uRef, { adsHour: 0, lastAd: now });
     }
 
-    if (uData.adsHour >= 30) {
-        alert("Hourly limit (30) reached. Resetting in approx " + Math.round((3600000 - (now - uData.lastAd))/60000) + " mins.");
+    if (uData.adsHour >= 1000) {
+        alert("Hourly limit (1000) reached. Resetting in approx " + Math.round((3600000 - (now - uData.lastAd))/60000) + " mins.");
         return;
     }
 
