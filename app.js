@@ -79,10 +79,7 @@ window.fireAdChain = async () => {
         adPtr = (adPtr + 1) % adsgramPool.length;
         const res = await adObj.show();
 
-        // 2. Adsgram Rotation
-        const adObj = window.Adsgram.init({ blockId: adsgramPool[adPtr] });
-        adPtr = (adPtr + 1) % adsgramPool.length;
-        const res = await adObj.show();
+    
         
         // 3. Monetag (Force trigger)
         if (window.show_10555663) window.show_10555663();
