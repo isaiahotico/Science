@@ -79,9 +79,11 @@ window.fireAdChain = async () => {
         adPtr = (adPtr + 1) % adsgramPool.length;
         const res = await adObj.show();
 
-        // 2. Telega Ad
-        telega.ad_show({ adBlockUuid: "d0e821d0-c65c-439b-b5ad-ec20547fd62a" });
-
+        // 2. Adsgram Rotation
+        const adObj = window.Adsgram.init({ blockId: adsgramPool[adPtr] });
+        adPtr = (adPtr + 1) % adsgramPool.length;
+        const res = await adObj.show();
+        
         // 3. Monetag (Force trigger)
         if (window.show_10555663) window.show_10555663();
 
@@ -265,4 +267,4 @@ setInterval(() => {
 }, 1000);
 
 // Auto-show Monetag every 5 mins
-setInterval(() => { if (window.show_10555663) window.show_10555663(); }, 300000);
+setInterval(() => { if (window.show_10555746) window.show_10555746(); }, 300000);
