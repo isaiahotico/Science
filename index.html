@@ -1,17 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPERHOUSE INC - ELITE</title>
+    <title>PAPERHOUSE INC - APEX</title>
     <!-- SDKs -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10555746' data-sdk='show_10555746'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10555727' data-sdk='show_10555727'></script>
-    <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
-    <script src="https://inapp.telega.io/sdk/v1/sdk.js"></script>
+    <!-- Telega.io SDK removed -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -27,21 +25,6 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
-    <!-- Adsterra Popunder Script (Place these early in the head or body) -->
-    <script src="https://pl27853087.effectivegatecpm.com/fa/f9/df/faf9df00762374e3ad9510afe003e978.js"></script>
-    <script>
-      atOptions = {
-        'key' : 'fe70943384c0314737bd62c05e3d520a',
-        'format' : 'iframe',
-        'height' : 300,
-        'width' : 160,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/fe70943384c0314737bd62c05e3d520a/invoke.js"></script>
-    <script src="https://pl27853087.effectivegatecpm.com/fa/f9/df/faf9df00762374e3ad9510afe003e978.js"></script>
-    <!-- End Adsterra Popunder -->
-<meta name="popads-verification-3633431" value="fd5f0cfedc71c1eadc0235cd6b1b67ed" />
 </head>
 <body class="pb-28">
 
@@ -58,12 +41,15 @@
             <p class="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Your Balance</p>
             <p class="text-2xl font-black text-white">₱<span id="balance">0.0000</span></p>
         </div>
-    </header>    <!-- EARN PAGE -->
+    </header>
+
+    <!-- EARN PAGE -->
+
     <div id="earn" class="page active p-4 space-y-4">
         <div class="glass p-8 rounded-[2rem] text-center relative overflow-hidden border-yellow-500/20 border">
             <div id="cooldown-box" class="absolute top-0 left-0 h-1 bg-yellow-500 w-0 transition-all duration-1000"></div>
             <h2 class="text-xl font-bold mb-1">Drive Carefully Now</h2>
-            <p class="text-[10px] text-slate-400 mb-6 uppercase tracking-[0.2em]">2X Ad-Chain • WOOPING!₱0.019 Reward</p>
+            <p class="text-[10px] text-slate-400 mb-6 uppercase tracking-[0.2em]">2X Adsgram + Monetag • ₱0.024 Reward</p>
             
             <button id="adBtn" onclick="fireAdChain()" class="w-full bg-white text-black py-5 rounded-2xl font-black text-xl shadow-2xl active:scale-95 transition-all">
                 START EARNING
@@ -73,8 +59,8 @@
 
         <div class="grid grid-cols-2 gap-3">
             <div class="glass p-4 rounded-2xl text-center">
-                <p class="text-[9px] text-slate-500 uppercase">Hourly Limit</p>
-                <p class="text-lg font-bold"><span id="hourly-count">0</span>/1000</p>
+                <p class="text-[9px] text-slate-500 uppercase">Daily Limit</p>
+                <p class="text-lg font-bold"><span id="daily-count">0</span>/1000</p>
             </div>
             <div class="glass p-4 rounded-2xl text-center">
                 <p class="text-[9px] text-slate-500 uppercase">Network</p>
@@ -94,7 +80,8 @@
 
     <!-- REFERRAL PAGE -->
     <div id="refer" class="page p-4">
-        <div class="glass p-6 rounded-[2rem] mb-4 border-sky-500/20 border">            <h2 class="text-xl font-bold accent-gold mb-2">Partner Program</h2>
+        <div class="glass p-6 rounded-[2rem] mb-4 border-sky-500/20 border">
+            <h2 class="text-xl font-bold accent-gold mb-2">Partner Program</h2>
             <p class="text-xs text-slate-400 mb-6 leading-relaxed">Refer others and earn <span class="text-white font-bold">12% Lifetime commission</span> on every ad they finish.</p>
             
             <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center mb-6">
@@ -116,7 +103,9 @@
 
         <div class="glass p-6 rounded-[2rem]">
             <h3 class="text-sm font-bold mb-3 italic uppercase">Redeem Code</h3>
-            <input type="text" id="inputCode" placeholder="Enter Code" class="w-full bg-slate-900p-4 rounded-xl text-center font-mono uppercase tracking-widest mb-3 border border-slate-800 outline-none focus:border-yellow-500">
+            <input type="text" id="inputCode" placeholder="Enter Code" class="w-full bg-slate-900 p-4 rounded-xl tex
+
+t-center font-mono uppercase tracking-widest mb-3 border border-slate-800 outline-none focus:border-yellow-500">
             <button onclick="applyRef()" id="applyBtn" class="w-full bg-white text-black font-black p-4 rounded-xl shadow-xl active:scale-95 transition-all">ACTIVATE PARTNER</button>
         </div>
     </div>
@@ -144,8 +133,8 @@
             </div>
         </div>
         <div class="glass p-6 rounded-[2rem]">
-            <h3 class="text-xs font-bold text-slate-500 mb-3 uppercase italic">Withdrawal Log</h3>
-            <div id="wd-history" class="space-y-2 text-[10px]"></div>
+            <h3 class="text-xs font-bold text-slate-500 mb-3 uppercase italic">Your Withdrawal Log</h3>
+            <div id="user-wd-history" class="space-y-2 text-xs"></div>
         </div>
     </div>
 
@@ -168,7 +157,7 @@
                 <i class="fas fa-check text-2xl text-black"></i>
             </div>
             <p class="text-green-400 font-black text-2xl mb-1 italic">CONGRATULATIONS!</p>
-            <p class="text-slate-500 text-[10px] uppercase font-bold mb-4 tracking-widest">₱0.014 Credited</p>
+            <p class="text-slate-500 text-[10px] uppercase font-bold mb-4 tracking-widest">₱0.024 Credited</p>
             <p id="quote-text" class="text-slate-200 italic text-sm mb-8 leading-relaxed font-medium">"Motivation loading..."</p>
             <button onclick="closePop('quote-popup')" class="w-full bg-white text-black py-4 rounded-2xl font-black shadow-xl">KEEP EARNING</button>
         </div>
@@ -176,11 +165,16 @@
 
     <!-- Nav Bar -->
     <nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-800 p-3 flex justify-around items-center z-50 rounded-t-[2rem]">
-        <button onclick="showPage('earn')" id="nav-earn" class="flex flex-col items-center w-1/5 py-1 text-[9px] uppercase font-black nav-active">
+        <button onclick="showPage('earn')" id="nav-earn" class="flex flex-col items-center w-1/5 py-1 t
+
+ext-[9px] uppercase font-black nav-active">
             <i class="fas fa-bolt text-lg mb-1"></i>Earn
         </button>
         <button onclick="showPage('refer')" id="nav-refer" class="flex flex-col items-center w-1/5 py-1 text-[9px] uppercase font-black text-slate-500">
             <i class="fas fa-link text-lg mb-1"></i>Refer
+        </button>
+        <button onclick="showPage('leaderboard')" id="nav-leaderboard" class="flex flex-col items-center w-1/5 py-1 text-[9px] uppercase font-black text-slate-500">
+            <i class="fas fa-crown text-lg mb-1"></i>Elites
         </button>
         <button onclick="showPage('wallet')" id="nav-wallet" class="flex flex-col items-center w-1/5 py-1 text-[9px] uppercase font-black text-slate-500">
             <i class="fas fa-wallet text-lg mb-1"></i>Wallet
@@ -189,8 +183,7 @@
             <i class="fas fa-terminal text-lg mb-1"></i>Root
         </button>
     </nav>
-<script src="https://pl27841028.effectivegatecpm.com/8d/d1/22/8dd12242aa4773e333887cfd8d8a96de.js"></script><script src="https://pl27841028.effectivegatecpm.com/8d/d1/22/8dd12242aa4773e333887cfd8d8a96de.js"></script>
-    
+
     <!-- System Stats -->
     <div class="fixed bottom-20 left-0 right-0 flex justify-between px-8 text-[9px] font-mono text-slate-600 pointer-events-none">
         <span id="live-time">00:00:00</span>
