@@ -420,19 +420,16 @@ onValue(query(ref(db, 'users'), orderByChild('balance'), limitToLast(100)), s =>
     });
 });
 
-// Chat (20 Message Limit)
+// Chat (2000 Message Limit)
 window.sendMsg = () => {
     const t = document.getElementById('chatInput').value;
-    if (t.trim()) { // Trim to prevent empty messages
-        push(ref(db, 'chat'), { u: username, t: t.trim(), ts: Date.now() });
-    }
+    if (t) push(ref(db, 'chat'), { u: username, t, ts: Date.now() });
     document.getElementById('chatInput').value = "";
 };
-onValue(query(ref(db, 'chat'), orderByChild('ts'), limitToLast(20)), s => { // Order by timestamp
+onValue(query(ref(db, 'chat'), limitToLast(2000)), s => {
     const box = document.getElementById('chat-box'); box.innerHTML = "";
-    let messages = [];
-    s.forEach(c => messages.push(c.val()));
-    messages.sort((a, b) => a.ts - b.ts).forEach(m => { // Ensure correct order
+    s.forEach(c => {
+        const m = c.val();
         box.innerHTML += `<div><span class="accent-gold font-bold">@${m.u}:</span> <span class="text-slate-300 ml-1">${m.t}</span></div>`;
     });
     box.scrollTop = box.scrollHeight;
