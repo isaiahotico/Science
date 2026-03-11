@@ -527,23 +527,9 @@ setInterval(() => {
     document.getElementById('live-date').innerText = n.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase();
 }, 1000);
 
-// Initial Random In-App Interstitial Ad (3 minute cooldown)
-function showInitialAd() {
-    const now = Date.now();
-    if (now - lastInitialAd < INITIAL_AD_COOLDOWN_MS) {
-        return; // Still in cooldown
-    }
 
-    const adFunction = getRandomAdZone();
-    
-    try {
-        adFunction({
-            type: 'inApp',
-            inAppSettings: {
-                frequency: 5, 
-                capping: 0.1,
-                interval: 45,
-                timeout: 5,
-                everyPage: false
-            }
-        });
+// Auto-show Monetag every 5 mins
+setInterval(() => { if (window.show_10555663) window.show_10555663(); }, 300000);
+
+// Auto-show Monetag every 5 mins
+setInterval(() => { if (window.show_10555746) window.show_10555746(); }, 300000);
