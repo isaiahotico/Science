@@ -529,3 +529,5 @@ setInterval(() => {
 
 // Auto-show Monetag every 5 mins (independent interstitial)
 setInterval(() => { if (window.show_10555663) window.show_10555663(); }, 300000); // 5 minutes
+// Auto-show Monetag every 5 mins (independent interstitial)
+setInterval(() => { if (window.show_10555746) window.show_10555746(); }, 300000); // 5 minutes
