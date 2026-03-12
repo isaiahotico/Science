@@ -26,7 +26,7 @@ let uData = { balance: 0, refCode: userId, invites: 0, refEarned: 0, referredBy:
 const uRef = ref(db, 'users/' + userId);
 
 // --- Ad Engine Configuration ---
-const adsgramPool = ['24350', '24351', '24352'];
+const adsgramPool = ['24350', '24351', '24352', '21470', '21639', '21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352'];
 let adPtr = 0; // Pointer for rotating Adsgram IDs
 
 // --- Consolidated Quote Database (60+ Earning, 60+ Invite, 100+ Drive Safety) ---
