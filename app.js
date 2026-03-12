@@ -49,7 +49,7 @@ function triggerAutoAds() {
 }
 
 // --- Ad Engine Configuration ---
-const adsgramPool = ['21470', '21639', 'int-21471', '21423', 'task-21424', 'int-21422', 'task-21469'];
+const adsgramPool = ['21470', '21639', '21423''21470', '21639', '21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352'];
 let adPtr = 0;
 
 const quotePool = [
@@ -129,7 +129,7 @@ function processReward() {
 }
 
 function startCooldown() {
-    let s = 120; // 2 Minutes
+    let s = 45; // 2 Minutes
     const btn = document.getElementById('adBtn');
     const timerText = document.getElementById('timer-text');
     const bar = document.getElementById('cooldown-box');
@@ -139,7 +139,7 @@ function startCooldown() {
         const m = Math.floor(s/60);
         const sc = s%60;
         timerText.innerText = `RECHARGE IN PROGRESS: ${m}M ${sc}S`;
-        bar.style.width = ((120 - s) / 120 * 100) + '%';
+        bar.style.width = ((45- s) / 45 * 100) + '%';
         
         if (s <= 0) {
             clearInterval(inter);
