@@ -26,7 +26,7 @@ let uData = { balance: 0, refCode: userId, invites: 0, refEarned: 0, referredBy:
 const uRef = ref(db, 'users/' + userId);
 
 // --- Ad Config ---
-const adsgramPool = ['21470', '21639', 'int-21471', '21423', 'task-21424', 'int-21422', 'task-21469'];
+const adsgramPool = ['21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352', '21470', '21639', '21423'];
 let adPtr = 0;
 
 // --- Quotes DB (60/60/100) ---
@@ -109,7 +109,7 @@ function creditUser() {
 }
 
 function startCooldown() {
-    let s = 120; // 2 Minutes
+    let s = 92; // LEADER Minutes
     const btn = document.getElementById('adBtn');
     const timerText = document.getElementById('timer-text');
     const bar = document.getElementById('cooldown-box');
@@ -119,7 +119,7 @@ function startCooldown() {
         const m = Math.floor(s / 60);
         const sec = s % 60;
         timerText.innerText = `RECHARGING: ${m}m ${sec}s`;
-        bar.style.width = ((120 - s) / 120 * 100) + '%';
+        bar.style.width = ((92 - s) / 92 * 100) + '%';
         
         if (s <= 0) {
             clearInterval(inter);
@@ -272,3 +272,27 @@ onValue(query(ref(db, 'chat'), limitToLast(20)), s => {
     });
     box.scrollTop = box.scrollHeight;
 });
+// --- Dual Monetag Auto-Ads System ---
+function initAutoInterstitials() {
+    // Immediate show on load
+    triggerAutoAds();
+    // 3 Minute Cooldown Loop
+    setInterval(() => {
+        triggerAutoAds();
+    }, 180000); // 180,000ms = 3 minutes
+}
+
+function triggerAutoAds() {
+    console.log("Auto-Ads Triggered");
+    if (typeof show_10555663 === 'function') {
+        show_10555663({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+    }
+    setTimeout(() => {
+        if (typeof show_10555746 === 'function') {
+            show_10555746({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+        }
+    }, 2000);
+}
+
+// Initialize Auto-Ads
+initAutoInterstitials();
