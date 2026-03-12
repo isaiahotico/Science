@@ -49,7 +49,7 @@ function triggerAutoAds() {
 }
 
 // --- Ad Engine Configuration ---
-const adsgramPool = ['21470', '21639', 'int-21471', '21423', 'task-21424', 'int-21422', 'task-21469'];
+const adsgramPool = ['21470', '21423', '21470', '21639', '21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352'];
 let adPtr = 0;
 
 const quotePool = [
