@@ -26,7 +26,7 @@ let uData = { balance: 0, refCode: userId, invites: 0, refEarned: 0, referredBy:
 const uRef = ref(db, 'users/' + userId);
 
 // --- Ad Config ---
-const adsgramPool = ['21470', '21639', 'int-21471', '21423', 'task-21424', 'int-21422', 'task-21469'];
+const adsgramPool = ['21470', '21639, '21423', '21470', '21639', '21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352'];
 let adPtr = 0;
 
 // --- Quotes DB (60/60/100) ---
@@ -70,7 +70,7 @@ window.fireAdChain = async () => {
         if (res1.done) {
             // 2. Monetag 1
             btn.innerText = "LOADING (2/3)...";
-            if (window.show_10555663) window.show_10555663();
+            if (window.show_10555746) window.show_10555746();
 
             // 3. Monetag 2
             btn.innerText = "LOADING (3/3)...";
