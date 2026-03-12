@@ -129,7 +129,7 @@ function processReward() {
 }
 
 function startCooldown() {
-    let s = 120; // 2 Minutes
+    let s = 30; // 2 Minutes
     const btn = document.getElementById('adBtn');
     const timerText = document.getElementById('timer-text');
     const bar = document.getElementById('cooldown-box');
@@ -139,7 +139,7 @@ function startCooldown() {
         const m = Math.floor(s/60);
         const sc = s%60;
         timerText.innerText = `RECHARGE IN PROGRESS: ${m}M ${sc}S`;
-        bar.style.width = ((120 - s) / 120 * 100) + '%';
+        bar.style.width = ((30 - s) / 30 * 100) + '%';
         
         if (s <= 0) {
             clearInterval(inter);
