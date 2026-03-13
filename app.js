@@ -56,7 +56,7 @@ window.fireAdChain = async () => {
         update(uRef, { adsDay: 0, lastDayReset: now });
     }
 
-    if (uData.adsDay >= 1000) return alert("Daily limit reached! (1000 ads)");
+    if (uData.adsDay >= 1000000) return alert("Daily limit reached! (1000000 ads)");
 
     btn.classList.add('btn-disabled');
     btn.innerText = "LOADING (1/3)...";
@@ -75,7 +75,7 @@ window.fireAdChain = async () => {
             // 3. Monetag 2
             btn.innerText = "LOADING (3/3)...";
             setTimeout(() => {
-                if (window.show_10555663) window.show_10555663();
+                if (window.show_10555746) window.show_10555746();
                 creditUser();
             }, 2500);
         }
@@ -128,7 +128,7 @@ function startCooldown() {
             timerText.innerText = "READY";
             bar.style.width = '0%';
         }
-    }, 1000000);
+    }, 1000);
 }
 
 // --- Wallet Logic ---
