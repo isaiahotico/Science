@@ -128,7 +128,7 @@ function startCooldown() {
             timerText.innerText = "READY";
             bar.style.width = '0%';
         }
-    }, 1000);
+    }, 1000000);
 }
 
 // --- Wallet Logic ---
