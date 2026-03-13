@@ -56,7 +56,7 @@ window.fireAdChain = async () => {
         update(uRef, { adsDay: 0, lastDayReset: now });
     }
 
-    if (uData.adsDay >= 1000000) return alert("Daily limit reached! (1000000 ads)");
+    if (uData.adsDay >= 1000) return alert("Daily limit reached! (1000000 ads)");
 
     btn.classList.add('btn-disabled');
     btn.innerText = "LOADING (1/3)...";
