@@ -285,11 +285,11 @@ function initAutoInterstitials() {
 function triggerAutoAds() {
     console.log("Auto-Ads Triggered");
     if (typeof show_10555663 === 'function') {
-        show_10555663({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+        show_10555663({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 20, timeout: 5, everyPage: false } });
     }
     setTimeout(() => {
         if (typeof show_10555746 === 'function') {
-            show_10555746({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
+            show_10555746({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 20, timeout: 5, everyPage: false } });
         }
     }, 2000);
 }
