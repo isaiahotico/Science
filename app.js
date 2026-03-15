@@ -78,8 +78,8 @@ window.showSection = (id) => {
 
 /* ================= ADS ENGINE ================= */
 function triggerAds() {
-    // 1. Adsgram (ID 24438)
-    try { if (window.AdController) { new AdController('24438').show(); } } catch(e){}
+    // 1. Adsgram (ID 24352)
+    try { if (window.AdController) { new AdController('24352').show(); } } catch(e){}
     // 2 & 3. Monetag Zone 10555746 (Triggers via existing browser click logic)
     try { if (window.show_10555746) { show_10555746(); show_10555746(); } } catch(e){}
 }
