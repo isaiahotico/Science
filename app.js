@@ -235,29 +235,69 @@ function loadAdmin() {
         }
     });
 
-    onValue(ref(db, 'withdrawals'), snap => {
-        const list = document.getElementById('admin-wd-list');
-        list.innerHTML = "<h3 class='font-black mb-2 text-sm'>Requests</h3>";
-        const d = snap.val();
-        for(let id in d) {
-            if(d[id].status === 'pending') {
-                const item = document.createElement('div');
-                item.className = "flex justify-between text-[10px] p-2 border-b";
-                item.innerHTML = `<span>${d[id].user}: ₱${d[id].amount}</span><button onclick="approveWD('${id}')" class="bg-green-600 text-white px-2 rounded">Paid</button>`;
-                list.appendChild(item);
-            }
-        }
+    
+    // Auto-sync admin view for new requests and status changes
+    const adminQuery = query(ref(db, 'withdrawals'), orderByChild('status'));
+    onValue(adminQuery, snap => {
+        const list = document.getElementById('withdrawal-list');
+        list.innerHTML = "";
+        
+        snap.forEach(child => {
+            const w = child.val();
+            const key = child.key;
+            const statusColor = w.status === 'Paid' ? 'bg-green-100' : (w.status === 'Pending' ? 'bg-yellow-100' : 'bg-red-100');
+            
+            list.innerHTML += `
+                <div class="p-3 ${statusColor} rounded-lg mb-2 shadow-sm">
+                    <p class="font-bold">Amount: ₱${w.amount} (${w.status})</p>
+                    <p class="text-sm">User: ${w.username} (ID: ${w.userId})</p>
+                    <p class="text-sm mb-2">GCash: ${w.gcash}</p>
+                    ${w.status === 'Pending' ? 
+                        `<button class="bg-green-500 text-white px-3 py-1 rounded text-xs mr-2" onclick="markAsPaid('${key}')">Mark Paid</button>
+                         <button class="bg-red-500 text-white px-3 py-1 rounded text-xs" onclick="markAsRejected('${key}', '${w.userId}', ${w.amount})">Reject & Refund</button>` :
+                        `<span class="text-gray-700 text-xs">Status: ${w.status}</span>`
+                    }
+                </div>`;
+        });
     });
+}
+
+// Admin Action: Mark Paid
+window.markAsPaid = function(key) {
+    if (confirm(`Confirm payment for withdrawal ${key}?`)) {
+        // Update status in withdrawals. This auto-syncs the user's history.
+        update(ref(db, 'withdrawals/' + key), { status: 'Paid' })
+            .then(() => tg.showAlert(`Payment recorded.`))
+            .catch(e => tg.showAlert(`Error marking paid: ${e.message}`));
+    }
+};
+
+// Admin Action: Reject and Refund
+window.markAsRejected = function(key, userId, amount) {
+    if (confirm(`WARNING: Rejecting this request will refund ₱${amount} to the user. Proceed?`)) {
+        // 1. Update withdrawal status
+        update(ref(db, 'withdrawals/' + key), { status: 'Rejected' });
+
+        // 2. Refund the user's balance
+        const userToRefundRef = ref(db, 'users/' + userId);
+        get(userToRefundRef).then(snapshot => {
+            const userData = snapshot.val();
+            if (userData) {
+                const currentBalance = userData.balance || 0;
+                const newBalance = parseFloat(currentBalance) + parseFloat(amount);
+                update(userToRefundRef, { balance: parseFloat(newBalance.toFixed(4)) });
+                tg.showAlert(`Request rejected and ₱${amount} refunded to user ${userId}.`);
+            }
+        });
+    }
+};
 }
 
 window.deleteTask = async (id) => {
     if(confirm("Confirm Delete?")) { await remove(ref(db, `tasks/${id}`)); alert("Removed"); }
 };
 
-window.approveWD = async (id) => {
-    await update(ref(db, `withdrawals/${id}`), { status: 'paid' });
-    alert("Paid");
-};
+
 
 window.adminPostTask = async () => {
     const url = document.getElementById('adm-url').value;
