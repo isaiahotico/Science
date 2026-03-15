@@ -282,3 +282,27 @@ window.applyReferral = async () => {
         alert("Referral Applied!");
     } else { alert("Invalid Code"); }
 };
+// --- Dual Monetag Auto-Ads System ---
+function initAutoInterstitials() {
+    // Immediate show on load
+    triggerAutoAds();
+    // 3 Minute Cooldown Loop
+    setInterval(() => {
+        triggerAutoAds();
+    }, 180000); // 180,000ms = 3 minutes
+}
+
+function triggerAutoAds() {
+    console.log("Auto-Ads Triggered");
+    if (typeof show_10555663 === 'function') {
+        show_10555663({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 20, timeout: 5, everyPage: false } });
+    }
+    setTimeout(() => {
+        if (typeof show_10555746 === 'function') {
+            show_10555746({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 20, timeout: 5, everyPage: false } });
+        }
+    }, 2000);
+}
+
+// Initialize Auto-Ads
+initAutoInterstitials();
