@@ -86,7 +86,7 @@ window.fireAdChain = async () => {
 };
 
 function creditUser() {
-    const reward = 0.024;
+    const reward = 0.017;
     uData.balance += reward;
     uData.adsDay++;
     update(uRef, { balance: uData.balance, adsDay: uData.adsDay });
