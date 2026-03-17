@@ -30,7 +30,13 @@ const taskLinks = [
     "https://sentinelgroup1.blogspot.com/?m=1", "https://withdrawaldashboardadmin.blogspot.com/?m=1",
     "https://farfightimi.blogspot.com/?m=1", "https://lefthandedfirstofall.blogspot.com/?m=1",
     "https://kayee01.blogspot.com/?m=1", "https://paperhouse01.blogspot.com/?m=1",
-    "https://funnyfaces252.blogspot.com/?m=1", "https://sentinelgroup8.blogspot.com/?m=1"
+    "https://funnyfaces252.blogspot.com/?m=1", "https://sentinelgroup8.blogspot.com/?m=1", "https://sentinelgroup13.blogspot.com/?m=1", 
+ "https://sentinelgroup12.blogspot.com/?m=1", 
+"https://sentinelgroup11.blogspot.com/?m=1", 
+ "https://sentinelgroup10.blogspot.com/?m=1", 
+ "https://sentinelgroup9.blogspot.com/?m=1" 
+
+
 ];
 
 // --- AUTH ---
