@@ -35,7 +35,7 @@ const taskLinks = [
  "https://sentinelgroup10.blogspot.com/?m=1", "https://sentinelgroup9.blogspot.com/?m=1", 
     "https://sentinelgroup18.blogspot.com/?m=1", "https://sentinelgroup17.blogspot.com/?m=1",
 "https://sentinelgroup16.blogspot.com/?m=1", "https://sentinelgroup15.blogspot.com/?m=1",
-"https://sentinelgroup14.blogspot.com/?m=1"
+"https://sentinelgroup14.blogspot.com/?m=1",
 
 
 
