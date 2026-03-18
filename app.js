@@ -117,7 +117,7 @@ window.renderTasks = () => {
         const card = document.createElement('div');
         card.className = `p-4 rounded-2xl flex justify-between items-center transition-all ${isCooldown ? 'bg-gray-100 opacity-60' : 'bg-white shadow-sm border border-gray-100'}`;
         
-        let meta = `<span class="text-green-600 font-black text-sm">₱0.019 Reward</span>`;
+        let meta = `<span class="text-green-600 font-black text-sm">₱0.024 Reward</span>`;
         if (isCooldown) {
             const rem = (2 * 60 * 60 * 1000) - diff;
             const h = Math.floor(rem / 3600000);
@@ -128,7 +128,7 @@ window.renderTasks = () => {
 
         card.innerHTML = `
             <div>
-                <p class="font-bold text-xs uppercase text-gray-400 italic">Mining Ad Link #${index+1}</p>
+                <p class="font-bold text-xs uppercase text-gray-400 italic">PREMIUM LINKS #${index+1}</p>
                 ${meta}
             </div>
             ${!isCooldown ? `<button onclick="openTask(${index},'${link}')" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-black text-xs">VIEW</button>` : ''}
@@ -199,7 +199,7 @@ function updateTimerUI() {
 
 async function finishTask() {
     const uKey = currentUser.username.replace(/[^a-zA-Z0-9]/g, '_');
-    const reward = 0.019;
+    const reward = 0.024;
     const updates = {};
     
     updates[`users/${uKey}/balance`] = currentUser.balance + reward;
@@ -216,7 +216,7 @@ async function finishTask() {
     }
 
     await update(ref(db), updates);
-    alert("Reward ₱0.019 Earned!");
+    alert("🎖Congratulations🎉🎉🎉 Received a Wooping Reward ₱0.024 Earned!INVITE MORE FRIENDS NOW!🎖");
     closeTask();
 }
 
