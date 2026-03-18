@@ -124,7 +124,7 @@ window.renderTasks = () => {
 
         card.innerHTML = `
             <div>
-                <p class="font-bold text-xs uppercase text-gray-400 italic">PREMIUM LINKS #${index+1}</p>
+                <p class="font-bold text-xs uppercase text-gray-400 italic"> PREMIUM TASKS #${index+1}</p>
                 ${meta}
             </div>
             ${!isCooldown ? `<button onclick="openTask(${index},'${link}')" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-black text-xs">VIEW</button>` : ''}
