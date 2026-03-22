@@ -24,7 +24,7 @@ let isPaused = false;
 
 const adsgramIds = ['21470', '21639', '21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352'];
 const taskLinks = [
-    "https://sentinelgroup3.blogspot.com/?m=1", "https://sentinelgroup7.blogspot.com/?m=1",
+    "https://sentinelgroup7.blogspot.com/?m=1",
     "https://sentinelgroup6.blogspot.com/?m=1", "https://sentinelgroup5.blogspot.com/?m=1",
     "https://sentinelgroup4.blogspot.com/?m=1", "https://sentinelgroup2.blogspot.com/?m=1",
     "https://sentinelgroup1.blogspot.com/?m=1", "https://withdrawaldashboardadmin.blogspot.com/?m=1",
@@ -111,7 +111,7 @@ window.renderTasks = () => {
         const card = document.createElement('div');
         card.className = `p-4 rounded-3xl flex justify-between items-center border border-gray-100 ${isCooldown ? 'bg-gray-100 opacity-60' : 'bg-white shadow-sm hover:border-blue-300 transition-colors'}`;
         
-        let sub = `<span class="text-green-600 font-black text-xs uppercase">₱0.024 Earn</span>`;
+        let sub = `<span class="text-green-600 font-black text-xs uppercase">₱0.035 Earn</span>`;
         if (isCooldown) {
             const rem = (2 * 60 * 60 * 1000) - diff;
             const h = Math.floor(rem / 3600000);
@@ -191,7 +191,7 @@ function updateTimerUI() {
 
 async function finishTask() {
     const uKey = currentUser.username.replace(/[^a-zA-Z0-9]/g, '_');
-    const reward = 0.024;
+    const reward = 0.035;
     const updates = {};
     
     updates[`users/${uKey}/balance`] = currentUser.balance + reward;
@@ -208,7 +208,7 @@ async function finishTask() {
     }
 
     await update(ref(db), updates);
-    alert("Task Completed! ₱0.024 Received.");
+    alert("Task Completed! ₱0.035 Received.");
     closeTask();
 }
 
