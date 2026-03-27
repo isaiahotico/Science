@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,199 +5,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAPERHOUSE INC</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Ads SDKs -->
+    <!-- Ad SDKs -->
     <script src='//libtl.com/sdk.js' data-zone='10555746' data-sdk='show_10555746'></script>
     <script src='//libtl.com/sdk.js' data-zone='10555727' data-sdk='show_10555727'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        body { background: #0f172a; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background: #0b0f1a; color: white; font-family: 'Segoe UI', sans-serif; }
         .tab-content { display: none; padding-bottom: 100px; }
         .tab-content.active { display: block; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        #taskOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 100; }
-        .nav-btn.active { color: #38bdf8; border-top: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.05); }
-        .cooldown { pointer-events: none; opacity: 0.5; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .nav-btn.active { color: #38bdf8; border-top: 3px solid #38bdf8; background: linear-gradient(to bottom, rgba(56,189,248,0.1), transparent); }
+        
+        /* Task Card Styles */
+        #taskContainer { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; padding: 15px; }
+        .full-screen-card { width: 100%; height: 90%; background: #1e293b; border-radius: 20px; overflow: hidden; display: flex; flex-col: column; position: relative; border: 1px solid #334155; }
+        .card-header { height: 60px; background: #0f172a; display: flex; justify-content: space-between; items-center: center; padding: 0 20px; border-bottom: 1px solid #334155; }
+        
+        .cooldown { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
     </style>
 </head>
-<body>
+<body class="select-none">
 
     <!-- Header -->
-    <div class="fixed top-0 w-full glass z-50 p-4 flex justify-between items-center shadow-xl">
-        <div id="userBar" class="font-bold text-sm text-blue-400 truncate max-w-[140px]">👤 Loading...</div>
-        <div class="flex items-center gap-2 bg-black/30 px-3 py-1 rounded-full">
-            <span class="text-xs text-gray-400">Balance:</span>
-            <span id="userBalance" class="font-bold text-green-400 font-mono">₱0.0000</span>
+    <div class="fixed top-0 w-full glass z-50 p-4 flex justify-between items-center">
+        <div id="userBar" class="font-bold text-blue-400 truncate max-w-[160px]">👤 Loading...</div>
+        <div class="bg-black/40 px-3 py-1 rounded-full border border-blue-500/20">
+            <span id="userBalance" class="font-mono text-green-400 font-bold text-sm">₱0.0000</span>
         </div>
     </div>
 
     <div class="mt-20 px-4">
         
-        <!-- Home Dashboard -->
+        <!-- Dashboard -->
         <section id="home" class="tab-content active">
-            <div class="glass rounded-2xl p-6 mb-6 text-center border-blue-500/20">
-                <h1 class="text-3xl font-black tracking-tighter mb-1 italic text-blue-400">PAPERHOUSE INC</h1>
-                <p class="text-gray-400 text-xs mb-6 uppercase tracking-widest">Premium Earning Station</p>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                        <small class="text-gray-500 block mb-1">Users Online</small>
-                        <div id="onlineCount" class="text-xl font-bold text-blue-400">0</div>
-
+            <div class="glass rounded-3xl p-8 mb-6 text-center shadow-2xl">                <h1 class="text-4xl font-black mb-1 italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">PAPERHOUSE INC</h1>
+                <p class="text-gray-500 text-[10px] tracking-[0.3em] mb-6">REAL-TIME EARNING SYSTEM</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl">
+                        <small class="text-gray-500 block mb-1 uppercase text-[9px]">Live Online</small>
+                        <div id="onlineCount" class="text-2xl font-bold">0</div>
                     </div>
-                    <div class="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                        <small class="text-gray-500 block mb-1">Platform Payouts</small>
-                        <div id="statsTotal" class="text-xl font-bold text-green-400">₱0.00</div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl">
+                        <small class="text-gray-500 block mb-1 uppercase text-[9px]">Total Payouts</small>
+                        <div id="statsTotal" class="text-2xl font-bold text-green-400">₱0.00</div>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-4 flex justify-between items-center">
-                <h3 class="font-bold text-sm text-gray-400">🟢 ACTIVE USERS</h3>
-            </div>
-            <div id="onlineList" class="flex flex-wrap gap-2 mb-6">
-                <!-- Online dots will appear here -->
-            </div>
+            <h3 class="font-bold text-xs text-gray-500 mb-2 px-1">🟢 CURRENTLY ONLINE</h3>
+            <div id="onlineList" class="flex flex-wrap gap-2 mb-8"></div>
             
-            <button onclick="openAdmin()" class="w-full py-3 bg-slate-800/50 rounded-xl text-[10px] text-gray-500 border border-white/5">ACCESS SECURE ADMIN PANEL</button>
+            <button onclick="openAdmin()" class="w-full py-4 text-gray-600 text-[10px] font-bold tracking-widest border border-dashed border-gray-800 rounded-xl">OPEN SECURE ADMIN</button>
         </section>
 
-        <!-- Task Section -->
+        <!-- Tasks -->
         <section id="tasks" class="tab-content">
-            <h2 class="text-2xl font-bold mb-4">Earning Tasks</h2>
+            <h2 class="text-2xl font-black mb-6">Available Tasks</h2>
             
-            <!-- Random Web Task -->
-            <div class="glass p-5 rounded-2xl flex justify-between items-center border-l-4 border-l-blue-500 mb-6">
-                <div>
-                    <h3 class="font-bold text-lg">Web Surfing</h3>
-                    <p class="text-xs text-gray-400">Reward: ₱0.003 - ₱0.025</p>
+            <!-- Main Reward Button -->
+            <div class="glass p-6 rounded-3xl mb-8 border-l-4 border-blue-500 bg-gradient-to-r from-blue-900/10 to-transparent">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-lg">Unlimited Surfing</h3>
+                        <p class="text-xs text-gray-400">Reward: ₱0.003 - ₱0.025</p>
+                        <p class="text-[9px] text-blue-400 mt-1">NO COOLDOWN</p>
+                    </div>
+                    <button onclick="triggerRewardTask()" class="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-2xl font-black shadow-lg shadow-blue-900/50">REWARD</button>
                 </div>
-                <button onclick="startTask()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-xl font-bold shadow-lg shadow-blue-900/40">REWARD</button>
             </div>
-
-            <h3 class="font-bold text-gray-400 mb-3 text-sm px-1 uppercase">Bonus Ad Missions (10m Cooldown)</h3>
+            <h3 class="text-xs font-bold text-gray-500 mb-4 px-1 uppercase tracking-wider">Bonus Missions (10M Cooldown)</h3>
             <div class="grid grid-cols-1 gap-3" id="bonusContainer">
                 <!-- Bonus Buttons -->
-                <button onclick="bonusTask('21470', 1)" id="btn-bonus-1" class="glass p-4 rounded-xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-sm">Bonus 1 <small class="block text-gray-500 font-normal">Adsgram 21470</small></span>
-                    <span class="text-green-400 font-bold text-sm">₱0.015</span>
+                <button onclick="bonusTask('21470', 1)" id="btn-bonus-1" class="glass p-4 rounded-2xl flex justify-between items-center">
+                    <span>Bonus 1 <small class="block text-gray-500">Adsgram 21470</small></span>
+                    <span class="text-green-400 font-bold">₱0.015</span>
                 </button>
-                <button onclick="bonusTask('21639', 2)" id="btn-bonus-2" class="glass p-4 rounded-xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-sm">Bonus 2 <small class="block text-gray-500 font-normal">Adsgram 21639</small></span>
-                    <span class="text-green-400 font-bold text-sm">₱0.015</span>
+                <button onclick="bonusTask('21639', 2)" id="btn-bonus-2" class="glass p-4 rounded-2xl flex justify-between items-center">
+                    <span>Bonus 2 <small class="block text-gray-500">Adsgram 21639</small></span>
+                    <span class="text-green-400 font-bold">₱0.015</span>
                 </button>
-                <button onclick="bonusTask('21423', 3)" id="btn-bonus-3" class="glass p-4 rounded-xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-sm">Bonus 3 <small class="block text-gray-500 font-normal">Adsgram 21423</small></span>
-                    <span class="text-green-400 font-bold text-sm">₱0.015</span>
+                <button onclick="bonusTask('21423', 3)" id="btn-bonus-3" class="glass p-4 rounded-2xl flex justify-between items-center">
+                    <span>Bonus 3 <small class="block text-gray-500">Adsgram 21423</small></span>
+                    <span class="text-green-400 font-bold">₱0.015</span>
                 </button>
-                <button onclick="bonusTask('24344', 4)" id="btn-bonus-4" class="glass p-4 rounded-xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-sm">Bonus 4 <small class="block text-gray-500 font-normal">Adsgram 24344</small></span>
-                    <span class="text-green-400 font-bold text-sm">₱0.015</span>
+                <button onclick="bonusTask('24344', 4)" id="btn-bonus-4" class="glass p-4 rounded-2xl flex justify-between items-center">
+                    <span>Bonus 4 <small class="block text-gray-500">Adsgram 24344</small></span>
+                    <span class="text-green-400 font-bold">₱0.015</span>
                 </button>
-                <button onclick="bonusTask('24346', 5)" id="btn-bonus-5" class="glass p-4 rounded-xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-sm">Bonus 5 <small class="block text-gray-500 font-normal">Adsgram 24346</small></
-
-span>
-                    <span class="text-green-400 font-bold text-sm">₱0.015</span>
+                <button onclick="bonusTask('24346', 5)" id="btn-bonus-5" class="glass p-4 rounded-2xl flex justify-between items-center">
+                    <span>Bonus 5 <small class="block text-gray-500">Adsgram 24346</small></span>
+                    <span class="text-green-400 font-bold">₱0.015</span>
                 </button>
             </div>
         </section>
 
-        <!-- Withdraw Section -->
+        <!-- Withdraw -->
         <section id="withdraw" class="tab-content">
-            <h2 class="text-2xl font-bold mb-4">Cash Out</h2>
-            <div class="glass p-5 rounded-2xl mb-6 border border-white/10">
-                <label class="text-xs text-gray-400 ml-1">Payment Method</label>
-                <select id="wdMethod" class="w-full bg-slate-900 p-3 rounded-xl mb-4 border border-white/5">
+            <h2 class="text-2xl font-black mb-6">Withdrawal</h2>
+            <div class="glass p-6 rounded-3xl mb-6">
+                <select id="wdMethod" class="w-full bg-slate-900 p-4 rounded-2xl mb-4 text-sm">
                     <option value="GCash">GCash</option>
                     <option value="FaucetPay">FaucetPay</option>
                     <option value="PayPal">PayPal</option>
                 </select>
-                <label class="text-xs text-gray-400 ml-1">Account Number / Email</label>
-                <input id="wdAddress" type="text" placeholder="0912... or email@domain.com" class="w-full bg-slate-900 p-3 rounded-xl mb-4 border border-white/5">
-                <label class="text-xs text-gray-400 ml-1">Amount (₱)</label>
-                <input id="wdAmount" type="number" placeholder="Enter amount" class="w-full bg-slate-900 p-3 rounded-xl mb-6 border border-white/5">
-                <button onclick="requestWithdrawal()" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-2xl font-black text-lg shadow-lg shadow-green-900/20">WITHDRAW NOW</button>
+                <input id="wdAddress" type="text" placeholder="Number or Email" class="w-full bg-slate-900 p-4 rounded-2xl mb-4 text-sm">
+                <input id="wdAmount" type="number" placeholder="Amount (₱)" class="w-full bg-slate-900 p-4 rounded-2xl mb-6 text-sm">
+                <button onclick="requestWithdrawal()" class="w-full bg-green-600 py-4 rounded-2xl font-black shadow-lg shadow-green-900/20">CONFIRM CASHOUT</button>
             </div>
-
-            <h3 class="font-bold mb-3 text-gray-400 text-sm uppercase">Withdrawal History</h3>
-            <div id="wdHistory" class="space-y-2">
-                <!-- History Items -->
-            </div>
+            <h3 class="text-sm font-bold text-gray-500 mb-3 px-1">YOUR WITHDRAWAL HISTORY</h3>
+            <div id="wdHistory" class="space-y-2"></div>
         </section>
 
-        <!-- Referral Section -->
+        <!-- Referral -->
         <section id="referral" class="tab-content">
-            <h2 class="text-2xl font-bold mb-4">Affiliate Program</h2>
-            <div class="glass p-6 rounded-2xl text-center mb-6 border border-blue-500/30">
-                <p class="text-xs text-blue-300 mb-2 uppercase font-bold">Earn 20% from every friend's task</p>
-                <div id="myRefCode" class="text-3xl font-mono font-black text-white mb-6 tracking-[0.2em] bg-black/20 py-2 rounded-lg">------</div>
+            <h2 class="text-2xl font-black mb-6">Referrals</h2>
+            <div class="glass p-8 rounded-3xl text-center mb-6 border border-blue-500/20">
+                <p class="text-blue-400 text-xs font-bold mb-4 uppercase">Your Code</p>
+                <div id="myRefCode" class="text-4xl font-mono font-black mb-8 tracking-tighter">------</div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-900/50 p-3 rounded-xl"><small class="text-gray-500">Total Refs</small><div id="refCount" class="text-lg font-bold">0</div></div>
-                    <div class="bg-slate-900/50 p-3 rounded-xl"><small class="text-gray-500">Comm. Earned</small><div id="refEarned" class="text-lg font-bold text-green-400">₱0.00</div></div>
+                    <div class="bg-black/40 p-4 rounded-2xl"><small class="text-gray-500 block">Total Invited</small><div id="refCount" class="text-xl font-bold">0</div></div>
+                    <div class="bg-black/40 p-4 rounded-2xl"><small class="text-gray-500 block">Total Earnings</small><div id="refEarned" class="text-xl font-bold text-green-400">₱0.00</div></div>
                 </div>
             </div>
-            <div class="glass p-5 rounded-2xl">
-                <p class="text-xs text-gray-400 mb-3 text-center">Enter Inviter Code</p>
+            <div class="glass p-6 rounded-3xl">
                 <div class="flex gap-2">
-                    <input id="refInput" type="text" placeholder="6 Letters" maxlength="6" class="flex-1 bg-slate-900 p-3 rounded-xl border border-white/5 uppercase">
-                    <button onclick="submitReferral()" class="bg-blue-600 px-6 rounded-xl font-bold">APPLY</button>
+                    <input id="refInput" type="text" placeholder="Invite Code" class="flex-1 bg-slate-900 p-4 rounded-2xl text-center font-bold">
+                    <button onclick="submitReferral()" class="bg-blue-600 px-6 rounded-2xl font-bold">BIND</button>
                 </div>
             </div>
         </section>
 
-        <!-- Chat Section -->
+        <!-- Chat -->
         <section id="chat" class="tab-content">
-            <h2 class="text-2xl font-bold mb-4">Public Chat</h2>
-            <div id="chatBox" class="glass h-[400px] overflow-y-auto p-4 mb-4 flex flex-col gap-3 rounded-2xl border border-white/5 text-sm shadow-inner"></div>
+            <h2 class="text-2xl font-black mb-6">Global Chat</h2>
+            <div id="chatBox" class="glass h-[400px] overflow-y-auto p-4 mb-4 flex flex-col gap-3 rounded-3xl text-sm"></div>
             <div class="flex gap-2">
-                <input id="chatInput" type="text" placeholder="Say something..." class="flex-1 bg-slate-900 p-4 rounded-xl border border-white/5 focus:border-blue-500
-
-outline-none">
-                <button onclick="sendMessage()" class="bg-blue-600 px-6 rounded-xl font-bold">SEND</button>
+                <input id="chatInput" type="text" placeholder="Enter message..." class="flex-1 bg-slate-900 p-4 rounded-2xl outline-none">
+                <button onclick="sendMessage()" class="bg-blue-600 px-6 rounded-2xl font-bold">SEND</button>
             </div>
         </section>
 
         <!-- Admin Section -->
         <section id="admin" class="tab-content">
-            <div id="adminLogin" class="glass p-6 rounded-2xl text-center">
-                <h2 class="text-xl font-bold mb-4">Protected Area</h2>
-                <input id="adminPass" type="password" placeholder="System Password" class="w-full bg-slate-900 p-3 rounded-xl mb-4 border border-white/5">
-                <button onclick="verifyAdmin()" class="w-full bg-red-600 py-3 rounded-xl font-bold">VERIFY IDENTITY</button>
+            <div id="adminLogin" class="glass p-8 rounded-3xl text-center"\
+                <h2 class="text-xl font-black mb-6">Admin Access</h2>
+                <input id="adminPass" type="password" placeholder="Password" class="w-full bg-slate-900 p-4 rounded-2xl mb-4 text-center">
+                <button onclick="verifyAdmin()" class="w-full bg-red-600 py-4 rounded-2xl font-bold">LOGIN</button>
             </div>
             <div id="adminPanel" class="hidden space-y-6">
-                <div class="bg-red-900/10 border border-red-500/20 p-5 rounded-2xl">
-                    <h3 class="font-bold text-red-400 mb-3">Admin Link Manager</h3>
-                    <input id="newLink" type="text" placeholder="Enter Target URL (https://...)" class="w-full bg-slate-900 p-3 rounded-xl mb-3 border border-white/5">
-                    <button onclick="postLink()" class="w-full bg-blue-600 py-2 rounded-xl font-bold">POST TO DATABASE</button>
+                <div class="bg-blue-900/10 p-6 rounded-3xl border border-blue-500/20">
+                    <h3 class="font-bold mb-4">Post Link to Database</h3>
+                    <input id="newLink" type="text" placeholder="https://..." class="w-full bg-slate-900 p-3 rounded-xl mb-3 border border-white/5">
+                    <button onclick="postLink()" class="w-full bg-blue-600 py-3 rounded-xl font-bold">SUBMIT LINK</button>
                 </div>
-                <div class="bg-red-900/10 border border-red-500/20 p-5 rounded-2xl">
-                    <h3 class="font-bold text-red-400 mb-3">Manual Approval Queue</h3>
-                    <div id="adminWdList" class="space-y-3">
-                        <!-- Detailed WD list -->
-                    </div>
+                <div class="bg-slate-900/50 p-6 rounded-3xl border border-white/5">
+                    <h3 class="font-bold mb-4">Manual Approval Information</h3>
+                    <div id="adminWdList" class="space-y-4"></div>
                 </div>
             </div>
         </section>
 
     </div>
 
-    <!-- Navigation -->
-    <nav class="fixed bottom-0 w-full glass flex justify-around p-4 z-50 border-t border-white/10 rounded-t-3xl shadow-2xl">
-        <button onclick="showSection('home')" class="nav-btn active transition-all duration-300 px-4 py-1 rounded-xl"><small class="block font-bold">HOME</small></button>
-        <button onclick="showSection('tasks')" class="nav-btn px-4 py-1 rounded-xl"><small class="block font-bold">TASKS</small></button>
-        <button onclick="showSection('withdraw')" class="nav-btn px-4 py-1 rounded-xl"><small class="block font-bold">CASH</small></button>
-        <button onclick="showSection('referral')" class="nav-btn px-4 py-1 rounded-xl"><small class="block font-bold">REFS</small></button>
-        <button onclick="showSection('chat')" class="nav-btn px-4 py-1 rounded-xl"><small class="block font-bold">CHAT</small></button>
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 w-full glass flex justify-around p-4 z-50 border-t border-white/5 rounded-t-[30px] shadow-2xl">
+        <button onclick="showSection('home')" class="nav-btn active px-4 py-2 rounded-xl transition-all"><small class="font-bold">HOME</small></button>
+        <button onclick="showSection('tasks')" class="nav-btn px-4 py-2 rounded-xl transition-all"><small class="font-bold">TASKS</small></button>
+        <button onclick="showSection('withdraw')" class="nav-btn px-4 py-2 rounded-xl transition-all"><small class="font-bold">CASH</small></button>
+        <button onclick="showSection('referral')" class="nav-btn px-4 py-2 rounded-xl transition-all"><small class="font-bold">REFS</small></button>
+        <button onclick="showSection('chat')" class="nav-btn px-4 py-2 rounded-xl transition-all"><small class="font-bold">CHAT</small></button>
     </nav>
 
-    <!-- Overlay Iframe -->
-    <div id="taskOverlay">
-        <div class="w-full flex justify-between items-center p-4 bg-slate-900 border-b border-white/10">
-            <span id="taskTimer" class="text-xl font-bold text-yellow-400 font-mono">15s</span>
-            <button id="closeTask" class="hidden text-red-500 font-black px-4 py-1 border border-red-500 rounded-lg" onclick="finishTask()">COLLECT REWARD</button>
+    <!-- Full Screen Task Card -->
+    <div id="taskContainer">
+        <div class="full-screen-card">
+            <div class="card-header">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                    <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                </div>
+                <div id="taskTimer" class="font-mono font-black text-yellow-400">15s</div>
+                <button id="closeTask" class="hidden text-red-400 font-bold px-3 py-1 bg-red-400/10 rounded-lg text-xs" onclick="finishTask()">CLAIM REWARD</button>
+            </div>
+            <iframe id="taskFrame" class="w-full flex-1 bg-white"></iframe>
         </div>
-        <iframe id="taskFrame" class="w-full flex-1 border-none bg-white"></iframe>
     </div>
 
     <script type="module" src="app.js"></script>
