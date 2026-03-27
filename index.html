@@ -26,6 +26,10 @@
         
         /* Reward Popup Animation */
         #rewardPopup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; background: #10b981; color: white; padding: 20px 40px; border-radius: 20px; font-weight: 900; box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); text-align: center; }
+
+        /* Social Icons (using simple SVG for illustrative purposes) */
+        .icon-telegram { background-color: #0088CC; border-radius: 50%; padding: 4px; }
+        .icon-facebook { background-color: #1877F2; border-radius: 50%; padding: 4px; }
     </style>
 </head>
 <body>
@@ -34,15 +38,15 @@
     <div class="fixed top-0 w-full glass z-50 p-4 flex justify-between items-center shadow-lg">
         <div id="userBar" class="font-bold text-sm text-blue-400 truncate max-w-[150px]">👤 Loading...</div>
         <div class="flex items-center gap-2">
-            <span class="text-[10px] text-gray-400 uppercase">Balance</span>
-            <span id="userBalance" class="font-mono font-black text-green-400">₱0.0000</span>
+            <span class="text-[10px] text-gray-400 uppercase">Balance</span>            <span id="userBalance" class="font-mono font-black text-green-400">₱0.0000</span>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="mt-20 px-4">
         
-        <!-- Dashboard Tab -->        <section id="home" class="tab-content active">
+        <!-- Dashboard Tab -->
+        <section id="home" class="tab-content active">
             <div class="glass rounded-3xl p-6 mb-6 text-center border-b-4 border-blue-500 shadow-xl">
                 <h1 class="text-3xl font-black italic tracking-tighter text-white">PAPERHOUSE INC</h1>
                 <p class="text-blue-400 text-[9px] tracking-[0.4em] mb-6 font-bold uppercase">Premium Ad-Earning Network</p>
@@ -63,7 +67,25 @@
             </div>
             <div id="onlineList" class="flex flex-wrap gap-2 mb-8"></div>
             
-            <button onclick="openAdmin()" class="w-full py-4 text-gray-700 text-[9px] font-black tracking-[0.3em] uppercase border border-dashed border-gray-800 rounded-2xl">Restricted Admin Access</button>
+            <!-- Connect With Us Section -->
+            <div class="glass p-6 rounded-3xl mb-8 border border-green-500/30 text-center shadow-md">
+                <h3 class="font-black text-[10px] text-green-400 mb-4 tracking-widest uppercase">Connect With Us</h3>
+                <div class="flex flex-col gap-3">
+                    <a href="https://t.me/paperhouseinc" target="_blank" class="flex items-center justify-center gap-3 bg-blue-700/50 hover:bg-blue-600/50 py-3 rounded-xl font-bold text-sm transition-all duration-200">                        <svg class="icon-telegram" fill="white" width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.187 8.528l-5.602 3.99a.7.7 0 0 1-.953-.083l-2.071-1.637c-.126-.1-.132-.284-.012-.416l1.248-1.298c.12-.124.316-.118.435.011l1.583 1.764.062.068.077-.044 3.791-2.222c.119-.07.26-.04.34.073l.01.01.071.096.002.003c.026.046.04.1.037.155a.3.3 0 0 1-.037.126z"/></svg>
+                        Telegram Group
+                    </a>
+                    <a href="https://t.me/PAPERHOUSE_INC" target="_blank" class="flex items-center justify-center gap-3 bg-blue-700/50 hover:bg-blue-600/50 py-3 rounded-xl font-bold text-sm transition-all duration-200">
+                        <svg class="icon-telegram" fill="white" width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.187 8.528l-5.602 3.99a.7.7 0 0 1-.953-.083l-2.071-1.637c-.126-.1-.132-.284-.012-.416l1.248-1.298c.12-.124.316-.118.435.011l1.583 1.764.062.068.077-.044 3.791-2.222c.119-.07.26-.04.34.073l.01.01.071.096.002.003c.026.046.04.1.037.155a.3.3 0 0 1-.037.126z"/></svg>
+                        Telegram Channel
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61586281245735" target="_blank" class="flex items-center justify-center gap-3 bg-blue-700/50 hover:bg-blue-600/50 py-3 rounded-xl font-bold text-sm transition-all duration-200">
+                        <svg class="icon-facebook" fill="white" width="20" height="20" viewBox="0 0 24 24"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm3.208 8.784h-1.61c-.551 0-.66.26-.66.643v.845h2.246l-.3 2.193h-1.946v6.297h-2.583v-6.297H8.257V9.704h1.708V8.129c0-1.688 1.03-2.614 2.536-2.614h1.907v2.269z"/></svg>
+                        Facebook Page
+                    </a>
+                </div>
+            </div>
+
+            <button onclick="openAdmin()" class="w-full py-4 text-gray-700 text-[9px] font-black tracking-[0.3em] uppercase border border-dashed border-gray-800 rounded-2xl">Admin Access</button>
         </section>
 
         <!-- Tasks Tab -->
@@ -74,7 +96,8 @@
             <div class="glass p-6 rounded-3xl mb-8 flex justify-between items-center border border-blue-500/30 bg-gradient-to-br from-blue-900/20 to-transparent">
                 <div>
                     <h3 class="font-black text-lg text-white">Main Reward</h3>
-                    <p class="text-xs text-gray-400">Earn up to ₱0.025</p>                    <div class="mt-2 inline-block px-2 py-0.5 bg-blue-500/20 rounded text-[9px] text-blue-400 font-bold">NO COOLDOWN</div>
+                    <p class="text-xs text-gray-400">Earn up to ₱0.025</p>
+                    <div class="mt-2 inline-block px-2 py-0.5 bg-blue-500/20 rounded text-[9px] text-blue-400 font-bold">NO COOLDOWN</div>
                 </div>
                 <button onclick="startMainTask()" class="bg-blue-600 hover:bg-blue-400 px-8 py-4 rounded-2xl font-black shadow-lg shadow-blue-900/40 transform active:scale-95 transition-all">REWARD</button>
             </div>
@@ -90,7 +113,7 @@
                     <span class="text-green-400 font-black">₱0.015</span>
                 </button>
                 <button onclick="bonusAd('21423', 3)" id="btn-bonus-3" class="glass p-4 rounded-2xl flex justify-between items-center">
-                    <span class="font-bold text-sm">Bonus 3 <smallclass="block text-gray-500 font-normal">Adsgram 21423</small></span>
+                    <span class="font-bold text-sm">Bonus 3 <small class="block text-gray-500 font-normal">Adsgram 21423</small></span>
                     <span class="text-green-400 font-black">₱0.015</span>
                 </button>
                 <button onclick="bonusAd('24344', 4)" id="btn-bonus-4" class="glass p-4 rounded-2xl flex justify-between items-center">
