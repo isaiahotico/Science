@@ -1,171 +1,176 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPERWIND INC | Premium Earning</title>
+    <title>PAPERHOUSE INC</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-    
-    <!-- Monetag SDK -->
-    <script src="https://pl28917645.effectivegatecpm.com/3a/6c/94/3a6c94eafdbe1b9ca34a971e7e5a12dd.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Ads SDKs -->
     <script src='//libtl.com/sdk.js' data-zone='10555746' data-sdk='show_10555746'></script>
     <script src='//libtl.com/sdk.js' data-zone='10555727' data-sdk='show_10555727'></script>
-    <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <style>
-        .tab-content { display: none; }
+        body { background: #0f172a; color: white; font-family: sans-serif; overflow-x: hidden; }
+        .tab-content { display: none; padding-bottom: 80px; }
         .tab-content.active { display: block; }
-        #task-view { display: none; position: fixed; inset: 0; background: white; z-index: 2000; }
-        #prompt-overlay { 
-            position: absolute; inset: 0; z-index: 2001; 
-            background: rgba(0,0,0,0.85); display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
-        .scroll-hide::-webkit-scrollbar { display: none; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        #taskOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 100; }
+        .nav-btn.active { color: #38bdf8; border-top: 2px solid #38bdf8; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900 scroll-hide">
+<body>
 
-    <!-- Auth Screen -->
-    <div id="auth-screen" class="fixed inset-0 bg-blue-700 flex items-center justify-center z-[10000]">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl w-[90%] max-w-sm text-center">
-            <h1 class="text-3xl font-black text-blue-700 mb-2 italic tracking-tighter">PAPERWIND INC</h1>
-            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">WELCOME TO SENTINEL DAEHAEMOTH AREA INVITE MORE USERS YOU WILL GOT 10% REFFERAL BONUS</p>
-            <input type="text" id="tg-username" placeholder="@Telegram_Username" class="w-full bg-gray-100 border-none p-4 rounded-2xl mb-4 focus:ring-2 focus:ring-blue-500 outline-none font-bold text-center">
-            <button onclick="login()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-200 hover:scale-95 transition-all">START MINING</button>
+    <!-- Header / User Bar -->
+    <div class="fixed top-0 w-full glass z-50 p-3 flex justify-between items-center">
+        <div id="userBar" class="font-bold text-sm text-blue-400 truncate max-w-[150px]">👤 Loading...</div>
+        <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400">Balance:</span>
+            <span id="userBalance" class="font-bold text-green-400">₱0.00</span>
         </div>
     </div>
 
-    <!-- Task View Overlay -->
-    <div id="task-view">
-        <div class="h-16 bg-white border-b flex items-center justify-between px-4">
-            <div class="flex items-center gap-3">
-                <div id="timer-display" class="bg-blue-600 text-white px-4 py-1 rounded-xl font-black text-xl shadow-md shadow-blue-100">45s</div>
-                <div>                    <span id="ad-status" class="text-[9px] font-black text-orange-500 uppercase block leading-none">Dual Ad in 10s</span>
-                    <span class="text-[9px] font-bold text-green-500 uppercase">Status: Mining...</span>
-                </div>
-            </div>
-            <button onclick="closeTask()" class="text-gray-300 hover:text-red-500 transition-colors"><i class="fas fa-times-circle text-2xl"></i></button>
-        </div>
+    <!-- Main Content Containers -->
+    <div class="mt-16 px-4">
         
-        <div class="relative w-full h-[calc(100vh-64px)] overflow-hidden">
-            <!-- Interruption Prompt -->
-            <div id="prompt-overlay">
-                <div class="text-white text-center mb-6">
-                    <p class="text-xl font-black uppercase mb-1">Activity Required!</p>
-                    <p class="text-xs text-gray-400">Timer Paused. Browse the site to resume.</p>
+        <!-- Home / Dashboard -->
+        <section id="home" class="tab-content active">
+            <div class="glass rounded-xl p-5 mb-4 text-center">
+                <h1 class="text-2xl font-black mb-2">PAPERHOUSE INC</h1>
+                <p class="text-gray-400 text-sm">Earn rewards by completing simple tasks.</p>
+                <div class="mt-4 grid grid-cols-2 gap-2">
+                    <div class="bg-slate-800 p-3 rounded-lg"><small>Online</small><div id="onlineCount">0</div></div>
+                    <div class="bg-slate-800 p-3 rounded-lg"><small>Total Earned</small><div id="statsTotal">₱0.00</div></div>
                 </div>
-                <button onclick="resumeTask()" class="bg-blue-600 text-white px-10 py-5 rounded-3xl font-black shadow-2xl animate-pulse border-4 border-blue-400/50">
-                    <i class="fas fa-hand-pointer mr-2"></i> 🙏🎉RESUME TASK Notes PLEASE CLICK THIS LINKS IN THE WEBSITE FOR ADMIN CAN PAY US ALL EASILY Skinnycrawlinglax
-kettledroopingcontinuation
-wayfarerorthodox
-Sourshaped THANK YOU!🎉🙏
-                </button>
             </div>
-            <iframe id="task-frame" src="" class="w-full h-full border-none"></iframe>
-        </div>
+
+            <button onclick="openAdmin()" class="w-full py-2 bg-slate-800 rounded text-xs opacity-50">Admin Panel</button>
+        </section>
+
+        <!-- Tasks Section -->
+        <section id="tasks" class="tab-content">
+            <h2 class="text-xl font-bold mb-4">Daily Tasks</h2>
+            <div id="taskList" class="space-y-3">
+                <!-- Links from admin go here -->
+                <div class="glass p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold">Browse Ad</h3>
+                        <p class="text-xs text-gray-400">Reward: ₱0.003 - ₱0.025</p>
+                    </div>
+                    <button onclick="startTask()" class="bg-blue-600 px-4 py-2 rounded-lg font-bold">REWARD</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Withdraw Section -->
+        <section id="withdraw" class="tab-content">
+            <h2 class="text-xl font-bold mb-4">Withdraw Funds</h2>
+            <div class="glass p-4 rounded-xl mb-4">
+                <select id="wdMethod" class="w-full bg-slate-800 p-3 rounded mb-3">
+                    <option value="GCash">GCash</option>
+                    <option value="FaucetPay">FaucetPay</option>
+                    <option value="PayPal">PayPal</option>
+                </select>
+                <input id="wdAddress" type="text" placeholder="Wallet Address / Number" class="w-full bg-slate-800 p-3 rounded mb-3">
+                <input id="wdAmount" type="number" placeholder="Amount (₱)" class="w-full bg-slate-800 p-3 rounded mb-4">
+                <button onclick="requestWithdrawal()" class="w-full bg-green-600 py-3 rounded-xl font-bold">Withdraw</button>
+            </div>
+            <h3 class="font-bold mb-2">History</h3>
+            <div id="wdHistory" class="text-xs space-y-2"></div>
+        </section>
+
+        <!-- Referral Section -->
+        <section id="referral" class="tab-content">
+            <h2 class="text-xl font-bold mb-4">Refer & Earn (20%)</h2>
+            <div class="glass p-4 rounded-xl text-center mb-4">
+                <p class="text-sm mb-2">Your Referral Code:</p>
+                <div id="myRefCode" class="text-2xl font-mono font-bold text-blue-400 mb-4 tracking-widest">------</div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-800 p-2 rounded"><small>Invited</small><div id="refCount">0</div></div>
+                    <div class="bg-slate-800 p-2 rounded"><small>Commission</small><div id="refEarned">₱0.00</div></div>
+                </div>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-xs mb-2">Have a referral code?</p>
+                <div class="flex gap-2">
+                    <input id="refInput" type="text" placeholder="6 Letters" maxlength="6" class="flex-1 bg-slate-800 p-2 rounded">
+                    <button onclick="submitReferral()" class="bg-blue-600 px-4 rounded">Apply</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Section -->
+        <section id="chat" class="tab-content">
+            <h2 class="text-xl font-bold mb-4">Community Chat</h2>
+            <div id="chatBox" class="glass h-80 overflow-y-auto p-3 mb-2 flex flex-col gap-2 text-sm"></div>
+            <div class="flex gap-2">
+                <input id="chatInput" type="text" placeholder="Type message..." class="flex-1 bg-slate-800 p-2 rounded">
+                <button onclick="sendMessage()" class="bg-blue-600 px-4 rounded">Send</button>
+            </div>
+        </section>
+
+        <!-- Leaderboard -->
+
+<section id="leaderboard" class="tab-content">
+            <h2 class="text-xl font-bold mb-4">Top Earners</h2>
+            <div id="leaderList" class="glass rounded-xl overflow-hidden">
+                <!-- Leaderboard items -->
+            </div>
+        </section>
+
+        <!-- Admin Section (Hidden) -->
+        <section id="admin" class="tab-content">
+            <div id="adminLogin">
+                <input id="adminPass" type="password" placeholder="Password" class="w-full bg-slate-800 p-3 rounded mb-2">
+                <button onclick="verifyAdmin()" class="w-full bg-red-600 py-2 rounded">Login Admin</button>
+            </div>
+            <div id="adminPanel" class="hidden space-y-4">
+                <div class="bg-red-900/20 p-4 rounded-xl">
+                    <h3 class="font-bold">Post New Link</h3>
+                    <input id="newLink" type="text" placeholder="https://..." class="w-full bg-slate-800 p-2 rounded mt-2">
+                    <button onclick="postLink()" class="w-full bg-blue-600 mt-2 py-1 rounded">Post Link</button>
+                </div>
+                <div class="bg-red-900/20 p-4 rounded-xl">
+                    <h3 class="font-bold">Pending Withdrawals</h3>
+                    <div id="adminWdList" class="text-xs mt-2 space-y-2"></div>
+                </div>
+            </div>
+        </section>
+
     </div>
 
-    <!-- Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t flex justify-around p-4 z-50">
-        <button onclick="showTab('tasks')" class="text-blue-600"><i class="fas fa-layer-group text-xl"></i></button>
-        <button onclick="showTab('chat')" class="text-gray-400"><i class="fas fa-comment-dots text-xl"></i></button>
-        <button onclick="showTab('referral')" class="text-gray-400"><i class="fas fa-user-friends text-xl"></i></button>
-        <button onclick="showTab('leaderboard')" class="text-gray-400"><i class="fas fa-medal text-xl"></i></button>
-        <button onclick="showTab('withdraw')" class="text-gray-400"><i class="fas fa-wallet text-xl"></i></button>
-        <button onclick="checkAdmin()" class="text-gray-100"><i class="fas fa-shield-alt"></i></button>
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 w-full glass flex justify-around p-3 z-50">
+        <button onclick="showSection('home')" class="nav-btn active text-center"><i class="block text-xl">🏠</i><small>Home</small></button>
+        <button onclick="showSection('tasks')" class="nav-btn text-center"><i class="block text-xl">🎯</i><small>Tasks</small></button>
+        <button onclick="showSection('withdraw')" class="nav-btn text-center"><i class="block text-xl">💰</i><small>Cash</small></button>
+        <button onclick="showSection('referral')" class="nav-btn text-center"><i class="block text-xl">👥</i><small>Ref</small></button>
+        <button onclick="showSection('chat')" class="nav-btn text-center"><i class="block text-xl">💬</i><small>Chat</small></button>
     </nav>
 
-    <!-- Header -->    <header class="bg-blue-600 p-8 text-white rounded-b-[3.5rem] shadow-2xl sticky top-0 z-40">
-        <div class="flex justify-between items-center">
-            <div>
-                <p id="display-username" class="text-blue-200 text-xs font-bold italic tracking-wide uppercase">@Loading...</p>
-                <h2 id="display-balance" class="text-3xl font-black mt-1">₱0.000</h2>
-            </div>
-            <div class="bg-white/10 px-4 py-2 rounded-2xl border border-white/20 text-center">
-                <p class="text-[10px] font-bold uppercase opacity-80">Ref Total</p>
-                <p id="total-ref" class="text-lg font-black leading-none">0</p>
-            </div>
+    <!-- Task Execution Overlay -->
+    <div id="taskOverlay" class="flex flex-col items-center justify-center">
+        <div class="w-full flex justify-between p-4 bg-slate-900">
+            <span id="taskTimer" class="text-2xl font-bold text-yellow-400">15s remaining...</span>
+            <button id="closeTask" class="hidden text-red-500 font-bold" onclick="finishTask()">CLOSE & CLAIM</button>
         </div>
-    </header>
+        <iframe id="taskFrame" class="w-full flex-1 border-none bg-white"></iframe>
+    </div>
 
-    <main class="p-5 pb-32">
-        <!-- Tasks -->
-        <section id="tasks" class="tab-content active">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-black text-xl italic text-blue-900">SENTINEL DAEHAEMOTH AREA</h3>
-                <span class="text-[10px] bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-bold">2H COOLDOWN</span>
-            </div>
-            <div id="links-container" class="grid grid-cols-1 gap-3"></div>
-        </section>
-
-        <!-- Referral -->
-        <section id="referral" class="tab-content">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border text-center mb-6">
-                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-4"Your Unique 6-Digit Code</p>
-                <h2 id="my-ref-code" class="text-5xl font-black text-blue-600 tracking-tighter mb-6">......</h2>
-                <div class="flex justify-between border-t pt-6">
-                    <div class="text-left">
-                        <p class="text-[10px] font-bold text-gray-400">REF EARNINGS</p>
-                        <p id="ref-earnings" class="text-xl font-black text-green-600">₱0.000</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] font-bold text-gray-400">COMMISSION</p>
-                        <p class="text-xl font-black text-blue-600">10%</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-blue-50 p-6 rounded-3xl border border-blue-100">
-                <p class="text-[10px] font-black text-blue-400 mb-3 uppercase px-1">Enter Inviter Code</p>
-                <div class="flex gap-2">
-                    <input type="text" id="input-ref-code" maxlength="6" class="flex-1 bg-white p-4 rounded-2xl font-black text-center outline-none border-none shadow-inner" placeholder="000000">
-                    <button onclick="submitReferral()" class="bg-blue-600 text-white px-8 rounded-2xl font-bold">JOIN</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chat / Leaderboard / Withdraw -->
-        <section id="leaderboard" class="tab-content">
-            <h3 class="font-black text-xl mb-4 italic text-blue-900 uppercase">Top Earners</h3>
-            <div id="leaderboard-list" class="bg-white rounded-3xl shadow-sm border overflow-hidden divide-y"></div>
-        </section>
-
-        <section id="chat" class="tab-content">
-            <div class="bg-white rounded-3xl shadow-sm border h-[50vh] flex flex-col overflow-hidden mb-4">
-                <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4"></div>
-            </div>
-            <div class="flex gap-2">
-                <input type="text" id="chat-input" class="flex-1 bg-white p-4 rounded-2xl shadow-sm outline-none border border-gray-100" placeholder="Type a message...">
-                <button onclick="sendMessage()" class="bg-blue-600 text-white w-14 rounded-2xl shadow-lg shadow-blue-200"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </section>
-
-        <section id="withdraw" class="tab-content">
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border mb-6">
-                <div class="bg-yellow-50 p-3 rounded-2xl mb-4 text-center border border-yellow-100">
-                    <p class="text-[10px] font-black text-yellow-700 uppercase">Minimum Payout: ₱1.00</p>
-                </div>
-                <select id="withdraw-method" class="w-full bg-gray-50 p-4 rounded-2xl mb-4 font-bold outline-none border-none">
-                    <option value="GCash">GCash</option>
-                    <option value="PayPal">PayPal</option>
-                    <option value="FaucetPay">FaucetPay</option>
-                </select>
-                <input type="text" id="withdraw-details" placeholder="Account Details" class="w-full bg-gray-50 p-4 rounded-2xl mb-4 outline-none border-none">
-                <input type="number" id="withdraw-amount" placeholder="Amount (1.0 min)" class="w-full bg-gray-50 p-4 rounded-2xl mb-4 outline-none font-black border-none">
-                <button onclick="requestWithdraw()" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black shadow-xl shadow-green-100 uppercase tracking-tighter">Withdraw Funds</button>
-            </div>
-            <div id="withdraw-history" class="space-y-2 px-1"></div>
-        </section>
-
-        <section id="admin-panel" class="tab-content">
-            <h3 class="font-black text-red-600 mb-4 px-2">PENDING REQUESTS</h3>
-            <div id="admin-withdrawals" class="space-y-3"></div>
-        </section>
-    </main>
-
+    <!-- Firebase Scripts -->
     <script type="module" src="app.js"></script>
+
+    <script>
+        // Tab switching logic
+        function showSection(id) {
+            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
 </body>
 </html>
