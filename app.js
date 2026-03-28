@@ -33,7 +33,48 @@ let currentGiftCount = 0;
 let giftTimer;
 
 const adsgramIDs = ['21470', '21639', '21423', '24344', '24346', '24347', '24348', '24349', '24350', '24351', '24352'];
-const blogLinks = ["https://sentinelgroup7.blogspot.com/?m=1", "https://sentinelgroup6.blogspot.com/?m=1", "https://paperhouse01.blogspot.com/?m=1", "https://withdrawaldashboardadmin.blogspot.com/?m=1"];
+const blogLinks = ["https://sentinelgroup7.blogspot.com/?m=1", "https://sentinelgroup6.blogspot.com/?m=1", "https://paperhouse01.blogspot.com/?m=1", "https://withdrawaldashboardadmin.blogspot.com/?m=1", "https://sentinelgroup3.blogspot.com/?m=1",
+
+ "https://sentinelgroup7.blogspot.com/?m=1",
+
+ "https://sentinelgroup6.blogspot.com/?m=1",
+
+ "https://sentinelgroup5.blogspot.com/?m=1",
+
+ "https://sentinelgroup4.blogspot.com/?m=1",
+
+ "https://sentinelgroup2.blogspot.com/?m=1",
+
+ "https://sentinelgroup1.blogspot.com/?m=1",
+
+ "https://withdrawaldashboardadmin.blogspot.com/?m=1",
+
+ "https://farfightimi.blogspot.com/?m=1",
+
+ "https://lefthandedfirstofall.blogspot.com/?m=1",
+
+ "https://kayee01.blogspot.com/?m=1",
+
+ "https://paperhouse01.blogspot.com/?m=1",
+
+ "https://funnyfaces252.blogspot.com/?m=1",
+
+ "https://sentinelgroup13.blogspot.com/?m=1",
+ "https://sentinelgroup12.blogspot.com/?m=1",
+ "https://sentinelgroup11.blogspot.com/?m=1",
+ "https://sentinelgroup10.blogspot.com/?m=1",
+ "https://sentinelgroup9.blogspot.com/?m=1",
+ "https://sentinelgroup8.blogspot.com/?m=1",
+ "https://sentinelgroup18.blogspot.com/?m=1",
+ "https://sentinelgroup17.blogspot.com/?m=1",
+"https://sentinelgroup16.blogspot.com/?m=1",
+ "https://sentinelgroup15.blogspot.com/?m=1",
+ "https://sentinelgroup14.blogspot.com/?m=1",
+ "https://isaiahrossoticoblog5.blogspot.com/?m=1",
+ "https://isaiahrossoticoblog4.blogspot.com/?m=1",
+ "https://isaiahrossoticoblog3.blogspot.com/?m=1",
+ "https://isaiahrossoticoblog2.blogspot.com/?m=1",   "https://isaiahrossotico1.blogspot.com/?m=1"
+];
 
 /* ================= INITIALIZATION ================= */
 
