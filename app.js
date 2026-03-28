@@ -180,7 +180,7 @@ window.claimGift = () => {
 };
 
 window.closeTask = () => {
-    addBalance(0.025);
+    addBalance(0.0102);
     document.getElementById("taskContainer").style.display = "none";
     clearInterval(giftTimer);
 };
