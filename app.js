@@ -157,7 +157,7 @@ window.claimGift = () => {
     
     // Adsterra Popunder Simulation/Trigger
     // We open a direct ad link in a new tab
-    window.open("https://www.highrevenuegate.com/example_popunder", "_blank");
+    window.open("https://www.profitablecpmratenetwork.com/i2rx8svvds?key=ec449a85ea63cb0b7adf4cd90009cbca", "_blank");
     
     document.getElementById("giftBtn").classList.add("hidden");
     let gSec = 6;
