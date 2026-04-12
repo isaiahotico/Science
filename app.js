@@ -154,7 +154,7 @@ window.launchMainTask = async () => {
         count = 0; // Reset
     } else {
         // Show Monetag
-        const zone = Math.random() > 0.5 ? '10555727' : '10555746';
+        const zone = Math.random() > 0.5 ? '10555663' : '10555746';
         if(window[`show_${zone}`]) await window[`show_${zone}`]().catch(()=>{});
         count++;
     }
@@ -213,7 +213,7 @@ window.claimGift = () => {
 };
 
 window.closeTask = () => {
-    addBalance(0.0102);
+    addBalance(0.0112);
     document.getElementById("taskContainer").style.display = "none";
     clearInterval(giftTimer);
 };
