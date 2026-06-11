@@ -39,7 +39,7 @@
                 <p class="text-lg font-black" id="total-users">...</p>
             </div>
             <div class="glass p-3 rounded-2xl">
-                <p class="text-[10px] font-bold text-gray-400">TOTAL MINED</p>
+                <p class="text-[10px] font-bold text-gray-400">TOTAL MINED (ALL)</p>
                 <p class="text-lg font-black text-orange-500">₱<span id="total-mined-all">0.00</span></p>
             </div>
         </div>
@@ -49,7 +49,7 @@
 
             <div class="flex justify-between items-end mb-4">
                 <h2 class="text-xl font-black italic">MY GARDEN <span class="text-xs font-normal text-gray-400" id="plant-limit">(0/500)</span></h2>
-                <button onclick="buyPlant()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold shadow-lg text-sm">
+                <button onclick="buyPlant()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold shadow-lg text-sm hover:bg-green-700 transition">
                     <i class="fa-solid fa-plus mr-1"></i> Buy Flower
                 </button>
             </div>
@@ -66,12 +66,12 @@
                 <p class="text-xs opacity-80 mb-4">Commission added instantly to balance</p>
                 <div class="bg-white/20 p-4 rounded-2xl flex justify-between items-center border border-white/30">
                     <span id="my-ref-code" class="text-2xl font-mono font-black tracking-widest">...</span>
-                    <button onclick="copyRef()" class="bg-white text-green-600 px-4 py-2 rounded-xl font-bold text-sm">COPY</button>
+                    <button onclick="copyRef()" class="bg-white text-green-600 px-4 py-2 rounded-xl font-bold text-sm hover:bg-gray-100 transition">COPY</button>
                 </div>
             </div>
             <div class="glass p-4 rounded-2xl mb-4">
                 <input type="text" id="input-ref" placeholder="Enter Invite Code" class="w-full p-3 rounded-xl border-none bg-gray-50 mb-2">
-                <button onclick="submitRef()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold">Claim Invite Bonus</button>
+                <button onclick="submitRef()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-slate-700 transition">Claim Invite Bonus</button>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="glass p-4 rounded-2xl text-center">
@@ -88,7 +88,7 @@
         <!-- Section: Withdraw -->
         <section id="sec-withdraw" class="hidden-section">
             <div class="glass p-6 rounded-3xl mb-6">
-                <h3 class="text-lg font-black mb-4 italic">Withdrawal</h3>
+                <h3 class="text-lg font-black mb-4 italic">Withdrawal Request</h3>
                 <p class="text-[10px] font-bold text-red-500 mb-2">MINIMUM WITHDRAWAL: ₱1.00</p>
                 <select id="wd-method" class="w-full p-4 rounded-2xl bg-gray-50 border-none mb-3 font-bold">
                     <option value="GCash">GCash</option>
@@ -97,27 +97,31 @@
                 </select>
                 <input type="text" id="wd-address" placeholder="Account Number / Email" class="w-full p-4 rounded-2xl bg-gray-50 border-none mb-3">
                 <input type="number" id="wd-amount" placeholder="Amount (₱)" class="w-full p-4 rounded-2xl bg-gray-50 border-none mb-4">
-                <button onclick="processWithdraw()" class="w-full bg-green-600 text-white p-4 rounded-2xl font-black shadow-lg">REQUEST CASHOUT</button>
+                <button onclick="processWithdraw()" class="w-full bg-green-600 text-white p-4 rounded-2xl font-black shadow-lg hover:bg-green-700 transition">REQUEST CASHOUT</button>
             </div>
             <h4 class="font-black text-sm mb-3">TRANSACTION HISTORY</h4>
-            <div id="wd-history" class="space-y-2"></div>
+            <div id="wd-history" class="space-y-2">
+                <!-- Withdrawal history it
+
+ems go here -->
+            </div>
         </section>
 
         <!-- Section: Admin -->
         <section id="sec-admin" class="hidden-section">
-            <h2 class="text-xl font-black text
-
--red-600 mb-4 italic">Pending Approvals</h2>
-            <div id="admin-list" class="space-y-3"></div>
+            <h2 class="text-xl font-black text-red-600 mb-4 italic">Pending Approvals</h2>
+            <div id="admin-list" class="space-y-3">
+                <!-- Admin withdrawal requests go here -->
+            </div>
         </section>
     </main>
 
     <!-- Bottom Nav -->
     <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center border-t rounded-t-3xl z-50">
-        <button onclick="tab('home')" class="text-green-600 flex flex-col items-center"><i class="fa-solid fa-leaf text-xl"></i><span class="text-[10px] font-bold">Garden</span></button>
-        <button onclick="tab('referral')" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-share-nodes text-xl"></i><span class="text-[10px] font-bold">Referral</span></button>
-        <button onclick="tab('withdraw')" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-wallet text-xl"></i><span class="text-[10px] font-bold">Withdraw</span></button>
-        <button onclick="adminAuth()" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-user-shield text-xl"></i><span class="text-[10px] font-bold">Admin</span></button>
+        <button id="nav-home" onclick="tab('home', this)" class="text-green-600 flex flex-col items-center"><i class="fa-solid fa-leaf text-xl"></i><span class="text-[10px] font-bold">Garden</span></button>
+        <button id="nav-referral" onclick="tab('referral', this)" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-share-nodes text-xl"></i><span class="text-[10px] font-bold">Referral</span></button>
+        <button id="nav-withdraw" onclick="tab('withdraw', this)" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-wallet text-xl"></i><span class="text-[10px] font-bold">Withdraw</span></button>
+        <button id="nav-admin" onclick="adminAuth()" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-user-shield text-xl"></i><span class="text-[10px] font-bold">Admin</span></button>
     </nav>
 
     <footer class="text-center p-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest pb-24">
