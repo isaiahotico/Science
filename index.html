@@ -6,7 +6,7 @@
     <title>Sampaguita Mining Elite</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase Compat SDKs -->
+    <!-- Firebase Compat SDKs to maintain modular configuration with older-style code -->
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -42,9 +42,9 @@
         <!-- Balance Dashboard -->
         <div class="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] p-6 text-white shadow-xl shadow-emerald-950/20">
             <div class="flex justify-between items-start mb-4">
-                <span class="text-xs uppercase tracking-widest opacity-80 font-bold">Unclaimed Balance</span>
-                <i class="fas fa-wallet text-xl opacity-60"></i>
-            </div>            <div class="flex items-baseline gap-1">
+                <span class="text-xs uppercase tracking-widest opacity-80 font-bold">Unclaimed Balance</span>                <i class="fas fa-wallet text-xl opacity-60"></i>
+            </div>
+            <div class="flex items-baseline gap-1">
                 <span class="text-3xl font-extrabold">₱</span>
                 <span class="text-5xl font-black tracking-tight" id="main-balance">0.00000</span>
             </div>
