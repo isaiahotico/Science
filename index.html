@@ -3,83 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sampaguita Garden | Digital Mining</title>
+    <title>Sampaguita Garden Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Ad SDK -->
     <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
     <style>
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
-        .garden-bg { background: radial-gradient(circle at top right, #f0fff4, #ffffff); min-height: 100vh; }
-        .mining-gradient { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .mining-gradient { background: linear-gradient(135deg, #10b981, #059669); }
         .hidden-section { display: none; }
-        @keyframes flow { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-        .float-anim { animation: flow 2s ease-in-out infinite alternate; }
+        .claim-btn-active { background: #1e293b; color: white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
     </style>
 </head>
-<body class="garden-bg text-slate-800 font-sans">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-    <!-- Header Stats -->
-    <div class="glass sticky top-0 z-50 p-4 shadow-sm flex justify-between items-center">
+    <!-- Sticky Balance Bar -->
+    <div class="glass sticky top-0 z-50 p-4 shadow-md flex justify-between items-center border-b border-green-100">
         <div>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Balance</p>
-            <h1 class="text-2xl font-black text-green-600">₱<span id="balance">0.000000</span></h1>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Available Balance</p>
+            <h1 class="text-2xl font-black text-green-600 leading-none">₱<span id="balance">0.00000000</span></h1>
         </div>
         <div class="text-right">
-            <div id="uid-card" class="bg-slate-100 px-3 py-1 rounded-lg text-[10px] font-mono font-bold mb-1">ID: ...</div>
-            <div class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">Ads: <span id="ad-count">0</span>/10 hr</div>
+            <div id="uid-display" class="text-[9px] font-mono bg-slate-200 px-2 py-1 rounded mb-1">ID: ...</div>
+            <div class="text-[10px] font-bold text-white bg-blue-500 px-2 py-0.5 rounded-full">Ads: <span id="ad-count">0</span>/10 hr</div>
         </div>
     </div>
 
-    <main class="p-4 pb-28 max-w-lg mx-auto">
-        <!-- Global Stats -->
+    <main class="p-4 pb-32 max-w-lg mx-auto">
+        <!-- Dashboard Stats -->
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="glass p-3 rounded-2xl">
-                <p class="text-[10px] font-bold text-gray-400">REGISTERED USERS</p>
-                <p class="text-lg font-black" id="total-users">...</p>
+            <div class="glass p-3 rounded-2xl border-l-4 border-green-500">
+                <p class="text-[10px] font-bold text-slate-400">GARDEN FLOWERS</p>
+                <p class="text-lg font-black" id="active-plants">0/500</p>
             </div>
-            <div class="glass p-3 rounded-2xl">
-                <p class="text-[10px] font-bold text-gray-400">TOTAL MINED (ALL)</p>
-                <p class="text-lg font-black text-orange-500">₱<span id="total-mined-all">0.00</span></p>
+            <div class="glass p-3 rounded-2xl border-l-4 border-orange-400">
+                <p class="text-[10px] font-bold text-slate-400">TOTAL REGISTERED</p>
+                <p class="text-lg font-black" id="total-users">...</p>
             </div>
         </div>
 
-        <!-- Section: Home / Mining -->
+        <!-- Section: Garden (Mining) -->
         <section id="sec-home">
-
-            <div class="flex justify-between items-end mb-4">
-                <h2 class="text-xl font-black italic">MY GARDEN <span class="text-xs font-normal text-gray-400" id="plant-limit">(0/500)</span></h2>
-                <button onclick="buyPlant()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold shadow-lg text-sm hover:bg-green-700 transition">
-                    <i class="fa-solid fa-plus mr-1"></i> Buy Flower
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-black italic text-slate-700">MY GARDEN</h2>
+                <button onclick="buyPlant()" class="mining-gradient text-white px-5 py-2.5 rounded-2xl font-bold shadow-lg text-sm flex items-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-plus"></i> Buy Sampaguita
                 </button>
             </div>
-
-            <div id="garden-grid" class="space-y-4">
-                <!-- Plants injected here -->
+            <div id="garden-grid" class="space-y-3">
+                <!-- Mining cards injected here -->
             </div>
         </section>
 
         <!-- Section: Referral -->
         <section id="sec-referral" class="hidden-section">
-            <div class="mining-gradient p-6 rounded-3xl text-white shadow-xl mb-6">
-                <h3 class="text-xl font-black mb-1">Invite & Earn 5%</h3>
-                <p class="text-xs opacity-80 mb-4">Commission added instantly to balance</p>
-                <div class="bg-white/20 p-4 rounded-2xl flex justify-between items-center border border-white/30">
-                    <span id="my-ref-code" class="text-2xl font-mono font-black tracking-widest">...</span>
-                    <button onclick="copyRef()" class="bg-white text-green-600 px-4 py-2 rounded-xl font-bold text-sm hover:bg-gray-100 transition">COPY</button>
+            <div class="mining-gradient p-6 rounded-[2rem] text-white shadow-xl mb-6">
+                <h3 class="text-xl font-black">Invite & Earn 5%</h3>
+                <p class="text-xs opacity-90 mb-4 italic">Commission is auto-credited on every invite claim</p>
+                <div class="bg-white/20 p-4 rounded-2xl flex justify-between items-center border border-white/30 backdrop-blur-sm">
+                    <span id="my-ref-code" class="text-2xl font-mono font-black">...</span>
+                    <button onclick="copyRef()" class="bg-white text-green-700 px-5 py-2 rounded-xl font-black text-xs hover:bg-slate-100 transition">COPY</button>
                 </div>
             </div>
             <div class="glass p-4 rounded-2xl mb-4">
-                <input type="text" id="input-ref" placeholder="Enter Invite Code" class="w-full p-3 rounded-xl border-none bg-gray-50 mb-2">
-                <button onclick="submitRef()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-slate-700 transition">Claim Invite Bonus</button>
+                <p class="text-xs font-bold mb-2 text-slate-500 uppercase">Enter Invite Code</p>
+                <div class="flex gap-2">
+                    <input type="text" id="input-ref" class="flex-grow bg-slate-100 p-3 rounded-xl border-none outline-none focus:ring-2 ring-green-500 font-bold" placeholder="6 Letters">
+                    <button onclick="submitRef()" class="bg-slate-800 text-white px-6 rounded-xl font-bold text-xs transition active:scale-95">BIND</button>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="glass p-4 rounded-2xl text-center">
-                    <p class="text-xs font-bold text-gray-400">TOTAL INVITES</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase">Invited</p>
                     <p class="text-xl font-black" id="ref-count">0</p>
                 </div>
                 <div class="glass p-4 rounded-2xl text-center">
-                    <p class="text-xs font-bold text-gray-400">REF EARNINGS</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase">Ref Earnings</p>
                     <p class="text-xl font-black text-green-600">₱<span id="ref-earnings">0.00</span></p>
                 </div>
             </div>
@@ -87,44 +87,43 @@
 
         <!-- Section: Withdraw -->
         <section id="sec-withdraw" class="hidden-section">
-            <div class="glass p-6 rounded-3xl mb-6">
-                <h3 class="text-lg font-black mb-4 italic">Withdrawal Request</h3>
-                <p class="text-[10px] font-bold text-red-500 mb-2">MINIMUM WITHDRAWAL: ₱1.00</p>
-                <select id="wd-method" class="w-full p-4 rounded-2xl bg-gray-50 border-none mb-3 font-bold">
-                    <option value="GCash">GCash</option>
-                    <option value="FaucetPay">FaucetPay</option>
-                    <option value="PayPal">PayPal</option>
-                </select>
-                <input type="text" id="wd-address" placeholder="Account Number / Email" class="w-full p-4 rounded-2xl bg-gray-50 border-none mb-3">
-                <input type="number" id="wd-amount" placeholder="Amount (₱)" class="w-full p-4 rounded-2xl bg-gray-50 border-none mb-4">
-                <button onclick="processWithdraw()" class="w-full bg-green-600 text-white p-4 rounded-2xl font-black shadow-lg hover:bg-green-700 transition">REQUEST CASHOUT</button>
-            </div>
-            <h4 class="font-black text-sm mb-3">TRANSACTION HISTORY</h4>
-            <div id="wd-history" class="space-y-2">
-                <!-- Withdrawal history it
+            <div class="glass p-6 rounded-[2rem] shadow-sm mb-6">
+                <h3 class="text-lg font-black mb-4 italic flex items-center gap-2"><i class="fa-solid fa-building-columns"></i> Withdrawal</h3>
+                <div class="space-y-3">
+                    <select id="wd-method" class="w-full p-4 rounded-2xl bg-slate-100 border-none font-bold text-sm appearance-none">
+                        <option value="GCash">GCash</option>
+                        <option value="FaucetPay">FaucetPay</option>
+                        <option value="PayPal">PayPal</option>
+                    </select>
+                    <input type="text" id="wd-address" placeholder="Number or Email" class="w-full p-4 rounded-2xl bg-slate-100 border-none text-sm font-bold">
+                    <input type="number" id="wd-amount" placeholder="Amount (Min ₱1.00)" class="w-full p-4 rounded-2xl bg-slate-100 border-none text-sm font-bold">
 
-ems go here -->
+<button onclick="processWithdraw()" class="w-full mining-gradient text-white p-4 rounded-2xl font-black shadow-lg transition active:scale-95">REQUEST CASHOUT</button>
+                </div>
             </div>
+            <h4 class="font-black text-sm mb-3 px-2">WITHDRAWAL HISTORY</h4>
+            <div id="wd-history" class="space-y-2"></div>
         </section>
 
         <!-- Section: Admin -->
         <section id="sec-admin" class="hidden-section">
-            <h2 class="text-xl font-black text-red-600 mb-4 italic">Pending Approvals</h2>
-            <div id="admin-list" class="space-y-3">
-                <!-- Admin withdrawal requests go here -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-black text-red-600 italic">Admin Queue</h2>
+                <button onclick="tab('home', document.getElementById('nav-home'))" class="text-xs font-bold text-slate-400">Exit Admin</button>
             </div>
+            <div id="admin-list" class="space-y-3"></div>
         </section>
     </main>
 
-    <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center border-t rounded-t-3xl z-50">
-        <button id="nav-home" onclick="tab('home', this)" class="text-green-600 flex flex-col items-center"><i class="fa-solid fa-leaf text-xl"></i><span class="text-[10px] font-bold">Garden</span></button>
-        <button id="nav-referral" onclick="tab('referral', this)" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-share-nodes text-xl"></i><span class="text-[10px] font-bold">Referral</span></button>
-        <button id="nav-withdraw" onclick="tab('withdraw', this)" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-wallet text-xl"></i><span class="text-[10px] font-bold">Withdraw</span></button>
-        <button id="nav-admin" onclick="adminAuth()" class="text-gray-400 flex flex-col items-center"><i class="fa-solid fa-user-shield text-xl"></i><span class="text-[10px] font-bold">Admin</span></button>
+    <!-- Bottom Navbar -->
+    <nav class="fixed bottom-0 left-0 right-0 glass p-4 flex justify-around items-center border-t rounded-t-[2rem] z-50">
+        <button id="nav-home" onclick="tab('home', this)" class="text-green-600 flex flex-col items-center transition-all"><i class="fa-solid fa-house-chimney text-xl"></i><span class="text-[10px] font-bold">Garden</span></button>
+        <button onclick="tab('referral', this)" class="text-slate-400 flex flex-col items-center transition-all"><i class="fa-solid fa-users-viewfinder text-xl"></i><span class="text-[10px] font-bold">Referral</span></button>
+        <button onclick="tab('withdraw', this)" class="text-slate-400 flex flex-col items-center transition-all"><i class="fa-solid fa-hand-holding-dollar text-xl"></i><span class="text-[10px] font-bold">Withdraw</span></button>
+        <button onclick="adminAuth()" class="text-slate-400 flex flex-col items-center transition-all"><i class="fa-solid fa-shield-halved text-xl"></i><span class="text-[10px] font-bold">Admin</span></button>
     </nav>
 
-    <footer class="text-center p-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest pb-24">
+    <footer class="text-center p-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest pb-32">
         <span id="footer-time"></span>
     </footer>
 
