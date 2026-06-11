@@ -3,33 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sampaguita Miner</title>
+    <title>Sampaguita Garden Elite</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src='//libtl.com/sdk.js' data-zone='10555663' data-sdk='show_10555663'></script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .mining-animate { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .hidden-section { display: none; }
+    </style>
 </head>
-<body class="bg-gray-100 pb-20">
-    <div id="app" class="max-w-md mx-auto p-4">
-        <!-- Header -->
-        <div class="bg-white p-4 rounded-xl shadow mb-4">
-            <h1 class="text-xl font-bold">Sampaguita Garden</h1>
-            <p>User ID: <span id="uid">Loading...</span></p>
-            <p class="text-green-600 font-bold">Balance: ₱<span id="balance">0.00</span></p>
-        </div>
+<body class="bg-slate-50 text-slate-800 font-sans">
 
-        <!-- Garden -->
-        <div class="grid grid-cols-2 gap-4" id="garden">
-            <!-- Dynamically populated -->
+    <!-- Top Status Bar -->
+    <div class="glass sticky top-0 z-50 border-b p-4 flex justify-between items-center shadow-sm">
+        <div>
+            <p class="text-xs text-gray-500 font-bold">WALLET BALANCE</p>
+            <h2 class="text-2xl font-black text-green-600">₱<span id="balance">0.0000</span></h2>
         </div>
-
-        <!-- Navigation -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-white p-4 flex justify-around border-t">
-            <button onclick="showSection('home')">Home</button>
-            <button onclick="showSection('referral')">Invite</button>
-            <button onclick="showSection('withdraw')">Withdraw</button>
-        </nav>
+        <div class="text-right">
+            <p class="text-xs text-gray-500 font-bold" id="user-id-display">ID: ---</p>
+            <div class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold mt-1">
+                Ads: <span id="ad-count">0</span>/10 hr
+            </div>
+        </div>
     </div>
 
-    <footer class="text-center p-4 text-xs text-gray-500" id="footer-date"></footer>
+    <main class="p-4 pb-24 max-w-2xl mx-auto">
+        
+        <!-- Stats Card -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <p class="text-xs text-gray-400">Total Users</p>
+                <h3 class="text-lg font-bold" id="total-users">0</h3>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <p class="text-xs text-gray-400">Active Plants</p>
+                <h3 class="text-lg font-bold"><span id="active-plants">0</span>/500</h3>
+            </div>
+        </div>
+
+        <!-- Section: Home (Garden) -->
+        <section id="sec-home">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Your Garden</h3>
+                <button onclick="buySampaguita()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold shadow-lg hover:bg-green-600 transition">
+
+                    <i class="fa-solid fa-plus mr-1"></i> Buy Plant (Watch Ad)
+                </button>
+            </div>
+            <div id="garden-grid" class="grid grid-cols-1 gap-3">
+                <!-- Plants will be injected here -->
+            </div>
+        </section>
+
+        <!-- Section: Referral -->
+        <section id="sec-referral" class="hidden-section">
+            <div class="bg-indigo-600 rounded-2xl p-6 text-white mb-6">
+                <h3 class="text-xl font-bold mb-2">Invite Friends</h3>
+                <p class="text-indigo-100 text-sm mb-4">Earn 5% commission on all their deposits/earnings.</p>
+                <div class="bg-white/20 p-3 rounded-lg flex justify-between items-center">
+                    <span id="my-referral-code" class="font-mono font-bold tracking-widest text-lg">---</span>
+                    <button onclick="copyReferral()" class="bg-white text-indigo-600 px-3 py-1 rounded-md text-sm font-bold">Copy</button>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm mb-4">
+                <p class="text-sm font-bold mb-2">Enter Referral Code</p>
+                <div class="flex gap-2">
+                    <input type="text" id="ref-input" class="border rounded-xl p-2 flex-grow" placeholder="6 Letters">
+                    <button onclick="applyReferral()" class="bg-indigo-500 text-white px-4 py-2 rounded-xl font-bold">Apply</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-xl border">
+                    <p class="text-xs text-gray-400">Total Referrals</p>
+                    <p class="font-bold text-lg" id="ref-count">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border">
+                    <p class="text-xs text-gray-400">Ref Earnings</p>
+                    <p class="font-bold text-lg text-green-600">₱<span id="ref-earnings">0.00</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Withdraw -->
+        <section id="sec-withdraw" class="hidden-section">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border mb-6">
+                <h3 class="text-lg font-bold mb-4">Withdraw Funds</h3>
+                <p class="text-xs text-red-500 mb-4 font-bold">Min: ₱1.00</p>
+                <select id="wd-method" class="w-full border rounded-xl p-3 mb-4">
+                    <option value="GCash">GCash</option>
+                    <option value="FaucetPay">FaucetPay</option>
+                    <option value="PayPal">PayPal Email</option>
+                </select>
+                <input type="text" id="wd-address" class="w-full border rounded-xl p-3 mb-4" placeholder="Number or Email">
+                <input type="number" id="wd-amount" class="w-full border rounded-xl p-3 mb-4" placeholder="Amount (₱)">
+                <button onclick="requestWithdrawal()" class="w-full bg-slate-800 text-white p-4 rounded-xl font-bold">Submit Request</button>
+            </div>
+            <h4 class="font-bold mb-2">Withdrawal History</h4>
+            <div id="wd-history" class="space-y-2"></div>
+        </section>
+
+        <!-- Section: Admin -->
+        <section id="sec-admin" class="hidden-section">
+            <h3 class="text-xl font-bold mb-4 text-red-600">Admin Panel</h3>
+            <div id="admin-pending-list" class="space-y-4"></div>
+        </section>
+
+    </main>
+
+    <!-- Footer Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 glass border-t p-3 flex justify-around items-center z-50">
+        <button onclick="switchTab('home')" cla
+
+ss="flex flex-col items-center text-green-600"><i class="fa-solid fa-seedling text-xl"></i><span class="text-[10px] font-bold">Garden</span></button>
+        <button onclick="switchTab('referral')" class="flex flex-col items-center text-gray-400"><i class="fa-solid fa-users text-xl"></i><span class="text-[10px] font-bold">Referral</span></button>
+        <button onclick="switchTab('withdraw')" class="flex flex-col items-center text-gray-400"><i class="fa-solid fa-wallet text-xl"></i><span class="text-[10px] font-bold">Wallet</span></button>
+        <button onclick="adminLogin()" class="flex flex-col items-center text-gray-400"><i class="fa-solid fa-lock text-xl"></i><span class="text-[10px] font-bold">Admin</span></button>
+    </nav>
+
+    <footer class="text-center p-8 pb-24 text-gray-400 text-xs">
+        <p id="footer-clock"></p>
+        <p>© 2024 Sampaguita Mining Concept</p>
+    </footer>
 
     <script type="module" src="app.js"></script>
 </body>
