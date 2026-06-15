@@ -231,7 +231,35 @@ window.tab = (id) => {
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active', 'text-emerald-600'));
     document.getElementById(`nav-${id}`).classList.add('nav-active', 'text-emerald-600');
 };
+// Initial Random In-App Interstitial Ad (3 minute cooldown)
+function showInitialAd() {
+    const now = Date.now();
+    if (now - lastInitialAd < INITIAL_AD_COOLDOWN_MS) {
+        return; // Still in cooldown
+    }
 
+    const adFunction = getRandomAdZone();
+    
+    try {
+        adFunction({
+            type: 'inApp',
+            inAppSettings: {
+                frequency: 5, 
+                capping: 0.1,
+                interval: 45,
+                timeout: 5,
+                everyPage: false
+            }
+        });
+        
+        // Update the last shown time
+        lastInitialAd = now;
+        update(userRef, { lastInitialAd: now });
+
+    } catch(e) {
+        console.error("Initial ad failed:", e);
+    }
+}
 // --- SECURE ADMINISTRATIVE SUITE (Propetas12) ---
 window.adminCheck = () => { 
     if (prompt("Enter Administrative Key Password:") === "Propetas12") { 
